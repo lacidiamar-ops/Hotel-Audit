@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V9</title>
-<link rel="manifest" href="/manifest.webmanifest?v=9">
+<link rel="manifest" href="/manifest.webmanifest?v=9.1">
 <meta name="theme-color" content="#161a24">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=9">
+<link rel="apple-touch-icon" href="/icon192.png?v=9.1">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -46,14 +46,18 @@
   .kpi.blue:before{background-image:linear-gradient(90deg,var(--blue),#a9d4ff,var(--blue))}
 }
 .card,.kpi,.audit-item,.li{transition:transform .38s cubic-bezier(.2,.7,.3,1),box-shadow .38s ease}
-.card:hover,.kpi:hover{transform:translateY(-4px) rotateX(2deg) rotateY(-2deg);box-shadow:0 22px 46px rgba(20,33,61,.18)}
-.li:hover{transform:translateY(-2px) rotateX(1deg);box-shadow:0 14px 30px rgba(20,33,61,.14)}
+@media (hover:hover) and (pointer:fine){
+  .card:hover,.kpi:hover{transform:translateY(-4px) rotateX(2deg) rotateY(-2deg);box-shadow:0 22px 46px rgba(20,33,61,.18)}
+  .li:hover{transform:translateY(-2px) rotateX(1deg);box-shadow:0 14px 30px rgba(20,33,61,.14)}
+}
 .card:active,.kpi:active,.li:active{transform:translateY(-1px) scale(.995);transition-duration:.12s}
 .btn{transition:transform .16s ease,box-shadow .16s ease}
-.btn:hover{transform:translateY(-2px)}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover{transform:translateY(-2px)}
+  .btn-gold:hover{box-shadow:0 10px 24px rgba(197,161,90,.45)}
+}
 .btn:active{transform:translateY(0) scale(.96)}
 .btn-gold{box-shadow:0 6px 16px rgba(197,161,90,.35)}
-.btn-gold:hover{box-shadow:0 10px 24px rgba(197,161,90,.45)}
 
 
 </style>
@@ -708,7 +712,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=9').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=9.1').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
