@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
-<link rel="manifest" href="/manifest.webmanifest?v=12">
+<link rel="manifest" href="/manifest.webmanifest?v=13">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=12">
+<link rel="apple-touch-icon" href="/icon192.png?v=13">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -262,13 +262,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=12" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=13" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=12" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=13" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -943,7 +943,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=12').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=13').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
