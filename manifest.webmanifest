@@ -1,0 +1,21 @@
+{
+  "name": "Audit Hôtel Pro",
+  "short_name": "Audit Hôtel",
+  "start_url": "/?v=4",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#f5f7fb",
+  "icons": [
+    {
+      "src": "/icon-192.png?v=4",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png?v=4",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "description": "Audit qualité hôtel et traiteur stade : hygiène, produits, traçabilité photo, locaux, export PDF sectorisé pour déplacements OM PRO."
+}

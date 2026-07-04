@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V3</title>
+<link rel="manifest" href="/manifest.webmanifest?v=4">
+<meta name="theme-color" content="#161a24">
+<meta name="application-name" content="Audit Hôtel Pro">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
+<link rel="apple-touch-icon" href="/icon-192.png?v=4">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f5f7fb;--bg2:#ffffff;--bg3:#eef3fa;--bg4:#e4ebf6;--border:#d8e0ee;--border2:#bdc9dc;--text:#14213d;--muted:#50607c;--dim:#8090aa;--gold:#c5a15a;--gold2:#d9b86f;--green:#0f9f6e;--red:#d94b5d;--orange:#e08926;--blue:#0057a8;--purple:#7d62bd;--teal:#0a9aa5;--r:16px;--shadow:0 10px 34px rgba(20,33,61,.12);--f:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--f)}button,input,select,textarea{font-family:var(--f)}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+#login{position:fixed;inset:0;z-index:99;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 20% 10%,rgba(245,166,35,.16),transparent 35%),radial-gradient(circle at 80% 80%,rgba(77,159,255,.10),transparent 40%),var(--bg);padding:18px}.login-card{max-width:430px;width:100%;background:var(--bg2);border:2px solid var(--border2);border-radius:24px;padding:26px;box-shadow:var(--shadow)}.brand{text-align:center;margin-bottom:22px}.brand-api{font-size:54px;font-weight:900;color:var(--gold);letter-spacing:-3px;line-height:1}.brand-title{font-weight:900;font-size:22px}.brand-sub{font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:4px}.pinbox{display:flex;gap:8px}.pinbox input{flex:1}.hint{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.45}
+#app{display:flex;height:100vh;width:100vw;overflow:hidden}.side{width:245px;min-width:245px;background:linear-gradient(180deg,#1f2537,#171b27);border-right:2px solid var(--border);display:flex;flex-direction:column;position:relative}.side:before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--blue),transparent)}.side-head{padding:18px 15px 13px;border-bottom:1px solid var(--border)}.logo-row{display:flex;gap:10px;align-items:center}.logo{font-size:30px;font-weight:900;color:var(--gold);letter-spacing:-1px}.appname{font-weight:900;font-size:14px}.site{font-size:9px;color:var(--dim);font-family:var(--mono)}.current{padding:12px 15px;border-bottom:1px solid var(--border);background:rgba(245,166,35,.06)}.current b{font-size:13px}.current p{font-size:10px;color:var(--muted);margin-top:2px}.nav{flex:1;overflow-y:auto;padding:9px 7px}.nav-title{font-size:8px;color:var(--dim);letter-spacing:1.7px;text-transform:uppercase;font-weight:900;padding:12px 8px 5px}.nav button{width:100%;border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:9px;padding:11px 10px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:700;text-align:left}.nav button:hover{background:var(--bg3);color:var(--text)}.nav button.active{background:rgba(245,166,35,.15);color:var(--gold2)}.nav .ico{font-size:18px;width:22px;text-align:center}.side-foot{border-top:1px solid var(--border);padding:12px 15px;font-size:10px;color:var(--dim);line-height:1.4}.main{flex:1;display:flex;flex-direction:column;min-width:0}.top{height:56px;display:none;align-items:center;gap:10px;background:var(--bg2);border-bottom:2px solid var(--border);padding:10px 14px}.top button{background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:10px;padding:8px 11px;font-weight:800}.content{flex:1;overflow-y:auto;padding:20px}.page{display:none;animation:fade .22s ease}.page.active{display:block}@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:5px}.ph h1{font-size:27px;font-weight:900;letter-spacing:-.5px}.sub{color:var(--dim);font-size:12px;font-family:var(--mono);margin-bottom:17px}.grid{display:grid;gap:12px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--bg2);border:2px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.label{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:1px;text-transform:uppercase}.kpi{background:var(--bg2);border:2px solid var(--border);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}.kpi:before{content:'';position:absolute;top:0;left:0;right:0;height:3px}.kpi.gold:before{background:var(--gold)}.kpi.green:before{background:var(--green)}.kpi.red:before{background:var(--red)}.kpi.blue:before{background:var(--blue)}.kpi .v{font-family:var(--mono);font-size:31px;font-weight:900}.kpi .l{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}.btn{border:0;border-radius:11px;padding:10px 15px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-size:13px}.btn:active{transform:scale(.97)}.btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111}.btn-sec{background:var(--bg3);border:2px solid var(--border2);color:var(--text)}.btn-blue{background:rgba(77,159,255,.14);border:2px solid rgba(77,159,255,.45);color:#9dccff}.btn-red{background:rgba(255,69,96,.14);border:2px solid rgba(255,69,96,.45);color:#ff9aaa}.btn-green{background:rgba(0,214,143,.14);border:2px solid rgba(0,214,143,.45);color:#7dffc9}.btn-full{width:100%;justify-content:center}.btn-sm{padding:7px 10px;font-size:11px}.fg{margin-bottom:13px}.fl{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:900;margin-bottom:6px}.fc{width:100%;background:var(--bg3);border:2px solid var(--border2);color:var(--text);border-radius:11px;padding:11px 12px;font-size:14px;font-weight:600}.fc:focus{outline:0;border-color:var(--gold)}textarea.fc{min-height:92px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{border:2px solid var(--border);background:var(--bg3);color:var(--muted);border-radius:20px;padding:8px 13px;font-size:12px;font-weight:800;cursor:pointer}.chip.active{background:var(--gold);color:#111;border-color:var(--gold)}.status{display:flex;gap:6px;flex-wrap:wrap}.status button{padding:7px 9px;border-radius:9px;border:2px solid var(--border);background:var(--bg3);color:var(--muted);font-size:11px;font-weight:900;cursor:pointer}.status button.on.ok{background:rgba(0,214,143,.18);border-color:var(--green);color:#83ffd0}.status button.on.ko{background:rgba(255,69,96,.18);border-color:var(--red);color:#ffa1ae}.status button.on.rep{background:rgba(255,140,0,.18);border-color:var(--orange);color:#ffc47d}.status button.on.nc{background:rgba(108,120,158,.18);border-color:var(--dim);color:#c2cae3}.audit-item{border:2px solid var(--border);border-radius:14px;background:rgba(255,255,255,.02);padding:13px;margin-bottom:10px}.audit-title{font-weight:900;font-size:14px;margin-bottom:8px}.audit-meta{display:grid;grid-template-columns:170px 110px 1fr;gap:8px;align-items:center}.badge{display:inline-flex;align-items:center;gap:5px;border:1.5px solid var(--border2);border-radius:9px;padding:5px 9px;font-size:11px;font-weight:900}.b-ok{background:rgba(0,214,143,.13);color:#83ffd0;border-color:rgba(0,214,143,.45)}.b-ko{background:rgba(255,69,96,.13);color:#ffa1ae;border-color:rgba(255,69,96,.45)}.b-rep{background:rgba(255,140,0,.13);color:#ffc47d;border-color:rgba(255,140,0,.45)}.b-nc{background:rgba(108,120,158,.13);color:#c2cae3;border-color:rgba(108,120,158,.45)}.list{display:flex;flex-direction:column;gap:9px}.li{display:flex;gap:12px;align-items:center;border:1px solid var(--border);background:rgba(255,255,255,.02);border-radius:13px;padding:10px}.thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:25px;flex-shrink:0}.li h3{font-size:14px}.li p{font-size:11px;color:var(--muted);margin-top:2px}.actions{margin-left:auto;display:flex;gap:6px;flex-shrink:0}.empty{padding:20px;border:2px dashed var(--border);border-radius:14px;color:var(--dim);text-align:center;font-weight:700}.photo-row{display:flex;gap:8px;flex-wrap:wrap}.photo-mini{position:relative}.photo-mini img{width:82px;height:82px;object-fit:cover;border-radius:10px;border:1px solid var(--border2)}.photo-mini button{position:absolute;top:-7px;right:-7px;border:0;background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;font-weight:900}.mo{display:none;position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.82);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:14px}.mo.open{display:flex}.mo-box{width:100%;max-width:560px;max-height:94vh;overflow:auto;background:var(--bg2);border:2px solid var(--border2);border-radius:22px;box-shadow:var(--shadow)}.mo-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:2px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}.mo-h h2{font-size:17px}.mo-body{padding:18px}.x{background:var(--bg3);color:var(--text);border:2px solid var(--border);border-radius:10px;width:34px;height:34px;font-weight:900}.cam-preview{width:100%;background:#000;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:290px}.cam-preview video{width:100%;max-height:58vh;object-fit:contain}.cam-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.file-input{display:none}.bottom{display:none}.toast{position:fixed;top:14px;right:14px;z-index:120;background:var(--bg2);border:2px solid var(--border2);border-left:5px solid var(--gold);border-radius:12px;padding:12px 16px;font-weight:800;box-shadow:var(--shadow);max-width:320px}.export-preview{background:#fff;color:#111;border-radius:12px;padding:16px;font-family:Arial,sans-serif}.export-preview h2{font-size:18px}.export-preview table{width:100%;border-collapse:collapse;font-size:10px;margin-top:8px}.export-preview th,.export-preview td{border:1px solid #999;padding:5px;text-align:left}.export-preview th{background:#eee}.warn{background:rgba(255,140,0,.13);border:1px solid rgba(255,140,0,.45);color:#ffc47d;padding:11px;border-radius:11px;font-size:12px;font-weight:700;margin-bottom:12px}
+@media(max-width:900px){.side{position:fixed;z-index:40;transform:translateX(-100%);height:100vh}.side.open{transform:translateX(0)}.top{display:flex}.content{padding:14px 12px 82px}.g2,.g3,.g4,.row,.row3{grid-template-columns:1fr}.audit-meta{grid-template-columns:1fr}.ph h1{font-size:22px}.bottom{display:grid;position:fixed;left:0;right:0;bottom:0;background:var(--bg2);border-top:2px solid var(--border);grid-template-columns:repeat(5,1fr);padding:8px 4px 12px;z-index:30}.bottom button{background:transparent;border:0;color:var(--dim);font-size:10px;font-weight:900;display:flex;flex-direction:column;align-items:center;gap:3px}.bottom .active{color:var(--gold)}.bottom .bi{font-size:21px}.actions{margin-left:0}.li{align-items:flex-start}.li{flex-wrap:wrap}.thumb{width:54px;height:54px}.cam-tools{grid-template-columns:1fr}}
+@media print{body{overflow:auto;background:#fff;color:#000}.side,.top,.bottom,.btn,.mo{display:none!important}.content{padding:0;overflow:visible}.page{display:block!important}.card{border:1px solid #999;background:#fff;color:#000;break-inside:avoid}.fc{border:0;background:#fff;color:#000}.audit-item{border:1px solid #999;background:#fff}.status button:not(.on){display:none}}
+
+.logo-img{width:52px;height:52px;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(20,33,61,.12);border:1px solid var(--border)}
+.login-logo-img{width:132px;height:132px;object-fit:contain;margin:0 auto 12px;display:block;border-radius:26px;box-shadow:0 12px 36px rgba(20,33,61,.16);background:#fff;border:1px solid var(--border)}
+.brand-api{display:none}.side{background:linear-gradient(180deg,#fff,#f2f5fa)}.side:before{background:linear-gradient(90deg,var(--blue),var(--gold),var(--blue))}.side-head,.current,.side-foot,.top{background:#fff}.nav button.active{background:rgba(197,161,90,.16);color:#8b6a25}.card,.kpi,.audit-item,.li{box-shadow:0 4px 18px rgba(20,33,61,.06)}
+.export-sector{border-left:5px solid var(--gold);background:linear-gradient(135deg,#fff,#f8fafc);padding:14px;border-radius:14px;border:1px solid var(--border);margin-bottom:12px}.export-sector h3{font-size:15px;color:var(--text);margin-bottom:6px}.export-sector p{font-size:12px;color:var(--muted);line-height:1.45}
+
+</style>
+</head>
+<body>
+<div id="login">
+  <div class="login-card">
+    <div class="brand"><div class="brand-api">API</div><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
+  </div>
+</div>
+<div id="app">
+  <aside class="side" id="side">
+    <div class="side-head"><div class="logo-row"><div class="logo">API</div><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V3</div></div></div></div>
+    <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
+    <nav class="nav">
+      <div class="nav-title">Pilotage</div>
+      <button data-page="dashboard" class="active"><span class="ico">📊</span> Tableau de bord</button>
+      <button data-page="audit"><span class="ico">🏨</span> Déplacement / Hôtel</button>
+      <button data-page="checklist"><span class="ico">✅</span> Audit PMS</button>
+      <button data-page="products"><span class="ico">🏷️</span> Produits & étiquettes</button>
+      <button data-page="locals"><span class="ico">📷</span> Locaux & photos</button>
+      <button data-page="stadium"><span class="ico">🏟️</span> Traiteur stade</button>
+      <button data-page="actions"><span class="ico">⚠️</span> Actions correctives</button>
+      <div class="nav-title">Restitution</div>
+      <button data-page="exports"><span class="ico">📄</span> Exports DDPP</button>
+    </nav>
+    <div class="side-foot">Audit qualité terrain · PMS hôtel · produits locaux · origine · traçabilité photo · contrôle locaux.</div>
+  </aside>
+  <main class="main">
+    <div class="top"><button onclick="toggleSide()">☰</button><b id="topTitle">Audit Hôtel Pro</b><button onclick="newAuditQuick()">+ Audit</button></div>
+    <section class="content">
+      <div class="page active" id="page-dashboard"></div>
+      <div class="page" id="page-audit"></div>
+      <div class="page" id="page-checklist"></div>
+      <div class="page" id="page-products"></div>
+      <div class="page" id="page-locals"></div>
+      <div class="page" id="page-stadium"></div>
+      <div class="page" id="page-actions"></div>
+      <div class="page" id="page-exports"></div>
+    </section>
+  </main>
+</div>
+<div class="bottom">
+  <button data-page="dashboard" class="active"><span class="bi">📊</span>Dash</button>
+  <button data-page="audit"><span class="bi">🏨</span>Hôtel</button>
+  <button data-page="checklist"><span class="bi">✅</span>PMS</button>
+  <button data-page="products"><span class="bi">🏷️</span>Photos</button>
+  <button data-page="stadium"><span class="bi">🏟️</span>Stade</button>
+  <button data-page="exports"><span class="bi">📄</span>PDF</button>
+</div>
+<div class="mo" id="cameraModal"><div class="mo-box"><div class="mo-h"><h2>Prise photo</h2><button class="x" onclick="closeCamera()">×</button></div><div class="mo-body"><div class="cam-preview"><video id="video" autoplay playsinline muted></video></div><div class="cam-tools"><button class="btn btn-gold btn-full" onclick="capturePhoto()">📸 Capturer</button><button class="btn btn-sec btn-full" onclick="forceRearCamera()">📷 Caméra arrière</button><button class="btn btn-sec btn-full" onclick="forceFrontCamera()">🤳 Caméra avant</button><button class="btn btn-sec btn-full" onclick="switchCamera()">🔁 Changer caméra</button></div><div class="hint">La caméra arrière est forcée en priorité. Si le téléphone ouvre la caméra selfie, appuie sur “Caméra arrière”. Le site doit être en HTTPS.</div></div></div></div>
+<input id="filePicker" class="file-input" type="file" accept="image/*">
+<script>
+const SITE='API 05147 OM PRO';
+const CHECK_SECTIONS=[
+ {name:'Cuisine · Propreté', color:'green', items:['État de propreté zone chaude','État de propreté zone préparation froide','État de propreté matériels de cuisson petit/gros','Enceintes froides positives/négatives : séparation brut / préparé']},
+ {name:'Contrôle traçabilité', color:'blue', items:['Registre température enceinte froide négative/positive','Température de distribution repas','Traçabilité provenance protéines : lots, agrément, origine','Traçabilité cellule de refroidissement','Traçabilité plats témoins','Contrôle DLC et DDM','Traçabilité étiquettes']},
+ {name:'Contrôle cahier des charges OM', color:'gold', items:['Conformité entrée froide : nombre, quantité, recette, contenant','Conformité protéine : nombre, quantité, recette, cuisson','Conformité garniture féculents et légumes','Conformité condiments et sauces','Respect des produits demandés par la nutrition','Respect halal / absence porc / gélatine','Respect timing service / départ stade']},
+ {name:'Produits locaux & qualité', color:'purple', items:['Produits locaux identifiés et valorisables','Qualité visuelle des produits bruts','Marques utilisées adaptées au niveau pro','Origine des viandes / poissons / œufs renseignée','Solutions de remplacement prévues','Produits sensibles bien stockés et protégés']},
+ {name:'Locaux & organisation', color:'orange', items:['Flux propres / sales cohérents','Plan de travail dégagé et désinfecté','Zone de stockage sèche propre et rangée','Poubelles fermées et évacuées','Tenues professionnelles propres','Matériel nécessaire disponible pour prestation OM']}
+];
+
+const STADIUM_SECTIONS=[
+ {name:'Traiteur stade · Hygiène & PMS', color:'green', items:['Propreté zone de production traiteur stade','Propreté zone dressage / conditionnement','Respect chaîne du froid avant transport','Respect chaîne du chaud avant départ','Séparation brut / cuit / préparé','Hygiène du personnel et tenues propres']},
+ {name:'Traiteur stade · Produits & traçabilité', color:'blue', items:['Traçabilité viandes halal : lots, agrément, origine','Traçabilité poissons / produits sensibles','Contrôle DLC / DDM produits utilisés','Étiquettes produits photographiées','Marques utilisées conformes au niveau OM','Origine des produits clairement renseignée']},
+ {name:'Traiteur stade · Qualité prestation', color:'gold', items:['Conformité menu validé pour le stade','Conformité grammages et portions','Qualité visuelle des préparations','Respect cuisson et texture après remise en température','Sauces et condiments conditionnés proprement','Alternatives allergies / sans gluten disponibles']},
+ {name:'Traiteur stade · Logistique stade', color:'orange', items:['Conditionnement adapté au transport','Étuves / bacs GN / housses thermiques propres','Heure de départ respectée','Heure de livraison vestiaire respectée','Température à réception stade contrôlée','Organisation remise au vestiaire fluide']},
+ {name:'Traiteur stade · Locaux & photos', color:'purple', items:['Zone de stockage propre et rangée','Zone d’allotissement propre','Matériel disponible et en bon état','Photos des locaux / étuves / conditionnements','Poubelles fermées et évacuées','Actions correctives identifiées']}
+];
+let state={audits:[],currentId:null,user:'Auditeur'};
+let cameraStream=null,devices=[],deviceIndex=0,photoCallback=null,currentFacing='environment',lastDeviceId=null;
+const $=id=>document.getElementById(id);
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function today(){return new Date().toISOString().slice(0,10)}
+function nowText(){return new Date().toLocaleString('fr-FR')}
+function save(){localStorage.setItem('auditHotelProV1',JSON.stringify(state));}
+function load(){try{state=JSON.parse(localStorage.getItem('auditHotelProV1'))||state}catch(e){}; if(!state.audits)state.audits=[];}
+function login(){let p=$('pin').value.trim(); if(p==='05147'){state.user='Manager'; $('login').style.display='none'; save(); renderAll(); return} if(p==='1234'){state.user='Auditeur'; $('login').style.display='none'; save(); renderAll(); return} toast('Code incorrect');}
+$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+function toast(msg){let d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
+function current(){return state.audits.find(a=>a.id===state.currentId)||null}
+function ensureAudit(){let a=current(); if(!a){toast('Créer ou sélectionner un audit avant de renseigner.'); showPage('audit'); return null} return a}
+function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:''},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
+function newAuditQuick(){newAudit();}
+function deleteAudit(id){if(!confirm('Supprimer cet audit ?'))return; state.audits=state.audits.filter(a=>a.id!==id); if(state.currentId===id)state.currentId=state.audits[0]?.id||null; save(); renderAll();}
+function selectAudit(id){state.currentId=id; save(); renderAll(); showPage('dashboard');}
+function updateAudit(field,val){let a=ensureAudit(); if(!a)return; a[field]=val; save(); renderHeader();}
+function completion(a){let total=0,done=0,ko=0,rep=0; Object.values(a.items||{}).forEach(i=>{total++; if(i.status)done++; if(i.status==='non conforme')ko++; if(i.status==='à remplacer')rep++;}); return {total,done,ko,rep,score:total?Math.round(done/total*100):0}}
+function renderHeader(){let a=current(); $('currentAuditName').textContent=a?(a.hotel||'Audit hôtel sans nom'):'Aucun audit sélectionné'; $('currentAuditMeta').textContent=a?`${a.destination||'Destination'} · ${a.date||''}`:'Créer ou choisir un déplacement'; $('topTitle').textContent=a?(a.hotel||'Audit Hôtel Pro'):'Audit Hôtel Pro';}
+function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); renderAudit(); renderChecklist(); renderProducts(); renderLocals(); renderStadium(); renderActions(); renderExports();}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); $('page-'+p).classList.add('active'); document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); $('side').classList.remove('open'); window.scrollTo(0,0)}
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
+function toggleSide(){ $('side').classList.toggle('open') }
+function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4"><div class="kpi gold"><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi green"><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi blue"><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi red"><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div></div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="badge b-ok">${a.date||today()}</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="row3" style="margin-top:14px"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
+ html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map(x=>{let c=completion(x);return `<div class="li"><div class="thumb">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · ${c.score}% renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-red" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
+function renderAudit(){let a=current(); let html=`<div class="ph"><div><h1>Déplacement / Hôtel</h1><div class="sub">Créer le contexte de l’audit qualité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouveau</button></div>`; if(!a){html+=`<div class="empty">Clique sur “Nouveau” pour démarrer.</div>`} else html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Date</label><input class="fc" type="date" value="${a.date||''}" onchange="updateAudit('date',this.value)"></div><div class="fg"><label class="fl">Destination</label><input class="fc" value="${esc(a.destination)}" placeholder="Ex : Rennes, Bruges, Lorient" onchange="updateAudit('destination',this.value)"></div></div><div class="row"><div class="fg"><label class="fl">Hôtel / prestataire</label><input class="fc" value="${esc(a.hotel)}" placeholder="Nom de l’hôtel" onchange="updateAudit('hotel',this.value)"></div><div class="fg"><label class="fl">Match / déplacement</label><input class="fc" value="${esc(a.match)}" placeholder="Ex : OM vs ..." onchange="updateAudit('match',this.value)"></div></div><div class="fg"><label class="fl">Adresse / contact hôtel</label><input class="fc" value="${esc(a.address)}" placeholder="Adresse, chef, contact opérationnel" onchange="updateAudit('address',this.value)"></div><div class="row"><div class="fg"><label class="fl">Auditeur</label><input class="fc" value="${esc(a.auditor)}" onchange="updateAudit('auditor',this.value)"></div><div class="fg"><label class="fl">Chef / interlocuteur hôtel</label><input class="fc" value="${esc(a.chefHotel)}" onchange="updateAudit('chefHotel',this.value)"></div></div><div class="fg"><label class="fl">Type de prestation</label><input class="fc" value="${esc(a.mealType)}" onchange="updateAudit('mealType',this.value)"></div><div class="fg"><label class="fl">Tour d’horizon / note générale</label><textarea class="fc" placeholder="Impression globale, niveau de qualité, points forts, vigilance..." onchange="updateAudit('notes',this.value)">${esc(a.notes)}</textarea></div></div>`; $('page-audit').innerHTML=html;}
+function renderChecklist(){let a=current(); let html=`<div class="ph"><div><h1>Audit PMS</h1><div class="sub">Hygiène · traçabilité · cahier des charges · produits</div></div></div>`; if(!a){$('page-checklist').innerHTML=html+`<div class="empty">Créer un audit avant de renseigner le PMS.</div>`;return} CHECK_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div></div>`; sec.items.forEach(it=>{let v=a.items[it]||{status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / cuisson" value="${esc(v.temp||v.cooking||'')}" onchange="setItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / agrément / action" value="${esc(v.remarks||'')}" onchange="setItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setItem('${key(it)}','notify',this.checked)"> À communiquer nutrition</label></div>${photoStrip(v.photos||[],`removeItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`}); $('page-checklist').innerHTML=html;}
+function key(s){return btoa(unescape(encodeURIComponent(s))).replaceAll('=','')}
+function unkey(k){let all=[];CHECK_SECTIONS.forEach(s=>all.push(...s.items));return all.find(x=>key(x)===k)||k}
+function setItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=unkey(k); if(!a.items[it])a.items[it]={status:'',temp:'',remarks:'',photos:[]}; a.items[it][field]=val; save(); renderChecklist(); renderDashboard();}
+function openCameraForItem(k){openCamera(data=>{let a=ensureAudit();let it=unkey(k);a.items[it].photos=a.items[it].photos||[];a.items[it].photos.push({src:data,at:nowText(),type:'PMS'});save();renderChecklist();})}
+function importForItem(k){pickFile(data=>{let a=ensureAudit();let it=unkey(k);a.items[it].photos=a.items[it].photos||[];a.items[it].photos.push({src:data,at:nowText(),type:'PMS'});save();renderChecklist();})}
+function removeItemPhoto(k,i){let a=ensureAudit();let it=unkey(k);a.items[it].photos.splice(i,1);save();renderChecklist();}
+function renderProducts(){let a=current(); let html=`<div class="ph"><div><h1>Produits & étiquettes</h1><div class="sub">Qualité · marques · origine · DLC/DDM · lots avec photo</div></div></div>`; if(!a){$('page-products').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des produits.</div>`;return} html+=`<div class="card"><div class="row3"><button class="btn btn-gold btn-full" onclick="addProductForm()">+ Produit</button><button class="btn btn-blue btn-full" onclick="quickPhotoProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportProduct()">📁 Importer étiquette</button></div></div><div id="prodForm"></div><div class="list">${a.products.length?a.products.map((p,i)=>`<div class="li"><img class="thumb" src="${p.photo||''}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette produit enregistrée</div>'}</div>`; $('page-products').innerHTML=html;}
+function productForm(p={},i=-1){return `<div class="card"><div class="card-head"><div class="label">${i>=0?'Modifier produit':'Nouveau produit'}</div></div><div class="row"><div class="fg"><label class="fl">Produit</label><input id="p_name" class="fc" value="${esc(p.name||'')}" placeholder="Ex : filet de poulet, saumon, skyr"></div><div class="fg"><label class="fl">Marque</label><input id="p_brand" class="fc" value="${esc(p.brand||'')}" placeholder="Marque / fournisseur"></div></div><div class="row3"><div class="fg"><label class="fl">Origine</label><input id="p_origin" class="fc" value="${esc(p.origin||'')}" placeholder="France, local, UE..."></div><div class="fg"><label class="fl">Lot</label><input id="p_lot" class="fc" value="${esc(p.lot||'')}" placeholder="N° lot"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="p_dlc" class="fc" value="${esc(p.dlc||'')}" placeholder="JJ/MM/AAAA"></div></div><div class="row"><div class="fg"><label class="fl">Catégorie</label><select id="p_cat" class="fc"><option>Viande / volaille</option><option>Poisson / marée</option><option>Fruits & légumes</option><option>Épicerie</option><option>Crèmerie / œufs</option><option>Produit local</option><option>Autre</option></select></div><div class="fg"><label class="fl">Qualité observée</label><select id="p_quality" class="fc"><option>Très bonne</option><option>Conforme</option><option>Moyenne</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="p_comment" class="fc" placeholder="Observation qualité, origine, remarque nutrition, remplacement...">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="p_photo_preview">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3" style="margin-top:10px"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempProductPhoto(d))">📷 Appareil photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempProductPhoto(d))">📁 Galerie</button><button class="btn btn-gold btn-full" onclick="saveProduct(${i})">Enregistrer</button></div><input type="hidden" id="p_photo" value="${p.photo||''}"></div>`}
+function addProductForm(){renderProducts(); $('prodForm').innerHTML=productForm();}
+function editProduct(i){renderProducts(); $('prodForm').innerHTML=productForm(current().products[i],i); $('p_cat').value=current().products[i].category||'Autre'; $('p_quality').value=current().products[i].quality||'Conforme';}
+function setTempProductPhoto(d){$('p_photo').value=d;$('p_photo_preview').innerHTML=`<img class="thumb" src="${d}">`}
+function saveProduct(i){let a=ensureAudit(); if(!a)return; let p={name:$('p_name').value,brand:$('p_brand').value,origin:$('p_origin').value,lot:$('p_lot').value,dlc:$('p_dlc').value,category:$('p_cat').value,quality:$('p_quality').value,comment:$('p_comment').value,photo:$('p_photo').value,at:nowText()}; if(i>=0)a.products[i]=p; else a.products.unshift(p); save(); renderProducts(); renderDashboard(); toast('Produit enregistré');}
+function delProduct(i){let a=ensureAudit(); if(!confirm('Supprimer ce produit ?'))return; a.products.splice(i,1); save(); renderProducts();renderDashboard();}
+function quickPhotoProduct(){addProductForm(); openCamera(d=>setTempProductPhoto(d));}
+function quickImportProduct(){addProductForm(); pickFile(d=>setTempProductPhoto(d));}
+function renderLocals(){let a=current(); let html=`<div class="ph"><div><h1>Locaux & photos</h1><div class="sub">Zone chaude · froid · réserve · matériel · organisation</div></div></div>`; if(!a){$('page-locals').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des photos.</div>`;return} html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="l_zone" class="fc"><option>Zone chaude</option><option>Préparation froide</option><option>Chambre froide positive</option><option>Chambre froide négative</option><option>Réserve sèche</option><option>Plonge</option><option>Vestiaires / hygiène personnel</option><option>Matériel cuisson</option><option>Distribution / buffet</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="l_comment" class="fc" placeholder="Observation, propreté, rangement, flux, matériel, action demandée..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveLocalPhoto(d))">📷 Photo locaux</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveLocalPhoto('')">Enregistrer sans photo</button></div></div><div class="list">${a.locals.length?a.locals.map((l,i)=>`<div class="li"><img class="thumb" src="${l.photo||''}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo de locaux enregistrée</div>'}</div>`; $('page-locals').innerHTML=html;}
+function saveLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.locals.unshift({zone:$('l_zone').value,status:$('l_status').value,comment:$('l_comment').value,photo,at:nowText()}); save(); renderLocals(); renderDashboard(); toast('Contrôle locaux enregistré');}
+function delLocal(i){let a=ensureAudit(); a.locals.splice(i,1); save(); renderLocals(); renderDashboard();}
+
+function migrateAuditData(){
+  state.audits.forEach(a=>{
+    if(!a.stadium) a.stadium={items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:''};
+    if(!a.stadium.items) a.stadium.items={};
+    if(!a.stadium.products) a.stadium.products=[];
+    if(!a.stadium.locals) a.stadium.locals=[];
+    STADIUM_SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(!a.stadium.items[it]) a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};}));
+  });
+}
+function renderStadium(){
+  let a=current(); let html=`<div class="ph"><div><h1>Traiteur stade</h1><div class="sub">Même logique que l’audit hôtel : PMS · produits · qualité · origine · traçabilité photo · locaux</div></div></div>`;
+  if(!a){$('page-stadium').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter le contrôle traiteur stade.</div>`;return}
+  if(!a.stadium) migrateAuditData(); let st=a.stadium;
+  html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Traiteur / prestataire stade</label><input class="fc" value="${esc(st.provider||'')}" placeholder="Ex : Metsens" onchange="updateStadium('provider',this.value)"></div><div class="fg"><label class="fl">Contact opérationnel</label><input class="fc" value="${esc(st.contact||'')}" placeholder="Nom / téléphone" onchange="updateStadium('contact',this.value)"></div><div class="fg"><label class="fl">Heure livraison stade</label><input class="fc" value="${esc(st.deliveryTime||'')}" placeholder="Ex : 70e minute / 23h30" onchange="updateStadium('deliveryTime',this.value)"></div></div><div class="fg"><label class="fl">Note générale traiteur stade</label><textarea class="fc" placeholder="Qualité globale, respect menu, remarques vestiaire, retours joueurs/staff..." onchange="updateStadium('notes',this.value)">${esc(st.notes||'')}</textarea></div></div>`;
+  STADIUM_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div></div>`; sec.items.forEach(it=>{let v=st.items[it]||{status:'',temp:'',remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setStadiumItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setStadiumItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setStadiumItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setStadiumItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / heure / valeur" value="${esc(v.temp||'')}" onchange="setStadiumItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / origine / action" value="${esc(v.remarks||'')}" onchange="setStadiumItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForStadiumItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForStadiumItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setStadiumItem('${key(it)}','notify',this.checked)"> À communiquer</label></div>${photoStrip(v.photos||[],`removeStadiumItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`});
+  html+=`<div class="card"><div class="card-head"><div class="label">Étiquettes traiteur stade</div></div><div class="row3"><button class="btn btn-gold btn-full" onclick="addStadiumProductForm()">+ Produit stade</button><button class="btn btn-blue btn-full" onclick="quickPhotoStadiumProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportStadiumProduct()">📁 Importer étiquette</button></div><div id="stadiumProdForm" style="margin-top:12px"></div><div class="list" style="margin-top:12px">${st.products.length?st.products.map((p,i)=>`<div class="li"><img class="thumb" src="${p.photo||''}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit stade sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editStadiumProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delStadiumProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette traiteur stade enregistrée</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Photos locaux / conditionnement stade</div></div><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="st_l_zone" class="fc"><option>Production traiteur</option><option>Allotissement stade</option><option>Étuves / maintien chaud</option><option>Chambres froides</option><option>Transport / housses thermiques</option><option>Vestiaire stade</option><option>Buffet / distribution</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="st_l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="st_l_comment" class="fc" placeholder="Conditionnement, température, propreté, transport, remise vestiaire..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveStadiumLocalPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveStadiumLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumLocalPhoto('')">Enregistrer sans photo</button></div><div class="list" style="margin-top:12px">${st.locals.length?st.locals.map((l,i)=>`<div class="li"><img class="thumb" src="${l.photo||''}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delStadiumLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo traiteur stade enregistrée</div>'}</div></div>`;
+  $('page-stadium').innerHTML=html;
+}
+function updateStadium(k,v){let a=ensureAudit(); if(!a)return; if(!a.stadium)migrateAuditData(); a.stadium[k]=v; save(); renderHeader();}
+function stadiumKey(k){let all=[];STADIUM_SECTIONS.forEach(s=>all.push(...s.items));return all.find(x=>key(x)===k)||k}
+function setStadiumItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); if(!a.stadium.items[it]) a.stadium.items[it]={status:'',temp:'',remarks:'',photos:[]}; a.stadium.items[it][field]=val; save(); renderStadium();}
+function openCameraForStadiumItem(k){openCamera(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
+function importForStadiumItem(k){pickFile(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
+function removeStadiumItemPhoto(k,i){let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos.splice(i,1); save(); renderStadium();}
+function stadiumProductForm(p={},i=null){return `<div class="card"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="sp_name" class="fc" value="${esc(p.name||'')}" placeholder="Produit / préparation"></div><div class="fg"><label class="fl">Marque</label><input id="sp_brand" class="fc" value="${esc(p.brand||'')}"></div><div class="fg"><label class="fl">Origine</label><input id="sp_origin" class="fc" value="${esc(p.origin||'')}"></div></div><div class="row3"><div class="fg"><label class="fl">Lot</label><input id="sp_lot" class="fc" value="${esc(p.lot||'')}"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="sp_dlc" class="fc" value="${esc(p.dlc||'')}"></div><div class="fg"><label class="fl">Qualité</label><select id="sp_quality" class="fc"><option ${p.quality==='Très bon'?'selected':''}>Très bon</option><option ${p.quality==='Correct'?'selected':''}>Correct</option><option ${p.quality==='À revoir'?'selected':''}>À revoir</option><option ${p.quality==='Refusé'?'selected':''}>Refusé</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="sp_comment" class="fc">${esc(p.comment||'')}</textarea></div><div class="photo-row">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveStadiumProduct(${i===null?'null':i},d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveStadiumProduct(${i===null?'null':i},d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumProduct(${i===null?'null':i},'${p.photo||''}')">Enregistrer</button></div></div>`}
+function addStadiumProductForm(){$('stadiumProdForm').innerHTML=stadiumProductForm()}
+function editStadiumProduct(i){let a=ensureAudit(); $('stadiumProdForm').innerHTML=stadiumProductForm(a.stadium.products[i],i)}
+function saveStadiumProduct(i,photo){let a=ensureAudit(); if(!a)return; let p={name:$('sp_name').value,brand:$('sp_brand').value,origin:$('sp_origin').value,lot:$('sp_lot').value,dlc:$('sp_dlc').value,quality:$('sp_quality').value,comment:$('sp_comment').value,photo:photo||'',at:nowText()}; if(i===null)a.stadium.products.unshift(p); else a.stadium.products[i]=p; save(); renderStadium();}
+function quickPhotoStadiumProduct(){openCamera(d=>{addStadiumProductForm(); setTimeout(()=>saveStadiumProduct(null,d),50)})}
+function quickImportStadiumProduct(){pickFile(d=>{addStadiumProductForm(); setTimeout(()=>saveStadiumProduct(null,d),50)})}
+function delStadiumProduct(i){let a=ensureAudit(); a.stadium.products.splice(i,1); save(); renderStadium();}
+function saveStadiumLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.stadium.locals.unshift({zone:$('st_l_zone')?.value||'Stade',status:$('st_l_status')?.value||'Conforme',comment:$('st_l_comment')?.value||'',photo,at:nowText()}); save(); renderStadium();}
+function delStadiumLocal(i){let a=ensureAudit(); a.stadium.locals.splice(i,1); save(); renderStadium();}
+
+function renderActions(){let a=current(); let html=`<div class="ph"><div><h1>Actions correctives</h1><div class="sub">Points à traiter avec hôtel / prestataire / nutrition</div></div></div>`; if(!a){$('page-actions').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter une action.</div>`;return} html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Priorité</label><select id="ac_prio" class="fc"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></div><div class="fg"><label class="fl">Responsable</label><input id="ac_owner" class="fc" placeholder="Hôtel / API / Nutri"></div><div class="fg"><label class="fl">Échéance</label><input id="ac_due" type="date" class="fc"></div></div><div class="fg"><label class="fl">Action demandée</label><textarea id="ac_text" class="fc" placeholder="Ex : fournir origine protéines, remplacer produit, revoir stockage brut/préparé..."></textarea></div><button class="btn btn-gold" onclick="addAction()">+ Ajouter action</button></div><div class="list">${a.actions.length?a.actions.map((x,i)=>`<div class="li"><div class="thumb">⚠️</div><div><h3>${esc(x.priority)} · ${x.done?'Réalisée':'Ouverte'}</h3><p>${esc(x.text)} · ${esc(x.owner)} · ${x.due||'Sans date'}</p></div><div class="actions"><button class="btn btn-sm btn-green" onclick="toggleAction(${i})">${x.done?'Rouvrir':'OK'}</button><button class="btn btn-sm btn-red" onclick="delAction(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune action corrective</div>'}</div>`; $('page-actions').innerHTML=html;}
+function addAction(){let a=ensureAudit(); a.actions.unshift({priority:$('ac_prio').value,owner:$('ac_owner').value,due:$('ac_due').value,text:$('ac_text').value,done:false,at:nowText()}); save(); renderActions();}
+function toggleAction(i){let a=ensureAudit(); a.actions[i].done=!a.actions[i].done; save(); renderActions();}
+function delAction(i){let a=ensureAudit(); a.actions.splice(i,1); save(); renderActions();}
+function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
+function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}">×</button></div>`).join('')}</div>`}
+async function openCamera(cb){photoCallback=cb; $('cameraModal').classList.add('open'); try{await startCamera(true)}catch(e){toast('Caméra indisponible. Utilise importer photo.'); console.warn(e)}}
+function isRearLabel(label){label=(label||'').toLowerCase();return /back|rear|environment|arrière|arriere|dos|trás|tras|rück|ruck|0/.test(label)}
+function isFrontLabel(label){label=(label||'').toLowerCase();return /front|user|face|facetime|avant|selfie|1/.test(label)}
+async function refreshCameras(){try{devices=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');}catch(e){devices=[]}return devices}
+async function attachStream(stream){cameraStream=stream;let video=$('video');video.srcObject=stream;await video.play();await refreshCameras();try{let track=stream.getVideoTracks()[0];let settings=track.getSettings?track.getSettings():{};lastDeviceId=settings.deviceId||null;let idx=devices.findIndex(d=>d.deviceId===lastDeviceId);deviceIndex=idx>=0?idx:deviceIndex;}catch(e){}}
+async function streamByFacing(facing,exact=true){let fm=exact?{exact:facing}:{ideal:facing};return navigator.mediaDevices.getUserMedia({video:{facingMode:fm,width:{ideal:1920},height:{ideal:1080}},audio:false})}
+async function streamByDevice(deviceId){return navigator.mediaDevices.getUserMedia({video:{deviceId:{exact:deviceId},width:{ideal:1920},height:{ideal:1080}},audio:false})}
+async function startCamera(rear=true){
+  closeStream();
+  currentFacing=rear?'environment':'user';
+  let stream=null;
+  try{stream=await streamByFacing(currentFacing,true)}catch(e1){try{stream=await streamByFacing(currentFacing,false)}catch(e2){stream=null}}
+  if(!stream){
+    await refreshCameras();
+    let preferred=devices.find(d=>rear?isRearLabel(d.label):isFrontLabel(d.label));
+    if(preferred){try{stream=await streamByDevice(preferred.deviceId)}catch(e){stream=null}}
+  }
+  if(!stream){stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1920},height:{ideal:1080}},audio:false})}
+  await attachStream(stream);
+  // Après autorisation, certains téléphones donnent enfin les noms des caméras : on force alors la bonne face.
+  await refreshCameras();
+  try{
+    let track=cameraStream.getVideoTracks()[0];let label=track.label||'';
+    let wrong=(rear&&isFrontLabel(label))||(!rear&&isRearLabel(label));
+    let preferred=devices.find(d=>rear?isRearLabel(d.label):isFrontLabel(d.label));
+    if(wrong&&preferred&&preferred.deviceId!==lastDeviceId){closeStream();await attachStream(await streamByDevice(preferred.deviceId));}
+  }catch(e){}
+}
+function closeStream(){if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null}}
+function closeCamera(){closeStream();$('cameraModal').classList.remove('open')}
+async function forceRearCamera(){try{await startCamera(true);toast('Caméra arrière activée')}catch(e){toast('Caméra arrière impossible sur cet appareil')}}
+async function forceFrontCamera(){try{await startCamera(false);toast('Caméra avant activée')}catch(e){toast('Caméra avant impossible sur cet appareil')}}
+async function switchCamera(){
+  try{
+    await refreshCameras();
+    let currentLabel='';try{currentLabel=(cameraStream&&cameraStream.getVideoTracks()[0].label)||''}catch(e){}
+    if(isFrontLabel(currentLabel)){await startCamera(true);toast('Caméra arrière activée');return}
+    if(isRearLabel(currentLabel)){await startCamera(false);toast('Caméra avant activée');return}
+    if(devices.length>1){
+      let next=devices.find(d=>d.deviceId!==lastDeviceId&&(currentFacing==='user'?isRearLabel(d.label):isFrontLabel(d.label)))||devices.find(d=>d.deviceId!==lastDeviceId)||devices[(deviceIndex+1)%devices.length];
+      currentFacing=currentFacing==='user'?'environment':'user';
+      closeStream();await attachStream(await streamByDevice(next.deviceId));toast('Caméra changée');return
+    }
+    await startCamera(currentFacing!=='environment');
+  }catch(e){toast('Changement caméra impossible sur cet appareil')}
+}
+function capturePhoto(){let v=$('video');let c=document.createElement('canvas');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;let ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);let data=c.toDataURL('image/jpeg',0.86);closeCamera(); if(photoCallback)photoCallback(data)}
+function pickFile(cb){let input=$('filePicker'); input.value=''; input.onchange=()=>{let f=input.files[0]; if(!f)return; let r=new FileReader(); r.onload=()=>cb(r.result); r.readAsDataURL(f)}; input.click();}
+function filename(prefix,a){let base=[prefix,a.date,a.destination,a.hotel].filter(Boolean).join('_').replace(/[^a-z0-9_\-]+/gi,'_');return base+'.pdf'}
+function addHeader(doc,a,title){doc.setFillColor(22,26,36);doc.rect(0,0,210,22,'F');doc.setTextColor(245,166,35);doc.setFontSize(16);doc.setFont(undefined,'bold');doc.text('API',12,14);doc.setTextColor(255,255,255);doc.setFontSize(12);doc.text(title,32,14);doc.setTextColor(120,120,120);doc.setFontSize(8);doc.text(`${SITE} · généré le ${nowText()}`,12,28);doc.setTextColor(0,0,0)}
+function text(doc,txt,x,y,max=180,size=10){doc.setFontSize(size); let lines=doc.splitTextToSize(String(txt||'-'),max); doc.text(lines,x,y); return y+lines.length*(size*0.36+1.5)}
+function statusLabel(s){return s||'Non renseigné'}
+
+function pdfFooter(doc, page, total){
+  doc.setFontSize(7); doc.setTextColor(120,130,150);
+  doc.text(`Audit Hôtel Pro · API 05147 OM PRO · Page ${page}/${total}`,12,290);
+  doc.setTextColor(0,0,0);
+}
+function sectorStats(a){
+  return CHECK_SECTIONS.map(sec=>{
+    let total=sec.items.length, ok=0, ko=0, rep=0, nc=0, photos=0, remarks=0;
+    sec.items.forEach(it=>{let v=a.items[it]||{}; let s=(v.status||'').toLowerCase(); if(s==='ok')ok++; else if(s==='ko')ko++; else if(s==='à reprendre'||s==='a reprendre')rep++; else nc++; photos += (v.photos||[]).length; if(v.remarks)remarks++;});
+    let score=Math.round((ok/Math.max(total,1))*100);
+    return {name:sec.name,total,ok,ko,rep,nc,photos,remarks,score};
+  });
+}
+function drawTableHeader(doc, cols, x, y, widths){
+  doc.setFillColor(20,33,61); doc.rect(x,y,widths.reduce((a,b)=>a+b,0),8,'F');
+  doc.setTextColor(255,255,255); doc.setFont(undefined,'bold'); doc.setFontSize(8);
+  let cx=x; cols.forEach((c,i)=>{doc.text(c,cx+2,y+5.3); cx+=widths[i];});
+  doc.setTextColor(0,0,0); doc.setFont(undefined,'normal'); return y+8;
+}
+function drawTableRow(doc, vals, x, y, widths, fill){
+  let maxLines=1; vals.forEach((v,i)=>{maxLines=Math.max(maxLines, doc.splitTextToSize(String(v||'-'), widths[i]-4).length)});
+  let h=Math.max(8, maxLines*4.2+3); if(fill){doc.setFillColor(248,250,252); doc.rect(x,y,widths.reduce((a,b)=>a+b,0),h,'F')}
+  doc.setDrawColor(220,226,238); doc.rect(x,y,widths.reduce((a,b)=>a+b,0),h);
+  let cx=x; doc.setFontSize(7.5); vals.forEach((v,i)=>{let lines=doc.splitTextToSize(String(v||'-'), widths[i]-4); doc.text(lines,cx+2,y+5); cx+=widths[i];});
+  return y+h;
+}
+function finalizePdf(doc){
+  const total=doc.internal.getNumberOfPages();
+  for(let i=1;i<=total;i++){doc.setPage(i); pdfFooter(doc,i,total)}
+}
+
+function exportGeneralPDF(){
+  let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4');
+  addHeader(doc,a,'Rapport audit hôtel complet');
+  let y=36;
+  doc.setFontSize(18);doc.setFont(undefined,'bold');doc.text(a.hotel||'Hôtel non renseigné',12,y); y+=8;
+  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10);
+  y=text(doc,`Auditeur : ${a.auditor||'-'} · Interlocuteur hôtel : ${a.chefHotel||'-'}`,12,y,180,9);
+  y=text(doc,`Adresse/contact : ${a.address||'-'}`,12,y,180,9); y+=4;
+
+  const stats=sectorStats(a); const totalItems=stats.reduce((s,x)=>s+x.total,0); const okItems=stats.reduce((s,x)=>s+x.ok,0);
+  const score=Math.round((okItems/Math.max(totalItems,1))*100);
+  doc.setFillColor(248,250,252);doc.roundedRect(12,y,186,32,4,4,'F');
+  doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text('Synthèse exécutive',16,y+7);
+  doc.setFontSize(22);doc.setTextColor(197,161,90);doc.text(`${score}%`,16,y+21);doc.setTextColor(0,0,0);
+  doc.setFontSize(8);doc.setFont(undefined,'normal');
+  doc.text(`Conformités : ${okItems}/${totalItems}`,50,y+14);
+  doc.text(`Produits tracés : ${a.products.length}`,50,y+21);
+  doc.text(`Photos locaux : ${a.locals.length}`,102,y+14);
+  doc.text(`Actions ouvertes : ${a.actions.filter(x=>!x.done).length}`,102,y+21);
+  y+=40;
+
+  doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Tour d’horizon / contexte du déplacement',12,y); y+=6;
+  doc.setFont(undefined,'normal'); y=text(doc,a.notes||'Aucun commentaire général renseigné.',12,y,180,9); y+=5;
+
+  doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Score par secteur',12,y); y+=5;
+  y=drawTableHeader(doc,['Secteur','Score','OK','KO','À reprendre','Photos'],12,y,[70,22,18,18,32,26]);
+  stats.forEach((s,i)=>{if(y>265){doc.addPage();addHeader(doc,a,'Rapport audit hôtel complet');y=34} y=drawTableRow(doc,[s.name,`${s.score}%`,s.ok,s.ko,s.rep,s.photos],12,y,[70,22,18,18,32,26],i%2)});
+
+  doc.addPage(); addHeader(doc,a,'Contrôles sectorisés'); y=34;
+  CHECK_SECTIONS.forEach(sec=>{
+    if(y>242){doc.addPage();addHeader(doc,a,'Contrôles sectorisés');y=34}
+    doc.setFillColor(0,87,168);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(sec.name,14,y+5.5);doc.setTextColor(0,0,0); y+=10;
+    y=drawTableHeader(doc,['Point contrôlé','Statut','T°/valeur','Photos','Remarque'],12,y,[72,24,24,18,48]);
+    sec.items.forEach((it,idx)=>{
+      let v=a.items[it]||{}; if(y>268){doc.addPage();addHeader(doc,a,sec.name);y=34; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/valeur','Photos','Remarque'],12,y,[72,24,24,18,48]);}
+      y=drawTableRow(doc,[it,statusLabel(v.status),v.temp||'-',(v.photos||[]).length,v.remarks||'-'],12,y,[72,24,24,18,48],idx%2);
+    });
+    y+=6;
+  });
+
+  doc.addPage(); addHeader(doc,a,'Produits, traçabilité et origine'); y=34;
+  doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Produits locaux / marques / lots / DLC-DDM',12,y);y+=6;
+  y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC/DDM','Qualité'],12,y,[42,32,32,28,24,28]);
+  if(!a.products.length){doc.text('Aucun produit tracé.',12,y+8); y+=14}
+  a.products.forEach((p,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Produits, traçabilité et origine');y=34; y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC/DDM','Qualité'],12,y,[42,32,32,28,24,28]);} y=drawTableRow(doc,[p.name,p.brand,p.origin,p.lot,p.dlc,p.quality],12,y,[42,32,32,28,24,28],i%2);});
+  y+=8; doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Contrôle locaux',12,y);y+=6;
+  y=drawTableHeader(doc,['Zone','Statut','Commentaire','Heure','Photo'],12,y,[38,28,78,24,18]);
+  if(!a.locals.length){doc.text('Aucune photo locaux enregistrée.',12,y+8); y+=14}
+  a.locals.forEach((l,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Contrôle locaux');y=34; y=drawTableHeader(doc,['Zone','Statut','Commentaire','Heure','Photo'],12,y,[38,28,78,24,18]);} y=drawTableRow(doc,[l.zone,l.status,l.comment,l.at,l.photo?'Oui':'Non'],12,y,[38,28,78,24,18],i%2);});
+
+
+  if(a.stadium){
+    doc.addPage(); addHeader(doc,a,'Section traiteur stade'); y=34;
+    doc.setFont(undefined,'bold');doc.setFontSize(12);doc.text('Traiteur stade',12,y); y+=7;
+    doc.setFont(undefined,'normal'); y=text(doc,`Prestataire : ${a.stadium.provider||'-'} · Contact : ${a.stadium.contact||'-'} · Livraison : ${a.stadium.deliveryTime||'-'}`,12,y,180,9);
+    y=text(doc,a.stadium.notes||'Aucune note générale traiteur stade renseignée.',12,y,180,9); y+=5;
+    STADIUM_SECTIONS.forEach(sec=>{
+      if(y>240){doc.addPage();addHeader(doc,a,'Section traiteur stade');y=34}
+      doc.setFillColor(197,161,90);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(sec.name,14,y+5.5);doc.setTextColor(0,0,0); y+=10;
+      y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]);
+      sec.items.forEach((it,idx)=>{let v=a.stadium.items[it]||{}; if(y>268){doc.addPage();addHeader(doc,a,sec.name);y=34; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]);} y=drawTableRow(doc,[it,statusLabel(v.status),v.temp||'-',(v.photos||[]).length,v.remarks||'-'],12,y,[72,24,24,18,48],idx%2);});
+    });
+    if((a.stadium.products||[]).length){doc.addPage();addHeader(doc,a,'Produits traiteur stade');y=34; y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC','Qualité'],12,y,[42,32,32,28,24,28]); a.stadium.products.forEach((p,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Produits traiteur stade');y=34; y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC','Qualité'],12,y,[42,32,32,28,24,28]);} y=drawTableRow(doc,[p.name,p.brand,p.origin,p.lot,p.dlc,p.quality],12,y,[42,32,32,28,24,28],i%2);});}
+  }
+
+  doc.addPage(); addHeader(doc,a,'Plan d’actions correctives'); y=34;
+  y=drawTableHeader(doc,['Priorité','Action demandée','Responsable','Échéance','Statut'],12,y,[28,82,32,24,20]);
+  if(!a.actions.length){doc.text('Aucune action corrective enregistrée.',12,y+8)}
+  a.actions.forEach((x,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Plan d’actions correctives');y=34; y=drawTableHeader(doc,['Priorité','Action demandée','Responsable','Échéance','Statut'],12,y,[28,82,32,24,20]);} y=drawTableRow(doc,[x.priority,x.text,x.owner,x.due,x.done?'Réalisée':'Ouverte'],12,y,[28,82,32,24,20],i%2);});
+  finalizePdf(doc); doc.save(filename('rapport_audit_hotel_complet',a));
+}
+function addImagePage(doc,a,title,img,infos){doc.addPage(); addHeader(doc,a,title); let y=36; doc.setFont(undefined,'bold');doc.setFontSize(12); y=text(doc,infos.title||'',12,y,180,11); doc.setFont(undefined,'normal'); y=text(doc,infos.meta||'',12,y,180,9); y+=3; if(img){try{let props=doc.getImageProperties(img); let maxW=186, maxH=210; let ratio=Math.min(maxW/props.width,maxH/props.height); let w=props.width*ratio,h=props.height*ratio; doc.addImage(img,'JPEG',(210-w)/2,y,w,h)}catch(e){doc.text('Photo non disponible',12,y)}}else doc.text('Photo non disponible',12,y)}
+function exportProductsPDF(){let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); addHeader(doc,a,'Export traçabilité étiquettes'); doc.setFontSize(14);doc.text('Export traçabilité photos HACCP hôtel',12,40); doc.setFontSize(10);doc.text(`${a.hotel||'-'} · ${a.destination||'-'} · ${a.date||'-'}`,12,48); if(!a.products.length)doc.text('Aucune étiquette enregistrée.',12,60); a.products.forEach(p=>addImagePage(doc,a,'Étiquette produit grand format',p.photo,{title:p.name||'Produit',meta:`Marque : ${p.brand||'-'} · Origine : ${p.origin||'-'} · Lot : ${p.lot||'-'} · DLC/DDM : ${p.dlc||'-'} · Qualité : ${p.quality||'-'} · ${p.comment||''}`})); if(a.products.length)doc.deletePage(1); doc.save(filename('tracabilite_etiquettes_grand_format',a));}
+function exportLocalsPDF(){let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); addHeader(doc,a,'Export contrôle locaux'); doc.setFontSize(14);doc.text('Export photos locaux grand format',12,40); doc.setFontSize(10);doc.text(`${a.hotel||'-'} · ${a.destination||'-'} · ${a.date||'-'}`,12,48); if(!a.locals.length)doc.text('Aucune photo locaux enregistrée.',12,60); a.locals.forEach(l=>addImagePage(doc,a,'Photo locaux grand format',l.photo,{title:`${l.zone||'Zone'} · ${l.status||''}`,meta:`${l.comment||''} · ${l.at||''}`})); if(a.locals.length)doc.deletePage(1); doc.save(filename('controle_locaux_photos_grand_format',a));}
+
+function exportStadiumPDF(){
+  let a=ensureAudit(); if(!a)return; if(!a.stadium)migrateAuditData(); const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let y=34;
+  addHeader(doc,a,'Rapport traiteur stade complet');
+  doc.setFontSize(17);doc.setFont(undefined,'bold');doc.text(a.stadium.provider||'Traiteur stade',12,y); y+=8;
+  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10);
+  y=text(doc,`Contact : ${a.stadium.contact||'-'} · Livraison : ${a.stadium.deliveryTime||'-'}`,12,y,180,9);
+  y=text(doc,a.stadium.notes||'Aucune note générale renseignée.',12,y,180,9); y+=5;
+  STADIUM_SECTIONS.forEach(sec=>{if(y>240){doc.addPage();addHeader(doc,a,'Rapport traiteur stade complet');y=34} doc.setFillColor(20,33,61);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(sec.name,14,y+5.5);doc.setTextColor(0,0,0); y+=10; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]); sec.items.forEach((it,idx)=>{let v=a.stadium.items[it]||{}; if(y>268){doc.addPage();addHeader(doc,a,sec.name);y=34; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]);} y=drawTableRow(doc,[it,statusLabel(v.status),v.temp||'-',(v.photos||[]).length,v.remarks||'-'],12,y,[72,24,24,18,48],idx%2);});});
+  finalizePdf(doc); doc.save(filename('rapport_traiteur_stade',a));
+}
+function exportStadiumProductsPDF(){
+  let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let list=a.stadium?.products||[];
+  if(!list.length){toast('Aucune étiquette traiteur stade à exporter');return}
+  list.forEach((p,i)=>{if(i>0)doc.addPage(); addHeader(doc,a,'Étiquettes traiteur stade'); let y=34; doc.setFontSize(15);doc.setFont(undefined,'bold');doc.text(p.name||'Produit stade',12,y); y+=8; doc.setFontSize(9);doc.setFont(undefined,'normal'); y=text(doc,`Marque : ${p.brand||'-'} · Origine : ${p.origin||'-'} · Lot : ${p.lot||'-'} · DLC/DDM : ${p.dlc||'-'} · Qualité : ${p.quality||'-'}`,12,y,180,9); y=text(doc,p.comment||'',12,y,180,9); if(p.photo){try{doc.addImage(p.photo,'JPEG',12,58,186,205,undefined,'FAST')}catch(e){doc.text('Photo non disponible',12,65)}}});
+  finalizePdf(doc); doc.save(filename('etiquettes_traiteur_stade',a));
+}
+function exportStadiumLocalsPDF(){
+  let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let list=a.stadium?.locals||[];
+  if(!list.length){toast('Aucune photo locaux stade à exporter');return}
+  list.forEach((l,i)=>{if(i>0)doc.addPage(); addHeader(doc,a,'Photos locaux / conditionnement stade'); let y=34; doc.setFontSize(15);doc.setFont(undefined,'bold');doc.text(l.zone||'Zone stade',12,y); y+=8; doc.setFontSize(9);doc.setFont(undefined,'normal'); y=text(doc,`Statut : ${l.status||'-'} · Date : ${l.at||'-'}`,12,y,180,9); y=text(doc,l.comment||'',12,y,180,9); if(l.photo){try{doc.addImage(l.photo,'JPEG',12,58,186,205,undefined,'FAST')}catch(e){doc.text('Photo non disponible',12,65)}}});
+  finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
+}
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=4').catch(()=>{}))}
+load(); renderAll();
+</script>
+</body>
+</html>

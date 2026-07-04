@@ -1,0 +1,5 @@
+const CACHE_NAME='audit-hotel-pro-v4-camera-arriere-switch';
+const APP_SHELL=['/','/index.html','/manifest.webmanifest','/icon-192.png','/icon-512.png'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(url=>fetch(url,{cache:'reload'}).then(r=>r.ok?cache.put(url,r):null).catch(()=>null)))));self.skipWaiting();});
+self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE_NAME?caches.delete(k):null))));self.clients.claim();});
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;let url=new URL(event.request.url);if(url.origin!==self.location.origin)return;event.respondWith(fetch(event.request,{cache:'no-store'}).then(r=>{let c=r.clone();if(r.ok&&(url.pathname==='/'||APP_SHELL.includes(url.pathname)))caches.open(CACHE_NAME).then(cache=>cache.put(event.request,c)).catch(()=>{});return r}).catch(()=>caches.match(event.request).then(cached=>cached||caches.match('/index.html'))));});
