@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
-<link rel="manifest" href="/manifest.webmanifest?v=14">
+<link rel="manifest" href="/manifest.webmanifest?v=15">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=14">
+<link rel="apple-touch-icon" href="/icon192.png?v=15">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -111,7 +111,7 @@ body{background-image:radial-gradient(circle at 8% 4%,rgba(197,161,90,.09),trans
 .btn-red{background:rgba(240,69,95,.1);border:1px solid rgba(240,69,95,.35);color:#c62f47}
 .btn-green{background:rgba(15,185,129,.1);border:1px solid rgba(15,185,129,.35);color:#0b8a63}
 .btn-full{width:100%;justify-content:center}
-.btn-sm{padding:7px 10px;font-size:11px}
+.btn-sm{padding:9px 12px;font-size:11px;min-height:38px}
 .fg{margin-bottom:13px}
 .fl{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);font-weight:900;margin-bottom:6px}
 .fc{width:100%;background:var(--bg3);border:1px solid var(--border2);color:var(--text);border-radius:12px;padding:11px 12px;font-size:14px;font-weight:600}
@@ -141,19 +141,19 @@ textarea.fc{min-height:92px;resize:vertical}
 .thumb{width:64px;height:64px;border-radius:11px;object-fit:cover;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:25px;flex-shrink:0}
 .li h3{font-size:14px}
 .li p{font-size:11px;color:var(--muted);margin-top:2px}
-.actions{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+.actions{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
 .empty{padding:20px;border:1px dashed var(--border2);border-radius:15px;color:var(--dim);text-align:center;font-weight:700}
 .photo-row{display:flex;gap:8px;flex-wrap:wrap}
 .photo-mini{position:relative}
 .photo-mini img{width:82px;height:82px;object-fit:cover;border-radius:11px;border:1px solid var(--border2)}
-.photo-mini button{position:absolute;top:-7px;right:-7px;border:0;background:var(--red);color:#fff;border-radius:50%;width:22px;height:22px;font-weight:900}
+.photo-mini button{position:absolute;top:-8px;right:-8px;border:0;background:var(--red);color:#fff;border-radius:50%;width:26px;height:26px;font-weight:900;font-size:15px;line-height:1}
 .mo{display:none;position:fixed;inset:0;z-index:80;background:rgba(13,21,38,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px}
 .mo.open{display:flex}
 .mo-box{width:100%;max-width:560px;max-height:94vh;overflow:auto;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border:1px solid var(--border2);border-radius:24px;box-shadow:var(--glow)}
 .mo-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(255,255,255,.95);z-index:1}
 .mo-h h2{font-size:17px}
 .mo-body{padding:18px}
-.x{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:11px;width:34px;height:34px;font-weight:900}
+.x{background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:11px;width:40px;height:40px;font-weight:900}
 .cam-preview{width:100%;background:#0d1526;border-radius:15px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:290px}
 .cam-preview video{width:100%;max-height:58vh;object-fit:contain}
 .cam-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
@@ -219,7 +219,7 @@ textarea.fc{min-height:92px;resize:vertical}
 .qty-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:stretch}
 .qty-input{flex:1;min-width:120px}
 .unit-toggle{display:flex;border:2px solid var(--border2);border-radius:11px;overflow:hidden;background:var(--bg3)}
-.unit-btn{padding:0 13px;background:transparent;border:0;font-weight:800;font-size:11.5px;color:var(--muted);cursor:pointer;letter-spacing:.2px}
+.unit-btn{padding:0 13px;min-height:44px;background:transparent;border:0;font-weight:800;font-size:11.5px;color:var(--muted);cursor:pointer;letter-spacing:.2px}
 .unit-btn.active{background:var(--teal);color:#fff}
 .family-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:var(--teal);background:rgba(15,185,177,.12);border:1px solid rgba(15,185,177,.35);border-radius:8px;padding:3px 8px}
 .stat-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.6)}
@@ -279,13 +279,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=14" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=15" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=14" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=15" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -305,7 +305,7 @@ textarea.fc{min-height:92px;resize:vertical}
     <div class="side-foot">Audit qualité terrain · PMS hôtel · produits locaux · origine · traçabilité photo · contrôle locaux.</div>
   </aside>
   <main class="main">
-    <div class="top"><button onclick="toggleSide()">☰</button><b id="topTitle">Audit Hôtel Pro</b><button onclick="newAuditQuick()">+ Audit</button></div>
+    <div class="top"><button onclick="toggleSide()" aria-label="Ouvrir le menu">☰</button><b id="topTitle">Audit Hôtel Pro</b><button onclick="newAuditQuick()">+ Audit</button></div>
     <section class="content">
       <div class="page active" id="page-dashboard"></div>
       <div class="page" id="page-audit"></div>
@@ -328,7 +328,7 @@ textarea.fc{min-height:92px;resize:vertical}
   <button data-page="stadium"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4.2" ry="2.8"/><circle class="ic-orbit" r="1.3" fill="var(--gold)" stroke="none"/></svg></span>Stade</button>
   <button data-page="exports"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l4 4v14H7z" stroke-linejoin="round"/><path class="ic-arrow" d="M12 11v6m0 0-2.3-2.3M12 17l2.3-2.3" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>PDF</button>
 </div>
-<div class="mo" id="cameraModal"><div class="mo-box"><div class="mo-h"><h2>Prise photo</h2><button class="x" onclick="closeCamera()">×</button></div><div class="mo-body"><div class="cam-preview"><video id="video" autoplay playsinline muted></video></div><div class="cam-tools"><button class="btn btn-gold btn-full" onclick="capturePhoto()">📸 Capturer</button><button class="btn btn-sec btn-full" onclick="forceRearCamera()">📷 Caméra arrière</button><button class="btn btn-sec btn-full" onclick="forceFrontCamera()">🤳 Caméra avant</button><button class="btn btn-sec btn-full" onclick="switchCamera()">🔁 Changer caméra</button></div><div class="hint">La caméra arrière est forcée en priorité. Si le téléphone ouvre la caméra selfie, appuie sur “Caméra arrière”. Le site doit être en HTTPS.</div></div></div></div>
+<div class="mo" id="cameraModal"><div class="mo-box"><div class="mo-h"><h2>Prise photo</h2><button class="x" onclick="closeCamera()" aria-label="Fermer">×</button></div><div class="mo-body"><div class="cam-preview"><video id="video" autoplay playsinline muted></video></div><div class="cam-tools"><button class="btn btn-gold btn-full" onclick="capturePhoto()">📸 Capturer</button><button class="btn btn-sec btn-full" onclick="forceRearCamera()">📷 Caméra arrière</button><button class="btn btn-sec btn-full" onclick="forceFrontCamera()">🤳 Caméra avant</button><button class="btn btn-sec btn-full" onclick="switchCamera()">🔁 Changer caméra</button></div><div class="hint">La caméra arrière est forcée en priorité. Si le téléphone ouvre la caméra selfie, appuie sur “Caméra arrière”. Le site doit être en HTTPS.</div></div></div></div>
 <input id="filePicker" class="file-input" type="file" accept="image/*">
 <script>
 const SITE='API 05147 OM PRO';
@@ -399,10 +399,10 @@ function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.r
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function toggleSide(){ $('side').classList.toggle('open') }
 function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; let usedMB=storageUsageMB(); if(usedMB>3.5){html+=`<div class="warn">⚠️ Stockage local à ${usedMB.toFixed(1)} Mo (limite navigateur ≈5 Mo). Exporte tes PDF puis supprime les audits terminés depuis l'historique pour libérer de la place.</div>`} if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4">
-<div class="kpi gold"><div class="kpi-top"><div><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi-icon">✅</div></div></div>
-<div class="kpi green"><div class="kpi-top"><div><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi-icon">🏷️</div></div></div>
-<div class="kpi blue"><div class="kpi-top"><div><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi-icon">📷</div></div></div>
-<div class="kpi red"><div class="kpi-top"><div><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div><div class="kpi-icon">⚠️</div></div></div>
+<div class="kpi gold"><div class="kpi-top"><div><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8.5"/><path d="M8 12.3l2.8 2.8 5.2-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+<div class="kpi green"><div class="kpi-top"><div><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h7l9 9-7 7-9-9V4z" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.3" fill="currentColor" stroke="none"/></svg></div></div></div>
+<div class="kpi blue"><div class="kpi-top"><div><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2"/></svg></div></div></div>
+<div class="kpi red"><div class="kpi-top"><div><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3.5 21 20H3L12 3.5z" stroke-linejoin="round"/><line x1="12" y1="9.5" x2="12" y2="14" stroke-linecap="round"/><circle cx="12" cy="16.7" r="1" fill="currentColor" stroke="none"/></svg></div></div></div>
 </div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="status-pill"><span class="dot"></span>En cours</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="action-grid-2"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
  html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map((x,i)=>{let c=completion(x);return `<div class="li"><div class="hist-thumb ${i%2===0?'g1':'g2'}">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · <b style="color:${c.score>=80?'var(--green)':(c.score>=50?'var(--orange)':'var(--red)')}">${c.score}%</b> renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec pill-btn" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-blue pill-btn" onclick="duplicateAudit('${x.id}')">Dupliquer</button><button class="btn btn-sm btn-red pill-btn" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
 async function geocodeHotel(){
@@ -673,7 +673,7 @@ function renderRestes(){
       html+=`</div>`;
     });
   }
-  html+=`<div class="card"><div class="card-head"><div class="label">Produit hors cahier (optionnel)</div></div><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="rst_item" class="fc" placeholder="Ex : Saumon fumé"></div><div class="fg"><label class="fl">Famille</label><select id="rst_family" class="fc">${LEFTOVER_FAMILIES.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="fg"><label class="fl">Qté disposée (info)</label><input id="rst_qs" class="fc" placeholder="Ex : 20 tranches"></div></div><div class="qty-row"><input id="rst_ql" class="fc qty-input" type="number" step="any" inputmode="decimal" placeholder="Quantité restante"><div class="unit-toggle">${['kg','portion','unite'].map(u=>`<button class="unit-btn ${extraUnitSelected===u?'active':''}" onclick="selectExtraUnit('${u}')">${unitLabel(u)}</button>`).join('')}</div></div><div class="fg" style="margin-top:8px"><label class="fl">Remarque</label><input id="rst_remark" class="fc" placeholder="Observation, cause probable..."></div><button class="btn btn-gold btn-full" style="margin-top:6px" onclick="addLeftoverExtra()">+ Ajouter</button><div class="list" style="margin-top:12px">${lm.extra.length?lm.extra.map(l=>`<div class="li"><div class="thumb">🍽️</div><div><h3>${esc(l.item)} <span class="family-tag">${esc(l.family||'Autre')}</span></h3><p>Disposé : ${esc(l.qtyServed)||'-'} · Restant : ${esc(l.qtyValue)||'-'} ${unitLabel(l.qtyUnit)}</p>${l.remark?`<p>${esc(l.remark)}</p>`:''}</div><div class="actions"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverExtra('${l.id}')">📷</button><button class="btn btn-sm btn-red" onclick="delLeftoverExtra('${l.id}')">Suppr.</button></div></div>${photoStrip(l.photos||[],`removeLeftoverExtraPhoto('${l.id}',IDX)`)}`).join(''):'<div class="empty">Aucun produit hors cahier</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Produit hors cahier (optionnel)</div></div><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="rst_item" class="fc" placeholder="Ex : Saumon fumé"></div><div class="fg"><label class="fl">Famille</label><select id="rst_family" class="fc">${LEFTOVER_FAMILIES.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="fg"><label class="fl">Qté disposée (info)</label><input id="rst_qs" class="fc" placeholder="Ex : 20 tranches"></div></div><div class="qty-row"><input id="rst_ql" class="fc qty-input" type="number" step="any" inputmode="decimal" placeholder="Quantité restante"><div class="unit-toggle">${['kg','portion','unite'].map(u=>`<button class="unit-btn ${extraUnitSelected===u?'active':''}" onclick="selectExtraUnit('${u}')">${unitLabel(u)}</button>`).join('')}</div></div><div class="fg" style="margin-top:8px"><label class="fl">Remarque</label><input id="rst_remark" class="fc" placeholder="Observation, cause probable..."></div><button class="btn btn-gold btn-full" style="margin-top:6px" onclick="addLeftoverExtra()">+ Ajouter</button><div class="list" style="margin-top:12px">${lm.extra.length?lm.extra.map(l=>`<div class="li"><div class="thumb">🍽️</div><div><h3>${esc(l.item)} <span class="family-tag">${esc(l.family||'Autre')}</span></h3><p>Disposé : ${esc(l.qtyServed)||'-'} · Restant : ${esc(l.qtyValue)||'-'} ${unitLabel(l.qtyUnit)}</p>${l.remark?`<p>${esc(l.remark)}</p>`:''}</div><div class="actions"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverExtra('${l.id}')">📷 Photo</button><button class="btn btn-sm btn-red" onclick="delLeftoverExtra('${l.id}')">Suppr.</button></div></div>${photoStrip(l.photos||[],`removeLeftoverExtraPhoto('${l.id}',IDX)`)}`).join(''):'<div class="empty">Aucun produit hors cahier</div>'}</div></div>`;
   let stats=leftoverStatsByFamily(a);
   let families=Object.keys(stats).sort((x,y)=>stats[y].kg-stats[x].kg);
   html+=`<div class="card"><div class="card-head"><div class="label">📊 Statistiques par famille (tous moments)</div></div>`;
@@ -687,7 +687,7 @@ function toggleAction(i){let a=ensureAudit(); a.actions[i].done=!a.actions[i].do
 function delAction(i){let a=ensureAudit(); a.actions.splice(i,1); save(); renderActions();}
 function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button><button class="btn btn-gold btn-full" onclick="exportCdcPDF()">📖 Contrôle Cahier des Charges</button><button class="btn btn-blue btn-full" onclick="exportRestesPDF()">🍽️ Restes après service</button></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
 function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}">×</button></div>`).join('')}</div>`}
+function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}" aria-label="Supprimer la photo">×</button></div>`).join('')}</div>`}
 async function openCamera(cb){photoCallback=cb; $('cameraModal').classList.add('open'); try{await startCamera(true)}catch(e){toast('Caméra indisponible. Utilise importer photo.'); console.warn(e)}}
 function isRearLabel(label){label=(label||'').toLowerCase();return /back|rear|environment|arrière|arriere|dos|trás|tras|rück|ruck|0/.test(label)}
 function isFrontLabel(label){label=(label||'').toLowerCase();return /front|user|face|facetime|avant|selfie|1/.test(label)}
@@ -965,7 +965,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=14').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=15').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
