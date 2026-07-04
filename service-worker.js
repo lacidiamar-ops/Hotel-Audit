@@ -1,4 +1,4 @@
-const CACHE_NAME='audit-hotel-pro-v13-fix-vercel-email';
+const CACHE_NAME='audit-hotel-pro-v14-dashboard-21st';
 const APP_SHELL=['/','/index.html','/manifest.webmanifest','/icon192.png','/icon512.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE_NAME).then(cache=>Promise.all(APP_SHELL.map(url=>fetch(url,{cache:'reload'}).then(r=>r.ok?cache.put(url,r):null).catch(()=>null)))));self.skipWaiting();});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE_NAME?caches.delete(k):null))));self.clients.claim();});

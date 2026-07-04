@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
-<link rel="manifest" href="/manifest.webmanifest?v=13">
+<link rel="manifest" href="/manifest.webmanifest?v=14">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=13">
+<link rel="apple-touch-icon" href="/icon192.png?v=14">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -172,7 +172,8 @@ textarea.fc{min-height:92px;resize:vertical}
   .side.open{transform:translateX(0)}
   .top{display:flex}
   .content{padding:14px 12px 82px}
-  .g2,.g3,.g4,.row,.row3{grid-template-columns:1fr}
+  .g2,.g3,.row,.row3{grid-template-columns:1fr}
+.g4{grid-template-columns:1fr 1fr}
   .audit-meta{grid-template-columns:1fr}
   .ph h1{font-size:22px}
   .bottom{display:grid;position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);border-top:1px solid var(--border);grid-template-columns:repeat(5,1fr);padding:8px 4px 12px;z-index:30}
@@ -224,6 +225,22 @@ textarea.fc{min-height:92px;resize:vertical}
 .stat-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.6)}
 .stat-row .stat-vals{display:flex;gap:6px;flex-wrap:wrap}
 .stat-pill{font-family:var(--mono);font-size:11px;font-weight:800;background:var(--bg4);border-radius:8px;padding:3px 8px}
+
+/* ===== Dashboard — inspiré 21st : icônes KPI, statut, grille d'actions 2x2, historique en pilules ===== */
+.kpi{position:relative}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.kpi-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.kpi.gold .kpi-icon{background:rgba(197,161,90,.14);color:#a9853f}
+.kpi.green .kpi-icon{background:rgba(15,159,110,.14);color:var(--green)}
+.kpi.blue .kpi-icon{background:rgba(0,87,168,.14);color:var(--blue)}
+.kpi.red .kpi-icon{background:rgba(240,69,95,.14);color:var(--red)}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:6px 12px;border-radius:999px;background:rgba(224,137,38,.12);color:#c96f1a}
+.status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--orange)}
+.action-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.hist-thumb{width:46px;height:46px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff}
+.hist-thumb.g1{background:linear-gradient(135deg,var(--blue),var(--purple))}
+.hist-thumb.g2{background:linear-gradient(135deg,var(--orange),var(--gold))}
+.pill-btn{border-radius:999px!important;padding:6px 12px!important;font-size:11px!important}
 .export-sector h3{font-size:15px;color:var(--text);margin-bottom:6px}
 .export-sector p{font-size:12px;color:var(--muted);line-height:1.5}
 
@@ -262,13 +279,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=13" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=14" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=13" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=14" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -381,8 +398,13 @@ function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); rend
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); $('page-'+p).classList.add('active'); document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); $('side').classList.remove('open'); window.scrollTo(0,0)}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function toggleSide(){ $('side').classList.toggle('open') }
-function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; let usedMB=storageUsageMB(); if(usedMB>3.5){html+=`<div class="warn">⚠️ Stockage local à ${usedMB.toFixed(1)} Mo (limite navigateur ≈5 Mo). Exporte tes PDF puis supprime les audits terminés depuis l'historique pour libérer de la place.</div>`} if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4"><div class="kpi gold"><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi green"><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi blue"><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi red"><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div></div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="badge b-ok">${a.date||today()}</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="row3" style="margin-top:14px"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
- html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map(x=>{let c=completion(x);return `<div class="li"><div class="thumb">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · ${c.score}% renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-blue" onclick="duplicateAudit('${x.id}')">Dupliquer</button><button class="btn btn-sm btn-red" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
+function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; let usedMB=storageUsageMB(); if(usedMB>3.5){html+=`<div class="warn">⚠️ Stockage local à ${usedMB.toFixed(1)} Mo (limite navigateur ≈5 Mo). Exporte tes PDF puis supprime les audits terminés depuis l'historique pour libérer de la place.</div>`} if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4">
+<div class="kpi gold"><div class="kpi-top"><div><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi-icon">✅</div></div></div>
+<div class="kpi green"><div class="kpi-top"><div><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi-icon">🏷️</div></div></div>
+<div class="kpi blue"><div class="kpi-top"><div><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi-icon">📷</div></div></div>
+<div class="kpi red"><div class="kpi-top"><div><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div><div class="kpi-icon">⚠️</div></div></div>
+</div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="status-pill"><span class="dot"></span>En cours</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="action-grid-2"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
+ html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map((x,i)=>{let c=completion(x);return `<div class="li"><div class="hist-thumb ${i%2===0?'g1':'g2'}">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · <b style="color:${c.score>=80?'var(--green)':(c.score>=50?'var(--orange)':'var(--red)')}">${c.score}%</b> renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec pill-btn" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-blue pill-btn" onclick="duplicateAudit('${x.id}')">Dupliquer</button><button class="btn btn-sm btn-red pill-btn" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
 async function geocodeHotel(){
   let a=ensureAudit(); if(!a)return;
   let query=[a.hotel,a.address,a.destination].filter(Boolean).join(', ');
@@ -943,7 +965,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=13').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=14').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
