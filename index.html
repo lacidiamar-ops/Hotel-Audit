@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V6</title>
-<link rel="manifest" href="/manifest.webmanifest?v=6">
+<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V7</title>
+<link rel="manifest" href="/manifest.webmanifest?v=7">
 <meta name="theme-color" content="#161a24">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=6">
+<link rel="apple-touch-icon" href="/icon192.png?v=7">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -39,7 +39,7 @@
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><div class="logo">API</div><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V6</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><div class="logo">API</div><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V7</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -50,6 +50,9 @@
       <button data-page="locals"><span class="ico">📷</span> Locaux & photos</button>
       <button data-page="stadium"><span class="ico">🏟️</span> Traiteur stade</button>
       <button data-page="actions"><span class="ico">⚠️</span> Actions correctives</button>
+      <div class="nav-title">Cahier des charges OM</div>
+      <button data-page="cdc"><span class="ico">📖</span> Contrôle Cahier des Charges</button>
+      <button data-page="restes"><span class="ico">🍽️</span> Restes après service</button>
       <div class="nav-title">Restitution</div>
       <button data-page="exports"><span class="ico">📄</span> Exports DDPP</button>
     </nav>
@@ -65,6 +68,8 @@
       <div class="page" id="page-locals"></div>
       <div class="page" id="page-stadium"></div>
       <div class="page" id="page-actions"></div>
+      <div class="page" id="page-cdc"></div>
+      <div class="page" id="page-restes"></div>
       <div class="page" id="page-exports"></div>
     </section>
   </main>
@@ -96,6 +101,10 @@ const STADIUM_SECTIONS=[
  {name:'Traiteur stade · Logistique stade', color:'orange', items:['Conditionnement adapté au transport','Étuves / bacs GN / housses thermiques propres','Heure de départ respectée','Heure de livraison vestiaire respectée','Température à réception stade contrôlée','Organisation remise au vestiaire fluide']},
  {name:'Traiteur stade · Locaux & photos', color:'purple', items:['Zone de stockage propre et rangée','Zone d’allotissement propre','Matériel disponible et en bon état','Photos des locaux / étuves / conditionnements','Poubelles fermées et évacuées','Actions correctives identifiées']}
 ];
+const CDC_FUNCTION_URL='https://gytabinhioceawwgfsly.supabase.co/functions/v1/get-cdc-reference';
+const CDC_ANON_KEY='sb_publishable_czR-qnp1qxaJhAZts7nGzw_8_O92lxp';
+const CDC_MOMENTS=[{id:'pdj',label:'Petit-déjeuner'},{id:'dej_3a',label:'3A Déjeuner match'},{id:'dej',label:'Déjeuner'},{id:'din',label:'Dîner'},{id:'col',label:'Collation'}];
+let cdcActiveMoment='pdj', restesActiveMoment='pdj', cdcFetchInFlight=false;
 let state={audits:[],currentId:null,user:'Auditeur'};
 let cameraStream=null,devices=[],deviceIndex=0,photoCallback=null,currentFacing='environment',lastDeviceId=null;
 const $=id=>document.getElementById(id);
@@ -117,7 +126,7 @@ $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 function toast(msg){let d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
 function current(){return state.audits.find(a=>a.id===state.currentId)||null}
 function ensureAudit(){let a=current(); if(!a){toast('Créer ou sélectionner un audit avant de renseigner.'); showPage('audit'); return null} return a}
-function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:'',devis:{reference:'',date:'',fournisseur:'',lines:[]}},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
+function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:'',devis:{reference:'',date:'',fournisseur:'',lines:[]}},cdc:{reference:null,referenceFetchedAt:null,controls:{}},leftovers:{},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
 function newAuditQuick(){newAudit();}
 function duplicateAudit(id){
   let src=state.audits.find(a=>a.id===id); if(!src)return;
@@ -139,7 +148,7 @@ function scheduleGeocode(){clearTimeout(geoDebounceTimer); geoDebounceTimer=setT
 function updateAudit(field,val){let a=ensureAudit(); if(!a)return; a[field]=val; save(); renderHeader(); if(['hotel','address','destination'].includes(field))scheduleGeocode();}
 function completion(a){let total=0,done=0,ko=0,rep=0; Object.values(a.items||{}).forEach(i=>{total++; if(i.status)done++; if(i.status==='non conforme')ko++; if(i.status==='à remplacer')rep++;}); return {total,done,ko,rep,score:total?Math.round(done/total*100):0}}
 function renderHeader(){let a=current(); $('currentAuditName').textContent=a?(a.hotel||'Audit hôtel sans nom'):'Aucun audit sélectionné'; $('currentAuditMeta').textContent=a?`${a.destination||'Destination'} · ${a.date||''}`:'Créer ou choisir un déplacement'; $('topTitle').textContent=a?(a.hotel||'Audit Hôtel Pro'):'Audit Hôtel Pro';}
-function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); renderAudit(); renderChecklist(); renderProducts(); renderLocals(); renderStadium(); renderActions(); renderExports();}
+function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); renderAudit(); renderChecklist(); renderProducts(); renderLocals(); renderStadium(); renderCdc(); renderRestes(); renderActions(); renderExports();}
 function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); $('page-'+p).classList.add('active'); document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); $('side').classList.remove('open'); window.scrollTo(0,0)}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function toggleSide(){ $('side').classList.toggle('open') }
@@ -243,6 +252,8 @@ function migrateAuditData(){
     if(!a.stadium.products) a.stadium.products=[];
     if(!a.stadium.locals) a.stadium.locals=[];
     if(!a.stadium.devis) a.stadium.devis={reference:'',date:'',fournisseur:'',lines:[]};
+    if(!a.cdc) a.cdc={reference:null,referenceFetchedAt:null,controls:{}};
+    if(!a.leftovers) a.leftovers={};
     STADIUM_SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(!a.stadium.items[it]) a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};}));
   });
 }
@@ -276,11 +287,97 @@ function delStadiumProduct(i){let a=ensureAudit(); a.stadium.products.splice(i,1
 function saveStadiumLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.stadium.locals.unshift({zone:$('st_l_zone')?.value||'Stade',status:$('st_l_status')?.value||'Conforme',comment:$('st_l_comment')?.value||'',photo,at:nowText()}); save(); renderStadium();}
 function delStadiumLocal(i){let a=ensureAudit(); a.stadium.locals.splice(i,1); save(); renderStadium();}
 
+function ensureCdc(a){ if(!a.cdc) a.cdc={reference:null,referenceFetchedAt:null,controls:{}}; if(!a.cdc.controls) a.cdc.controls={}; return a.cdc; }
+function cdcItemKey(moment,bi,ii){ return moment+'__'+bi+'__'+ii; }
+async function fetchCdcReference(force){
+  let a=ensureAudit(); if(!a)return;
+  let cdc=ensureCdc(a);
+  if(cdc.reference && !force){ renderCdc(); return; }
+  let statusEl=$('cdcStatus'); if(statusEl)statusEl.textContent='Chargement du cahier des charges...';
+  try{
+    let res=await fetch(CDC_FUNCTION_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+CDC_ANON_KEY,'apikey':CDC_ANON_KEY},body:JSON.stringify({module:'cahier'})});
+    let json=await res.json();
+    if(json.error) throw new Error(json.error);
+    let doc=(json.documents||[])[0];
+    if(!doc){ if(statusEl)statusEl.textContent='Aucun cahier des charges trouvé côté serveur.'; return; }
+    cdc.reference=doc.payload; cdc.referenceFetchedAt=nowText(); cdc.referenceVersion=doc.version;
+    save(); renderCdc(); toast('Cahier des charges chargé');
+  }catch(e){
+    if(statusEl)statusEl.textContent='Impossible de charger le cahier des charges (hors-ligne ou service indisponible).'+(cdc.reference?' Version précédente conservée.':'');
+    console.error(e);
+  }
+}
+function selectCdcMoment(id){ cdcActiveMoment=id; renderCdc(); }
+function setCdcControl(k,field,val){ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k][field]=val; save(); renderCdc(); }
+function openCameraForCdc(k){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k].photos.push({src:d,at:nowText()}); save(); renderCdc(); }) }
+function importForCdc(k){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k].photos.push({src:d,at:nowText()}); save(); renderCdc(); }) }
+function removeCdcPhoto(k,i){ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); cdc.controls[cdcActiveMoment][k].photos.splice(i,1); save(); renderCdc(); }
+function cdcMomentScore(a,momentId){
+  let cdc=ensureCdc(a); let ref=cdc.reference&&cdc.reference[momentId]; if(!ref)return{total:0,ok:0};
+  let ctrl=cdc.controls[momentId]||{}; let total=0,ok=0;
+  ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{total++; let v=ctrl[cdcItemKey(momentId,bi,ii)]; if(v&&v.status==='conforme')ok++;}));
+  return {total,ok};
+}
+function renderCdc(){
+  let a=current();
+  let html=`<div class="ph"><div><h1>Contrôle Cahier des Charges</h1><div class="sub">Produits/quantités attendus (OM) vs présence hôtel</div></div></div>`;
+  if(!a){ $('page-cdc').innerHTML=html+'<div class="empty">Créer un audit avant de faire ce contrôle.</div>'; return }
+  let cdc=ensureCdc(a);
+  html+=`<div class="card"><div class="card-head"><div class="label">Référence cahier des charges</div><button class="btn btn-sm btn-blue" onclick="fetchCdcReference(true)">🔄 Recharger</button></div>`;
+  html+= cdc.reference ? `<p style="font-size:12px;color:var(--muted)">Chargé le ${esc(cdc.referenceFetchedAt)}.</p>` : `<p id="cdcStatus" style="font-size:12px;color:var(--dim)">Chargement du cahier des charges...</p>`;
+  html+=`</div>`;
+  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${cdcActiveMoment===m.id?'active':''}" onclick="selectCdcMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  let ref=cdc.reference && cdc.reference[cdcActiveMoment];
+  if(!ref){ html+=`<div class="empty" style="margin-top:12px">Pas de données pour ce moment pour l’instant.</div>`; $('page-cdc').innerHTML=html; if(!cdcFetchInFlight && !cdc.reference){ cdcFetchInFlight=true; fetchCdcReference().finally(()=>cdcFetchInFlight=false); } return }
+  let sc=cdcMomentScore(a,cdcActiveMoment);
+  html+=`<div class="card" style="margin-top:12px"><div class="card-head"><div class="label">${esc(ref.title)}</div><span class="badge b-ok">${sc.ok}/${sc.total} conforme</span></div><p style="font-size:12px;color:var(--muted)">${esc(ref.subtitle||'')}</p></div>`;
+  let ctrl=cdc.controls[cdcActiveMoment]||{};
+  ref.blocks.forEach((b,bi)=>{
+    html+=`<div class="card"><div class="card-head"><div class="label">${esc(b.title)}</div></div>`;
+    b.items.forEach((it,ii)=>{
+      let k=cdcItemKey(cdcActiveMoment,bi,ii); let v=ctrl[k]||{status:'',qty:'',remark:'',photos:[]};
+      html+=`<div class="audit-item"><div class="audit-title">${esc(it.l)} <span style="color:var(--gold);font-weight:900">· prévu ${esc(it.q)}</span></div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setCdcControl('${k}','status','conforme')">Conforme</button><button class="${v.status==='absent'?'on ko':''}" onclick="setCdcControl('${k}','status','absent')">Absent</button><button class="${v.status==='qte'?'on rep':''}" onclick="setCdcControl('${k}','status','qte')">Qté N/C</button><button class="${v.status==='nc'?'on nc':''}" onclick="setCdcControl('${k}','status','nc')">N/C</button></div><input class="fc" placeholder="Quantité constatée" value="${esc(v.qty)}" onchange="setCdcControl('${k}','qty',this.value)"><input class="fc" placeholder="Remarque" value="${esc(v.remark)}" onchange="setCdcControl('${k}','remark',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForCdc('${k}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForCdc('${k}')">📁 Importer</button></div>${photoStrip(v.photos||[],`removeCdcPhoto('${k}',IDX)`)}</div>`;
+    });
+    html+=`</div>`;
+  });
+  $('page-cdc').innerHTML=html;
+}
+function ensureLeftoverList(a){ if(!a.leftovers) a.leftovers={}; if(!a.leftovers[restesActiveMoment]) a.leftovers[restesActiveMoment]=[]; return a.leftovers[restesActiveMoment]; }
+function selectRestesMoment(id){ restesActiveMoment=id; renderRestes(); }
+function addLeftover(){
+  let a=ensureAudit(); if(!a)return;
+  let item=($('rst_item')?.value||'').trim();
+  if(!item){toast('Nom du produit requis'); return}
+  let list=ensureLeftoverList(a);
+  list.push({id:uid(),item,qtyServed:$('rst_qs').value,qtyLeft:$('rst_ql').value,remark:$('rst_remark').value,photos:[]});
+  save(); renderRestes(); toast('Reste enregistré');
+}
+function delLeftover(id){ let a=ensureAudit(); if(!a)return; a.leftovers[restesActiveMoment]=ensureLeftoverList(a).filter(l=>l.id!==id); save(); renderRestes(); }
+function openCameraForLeftover(id){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let l=ensureLeftoverList(a).find(x=>x.id===id); if(l){ l.photos=l.photos||[]; l.photos.push({src:d,at:nowText()}); } save(); renderRestes(); }) }
+function importForLeftover(id){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let l=ensureLeftoverList(a).find(x=>x.id===id); if(l){ l.photos=l.photos||[]; l.photos.push({src:d,at:nowText()}); } save(); renderRestes(); }) }
+function removeLeftoverPhoto(id,i){ let a=ensureAudit(); if(!a)return; let l=ensureLeftoverList(a).find(x=>x.id===id); if(l) l.photos.splice(i,1); save(); renderRestes(); }
+function leftoverPct(l){
+  let qs=parseFloat(String(l.qtyServed||'').replace(',','.'));
+  let ql=parseFloat(String(l.qtyLeft||'').replace(',','.'));
+  if(isNaN(qs)||qs<=0||isNaN(ql)) return null;
+  return Math.round((ql/qs)*100);
+}
+function leftoverBadge(pct){ if(pct===null) return ''; let cls=pct<10?'b-ok':(pct<30?'b-rep':'b-ko'); return `<span class="badge ${cls}">${pct}% restant</span>`; }
+function renderRestes(){
+  let a=current();
+  let html=`<div class="ph"><div><h1>Restes après service</h1><div class="sub">Quantification du gaspillage / surproduction par moment de service</div></div></div>`;
+  if(!a){ $('page-restes').innerHTML=html+'<div class="empty">Créer un audit avant de renseigner les restes.</div>'; return }
+  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${restesActiveMoment===m.id?'active':''}" onclick="selectRestesMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  html+=`<div class="card" style="margin-top:12px"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="rst_item" class="fc" placeholder="Ex : Saumon fumé"></div><div class="fg"><label class="fl">Qté mise à disposition</label><input id="rst_qs" class="fc" placeholder="Ex : 20 tranches"></div><div class="fg"><label class="fl">Qté restante</label><input id="rst_ql" class="fc" placeholder="Ex : 4 tranches"></div></div><div class="fg"><label class="fl">Remarque</label><input id="rst_remark" class="fc" placeholder="Observation, cause probable..."></div><button class="btn btn-gold btn-full" onclick="addLeftover()">+ Ajouter</button></div>`;
+  let list=ensureLeftoverList(a);
+  html+=`<div class="list" style="margin-top:12px">${list.length?list.map(l=>{let pct=leftoverPct(l); return `<div class="li"><div class="thumb">🍽️</div><div><h3>${esc(l.item)}</h3><p>Disposé : ${esc(l.qtyServed)||'-'} · Restant : ${esc(l.qtyLeft)||'-'} ${leftoverBadge(pct)}</p>${l.remark?`<p>${esc(l.remark)}</p>`:''}</div><div class="actions"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftover('${l.id}')">📷</button><button class="btn btn-sm btn-red" onclick="delLeftover('${l.id}')">Suppr.</button></div></div>${photoStrip(l.photos||[],`removeLeftoverPhoto('${l.id}',IDX)`)}`}).join(''):'<div class="empty">Aucun reste enregistré pour ce moment</div>'}</div>`;
+  $('page-restes').innerHTML=html;
+}
 function renderActions(){let a=current(); let html=`<div class="ph"><div><h1>Actions correctives</h1><div class="sub">Points à traiter avec hôtel / prestataire / nutrition</div></div></div>`; if(!a){$('page-actions').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter une action.</div>`;return} html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Priorité</label><select id="ac_prio" class="fc"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></div><div class="fg"><label class="fl">Responsable</label><input id="ac_owner" class="fc" placeholder="Hôtel / API / Nutri"></div><div class="fg"><label class="fl">Échéance</label><input id="ac_due" type="date" class="fc"></div></div><div class="fg"><label class="fl">Action demandée</label><textarea id="ac_text" class="fc" placeholder="Ex : fournir origine protéines, remplacer produit, revoir stockage brut/préparé..."></textarea></div><button class="btn btn-gold" onclick="addAction()">+ Ajouter action</button></div><div class="list">${a.actions.length?a.actions.map((x,i)=>`<div class="li"><div class="thumb">⚠️</div><div><h3>${esc(x.priority)} · ${x.done?'Réalisée':'Ouverte'}</h3><p>${esc(x.text)} · ${esc(x.owner)} · ${x.due||'Sans date'}</p></div><div class="actions"><button class="btn btn-sm btn-green" onclick="toggleAction(${i})">${x.done?'Rouvrir':'OK'}</button><button class="btn btn-sm btn-red" onclick="delAction(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune action corrective</div>'}</div>`; $('page-actions').innerHTML=html;}
 function addAction(){let a=ensureAudit(); a.actions.unshift({priority:$('ac_prio').value,owner:$('ac_owner').value,due:$('ac_due').value,text:$('ac_text').value,done:false,at:nowText()}); save(); renderActions();}
 function toggleAction(i){let a=ensureAudit(); a.actions[i].done=!a.actions[i].done; save(); renderActions();}
 function delAction(i){let a=ensureAudit(); a.actions.splice(i,1); save(); renderActions();}
-function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
+function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button><button class="btn btn-gold btn-full" onclick="exportCdcPDF()">📖 Contrôle Cahier des Charges</button><button class="btn btn-blue btn-full" onclick="exportRestesPDF()">🍽️ Restes après service</button></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
 function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}">×</button></div>`).join('')}</div>`}
 async function openCamera(cb){photoCallback=cb; $('cameraModal').classList.add('open'); try{await startCamera(true)}catch(e){toast('Caméra indisponible. Utilise importer photo.'); console.warn(e)}}
@@ -467,6 +564,51 @@ function addImagePage(doc,a,title,img,infos){doc.addPage(); addHeader(doc,a,titl
 function exportProductsPDF(){let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); addHeader(doc,a,'Export traçabilité étiquettes'); doc.setFontSize(14);doc.text('Export traçabilité photos HACCP hôtel',12,40); doc.setFontSize(10);doc.text(`${a.hotel||'-'} · ${a.destination||'-'} · ${a.date||'-'}`,12,48); if(!a.products.length)doc.text('Aucune étiquette enregistrée.',12,60); a.products.forEach(p=>addImagePage(doc,a,'Étiquette produit grand format',p.photo,{title:p.name||'Produit',meta:`Marque : ${p.brand||'-'} · Origine : ${p.origin||'-'} · Lot : ${p.lot||'-'} · DLC/DDM : ${p.dlc||'-'} · Qualité : ${p.quality||'-'} · ${p.comment||''}`})); finalizePdf(doc); doc.save(filename('tracabilite_etiquettes_grand_format',a));}
 function exportLocalsPDF(){let a=ensureAudit(); if(!a)return; const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); addHeader(doc,a,'Export contrôle locaux'); doc.setFontSize(14);doc.text('Export photos locaux grand format',12,40); doc.setFontSize(10);doc.text(`${a.hotel||'-'} · ${a.destination||'-'} · ${a.date||'-'}`,12,48); if(!a.locals.length)doc.text('Aucune photo locaux enregistrée.',12,60); a.locals.forEach(l=>addImagePage(doc,a,'Photo locaux grand format',l.photo,{title:`${l.zone||'Zone'} · ${l.status||''}`,meta:`${l.comment||''} · ${l.at||''}`})); finalizePdf(doc); doc.save(filename('controle_locaux_photos_grand_format',a));}
 
+function exportCdcPDF(){
+  let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a);
+  if(!cdc.reference){toast('Charge le cahier des charges avant d’exporter');return}
+  const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let y=34;
+  addHeader(doc,a,'Contrôle Cahier des Charges');
+  doc.setFontSize(16);doc.setFont(undefined,'bold');doc.text(a.hotel||'Hôtel',12,y); y+=8;
+  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10); y+=4;
+  let any=false;
+  CDC_MOMENTS.forEach(m=>{
+    let ref=cdc.reference[m.id]; if(!ref)return;
+    let ctrl=cdc.controls[m.id]||{}; let total=0;
+    ref.blocks.forEach(b=>total+=b.items.length);
+    if(total===0)return; any=true;
+    let sc=cdcMomentScore(a,m.id);
+    if(y>235){doc.addPage();addHeader(doc,a,'Contrôle Cahier des Charges');y=34}
+    doc.setFillColor(20,33,61);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(`${m.label} — ${sc.ok}/${sc.total} conforme`,14,y+5.5);doc.setTextColor(0,0,0); y+=10;
+    y=drawTableHeader(doc,['Produit','Prévu','Statut','Constaté','Remarque'],12,y,[56,26,26,28,50]);
+    ref.blocks.forEach((b,bi)=>{ b.items.forEach((it,ii)=>{
+      let k=cdcItemKey(m.id,bi,ii); let v=ctrl[k]||{};
+      let statusLbl=v.status==='conforme'?'Conforme':v.status==='absent'?'Absent':v.status==='qte'?'Qté N/C':(v.status==='nc'?'N/C':'Non vérifié');
+      if(y>268){doc.addPage();addHeader(doc,a,m.label);y=34; y=drawTableHeader(doc,['Produit','Prévu','Statut','Constaté','Remarque'],12,y,[56,26,26,28,50]);}
+      y=drawTableRow(doc,[it.l,it.q,statusLbl,v.qty||'-',v.remark||'-'],12,y,[56,26,26,28,50],ii%2);
+    });});
+    y+=6;
+  });
+  if(!any){toast('Aucune donnée à exporter pour ce cahier des charges');return}
+  finalizePdf(doc); doc.save(filename('controle_cahier_des_charges',a));
+}
+function exportRestesPDF(){
+  let a=ensureAudit(); if(!a)return;
+  if(!a.leftovers || !Object.values(a.leftovers).some(l=>l.length)){toast('Aucun reste enregistré');return}
+  const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let y=34;
+  addHeader(doc,a,'Restes après service');
+  doc.setFontSize(16);doc.setFont(undefined,'bold');doc.text(a.hotel||'Hôtel',12,y); y+=8;
+  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10); y+=4;
+  CDC_MOMENTS.forEach(m=>{
+    let list=(a.leftovers&&a.leftovers[m.id])||[]; if(!list.length)return;
+    if(y>235){doc.addPage();addHeader(doc,a,'Restes après service');y=34}
+    doc.setFillColor(197,161,90);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(m.label,14,y+5.5);doc.setTextColor(0,0,0); y+=10;
+    y=drawTableHeader(doc,['Produit','Disposé','Restant','% restant','Remarque'],12,y,[54,32,32,26,42]);
+    list.forEach((l,i)=>{ let pct=leftoverPct(l); if(y>268){doc.addPage();addHeader(doc,a,m.label);y=34; y=drawTableHeader(doc,['Produit','Disposé','Restant','% restant','Remarque'],12,y,[54,32,32,26,42]);} y=drawTableRow(doc,[l.item,l.qtyServed||'-',l.qtyLeft||'-',pct===null?'-':pct+'%',l.remark||'-'],12,y,[54,32,32,26,42],i%2); });
+    y+=6;
+  });
+  finalizePdf(doc); doc.save(filename('restes_apres_service',a));
+}
 function exportStadiumPDF(){
   let a=ensureAudit(); if(!a)return; if(!a.stadium)migrateAuditData(); const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let y=34;
   addHeader(doc,a,'Rapport traiteur stade complet');
@@ -498,7 +640,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=6').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=7').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
