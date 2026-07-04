@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V11</title>
-<link rel="manifest" href="/manifest.webmanifest?v=11">
+<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
+<link rel="manifest" href="/manifest.webmanifest?v=12">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=11">
+<link rel="apple-touch-icon" href="/icon192.png?v=12">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -199,6 +199,31 @@ textarea.fc{min-height:92px;resize:vertical}
 .logo-img{width:50px;height:50px;object-fit:contain;border-radius:14px;background:#fff;box-shadow:0 5px 18px rgba(20,33,61,.1);border:1px solid var(--border)}
 .login-logo-img{width:128px;height:128px;object-fit:contain;margin:0 auto 12px;display:block;border-radius:28px;box-shadow:0 14px 38px rgba(197,161,90,.28);background:#fff;border:1px solid var(--border)}
 .export-sector{border-left:4px solid var(--gold);background:linear-gradient(135deg,#fff,#fbf8f1);padding:14px;border-radius:15px;border:1px solid var(--border);margin-bottom:12px}
+
+/* ===== Accents de couleur par page — casse le mono-doré/marine, une identité par section ===== */
+#page-checklist .card-head .label{border-left:4px solid var(--blue);padding-left:10px}
+#page-products .card-head .label{border-left:4px solid var(--purple);padding-left:10px}
+#page-locals .card-head .label{border-left:4px solid var(--teal);padding-left:10px}
+#page-stadium .card-head .label{border-left:4px solid var(--orange);padding-left:10px}
+#page-cdc .card-head .label{border-left:4px solid var(--green);padding-left:10px}
+#page-restes .card-head .label{border-left:4px solid var(--red);padding-left:10px}
+#page-checklist .ph h1,#page-checklist h1{color:var(--blue)}
+#page-products .ph h1{color:var(--purple)}
+#page-locals .ph h1{color:var(--teal)}
+#page-stadium .ph h1{color:var(--orange)}
+#page-cdc .ph h1{color:var(--green)}
+#page-restes .ph h1{color:var(--red)}
+
+/* ===== Saisie quantité + unité (kg / portion / unité) ===== */
+.qty-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:stretch}
+.qty-input{flex:1;min-width:120px}
+.unit-toggle{display:flex;border:2px solid var(--border2);border-radius:11px;overflow:hidden;background:var(--bg3)}
+.unit-btn{padding:0 13px;background:transparent;border:0;font-weight:800;font-size:11.5px;color:var(--muted);cursor:pointer;letter-spacing:.2px}
+.unit-btn.active{background:var(--teal);color:#fff}
+.family-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;color:var(--teal);background:rgba(15,185,177,.12);border:1px solid rgba(15,185,177,.35);border-radius:8px;padding:3px 8px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;background:rgba(255,255,255,.6)}
+.stat-row .stat-vals{display:flex;gap:6px;flex-wrap:wrap}
+.stat-pill{font-family:var(--mono);font-size:11px;font-weight:800;background:var(--bg4);border-radius:8px;padding:3px 8px}
 .export-sector h3{font-size:15px;color:var(--text);margin-bottom:6px}
 .export-sector p{font-size:12px;color:var(--muted);line-height:1.5}
 
@@ -237,13 +262,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=11" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=12" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=11" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V11</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=12" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -547,6 +572,8 @@ function renderCdc(){
   });
   $('page-cdc').innerHTML=html;
 }
+const LEFTOVER_FAMILIES=['Pain & céréales','Viande - volaille - poissons - oeufs','Laitages','Fruits & légumes','Boissons chaudes','Boissons froides','Condiments & assaisonnements','Desserts & sucré','Autre'];
+let extraUnitSelected='kg';
 function ensureLeftoverMoment(a,moment){
   if(!a.leftovers) a.leftovers={};
   let m=a.leftovers[moment];
@@ -557,33 +584,53 @@ function ensureLeftoverMoment(a,moment){
 }
 function selectRestesMoment(id){ restesActiveMoment=id; renderRestes(); }
 function parseLeadingNumber(s){ if(!s)return NaN; let m=String(s).replace(',','.').match(/-?\d+(\.\d+)?/); return m?parseFloat(m[0]):NaN; }
-function leftoverPctFromRef(qRef,qtyLeftText){ let servedNum=parseLeadingNumber(qRef); let leftNum=parseLeadingNumber(qtyLeftText); if(isNaN(servedNum)||servedNum<=0||isNaN(leftNum))return null; return Math.round((leftNum/servedNum)*100); }
-function setLeftoverRef(k,field,val){ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyLeft:'',remark:'',photos:[]}; lm.refItems[k][field]=val; save(); renderRestes(); }
-function openCameraForLeftoverRef(k){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyLeft:'',remark:'',photos:[]}; lm.refItems[k].photos.push({src:d,at:nowText()}); save(); renderRestes(); }) }
-function importForLeftoverRef(k){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyLeft:'',remark:'',photos:[]}; lm.refItems[k].photos.push({src:d,at:nowText()}); save(); renderRestes(); }) }
+function unitLabel(u){ return u==='kg'?'kg':(u==='unite'?'unité':'portion'); }
+function setLeftoverRef(k,field,val){ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyValue:'',qtyUnit:'portion',remark:'',photos:[]}; lm.refItems[k][field]=val; save(); renderRestes(); }
+function openCameraForLeftoverRef(k){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyValue:'',qtyUnit:'portion',remark:'',photos:[]}; lm.refItems[k].photos.push({src:d,at:nowText()}); save(); renderRestes(); }) }
+function importForLeftoverRef(k){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); if(!lm.refItems[k])lm.refItems[k]={qtyValue:'',qtyUnit:'portion',remark:'',photos:[]}; lm.refItems[k].photos.push({src:d,at:nowText()}); save(); renderRestes(); }) }
 function removeLeftoverRefPhoto(k,i){ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); lm.refItems[k].photos.splice(i,1); save(); renderRestes(); }
+function selectExtraUnit(u){ extraUnitSelected=u; renderRestes(); }
 function addLeftoverExtra(){
   let a=ensureAudit(); if(!a)return;
   let item=($('rst_item')?.value||'').trim();
   if(!item){toast('Nom du produit requis'); return}
   let lm=ensureLeftoverMoment(a,restesActiveMoment);
-  lm.extra.push({id:uid(),item,qtyServed:$('rst_qs').value,qtyLeft:$('rst_ql').value,remark:$('rst_remark').value,photos:[]});
+  lm.extra.push({id:uid(),item,family:$('rst_family').value,qtyServed:$('rst_qs').value,qtyValue:$('rst_ql').value,qtyUnit:extraUnitSelected,remark:$('rst_remark').value,photos:[]});
+  extraUnitSelected='kg';
   save(); renderRestes(); toast('Produit hors cahier ajouté');
 }
 function delLeftoverExtra(id){ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); lm.extra=lm.extra.filter(l=>l.id!==id); save(); renderRestes(); }
 function openCameraForLeftoverExtra(id){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); let l=lm.extra.find(x=>x.id===id); if(l){l.photos=l.photos||[]; l.photos.push({src:d,at:nowText()});} save(); renderRestes(); }) }
 function importForLeftoverExtra(id){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); let l=lm.extra.find(x=>x.id===id); if(l){l.photos=l.photos||[]; l.photos.push({src:d,at:nowText()});} save(); renderRestes(); }) }
 function removeLeftoverExtraPhoto(id,i){ let a=ensureAudit(); if(!a)return; let lm=ensureLeftoverMoment(a,restesActiveMoment); let l=lm.extra.find(x=>x.id===id); if(l) l.photos.splice(i,1); save(); renderRestes(); }
-function leftoverPct(l){
-  let qs=parseFloat(String(l.qtyServed||'').replace(',','.'));
-  let ql=parseFloat(String(l.qtyLeft||'').replace(',','.'));
-  if(isNaN(qs)||qs<=0||isNaN(ql)) return null;
-  return Math.round((ql/qs)*100);
+function leftoverStatsByFamily(a){
+  let cdc=ensureCdc(a); let stats={};
+  function addTo(family,unit,value){
+    if(!family) family='Autre';
+    let n=parseFloat(String(value).replace(',','.'));
+    if(isNaN(n)||n<=0) return;
+    if(!stats[family]) stats[family]={kg:0,portion:0,unite:0,count:0};
+    stats[family][unit==='kg'?'kg':(unit==='unite'?'unite':'portion')]+=n;
+    stats[family].count++;
+  }
+  CDC_MOMENTS.forEach(m=>{
+    let lm=ensureLeftoverMoment(a,m.id);
+    let ref=cdc.reference && cdc.reference[m.id];
+    if(ref){ ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{ let k=cdcItemKey(m.id,bi,ii); let v=lm.refItems[k]; if(v&&v.qtyValue) addTo(b.title,v.qtyUnit||'portion',v.qtyValue); })); }
+    lm.extra.forEach(l=>{ if(l.qtyValue) addTo(l.family||'Autre',l.qtyUnit||'kg',l.qtyValue); });
+  });
+  return stats;
 }
-function leftoverBadge(pct){ if(pct===null) return ''; let cls=pct<10?'b-ok':(pct<30?'b-rep':'b-ko'); return `<span class="badge ${cls}">${pct}% restant</span>`; }
+function addLeftoverActionForFamily(family){
+  let a=ensureAudit(); if(!a)return;
+  let s=leftoverStatsByFamily(a)[family]||{kg:0,portion:0,unite:0};
+  let parts=[]; if(s.kg>0)parts.push(s.kg.toFixed(1)+' kg'); if(s.portion>0)parts.push(Math.round(s.portion)+' portions'); if(s.unite>0)parts.push(Math.round(s.unite)+' unités');
+  a.actions.unshift({priority:'Moyenne',owner:'Hôtel / Cuisine',due:'',text:`Ajuster les quantités préparées — famille "${family}" : reste constaté ${parts.join(', ')||'non précisé'}. Revoir le dimensionnement du service ou la recette.`,done:false,at:nowText()});
+  save(); renderActions(); renderRestes(); toast('Ajouté au plan d’actions correctives');
+}
 function renderRestes(){
   let a=current();
-  let html=`<div class="ph"><div><h1>Restes après service</h1><div class="sub">Lignes pré-remplies depuis le cahier des charges — indique juste la quantité restante</div></div></div>`;
+  let html=`<div class="ph"><div><h1>Restes après service</h1><div class="sub">Lignes pré-remplies depuis le cahier des charges — quantité + unité seulement</div></div></div>`;
   if(!a){ $('page-restes').innerHTML=html+'<div class="empty">Créer un audit avant de renseigner les restes.</div>'; return }
   let cdc=ensureCdc(a);
   html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${restesActiveMoment===m.id?'active':''}" onclick="selectRestesMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
@@ -593,19 +640,23 @@ function renderRestes(){
     html+=`<div class="empty" style="margin-top:12px" id="cdcStatus">Chargement du cahier des charges...</div>`;
     if(!cdcFetchInFlight && !cdc.reference){ cdcFetchInFlight=true; fetchCdcReference().finally(()=>cdcFetchInFlight=false); }
   } else {
-    html+=`<div class="card" style="margin-top:12px"><div class="card-head"><div class="label">${esc(ref.title)}</div></div></div>`;
     ref.blocks.forEach((b,bi)=>{
       html+=`<div class="card"><div class="card-head"><div class="label">${esc(b.title)}</div></div>`;
       b.items.forEach((it,ii)=>{
         let k=cdcItemKey(restesActiveMoment,bi,ii);
-        let v=lm.refItems[k]||{qtyLeft:'',remark:'',photos:[]};
-        let pct=leftoverPctFromRef(it.q,v.qtyLeft);
-        html+=`<div class="audit-item"><div class="audit-title">${esc(it.l)} <span style="color:var(--gold);font-weight:900">· disposé ${esc(it.q)}</span> ${leftoverBadge(pct)}</div><div class="row" style="margin-top:8px"><input class="fc" placeholder="Quantité restante" value="${esc(v.qtyLeft)}" onchange="setLeftoverRef('${k}','qtyLeft',this.value)"><input class="fc" placeholder="Remarque" value="${esc(v.remark)}" onchange="setLeftoverRef('${k}','remark',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverRef('${k}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForLeftoverRef('${k}')">📁 Importer</button></div>${photoStrip(v.photos||[],`removeLeftoverRefPhoto('${k}',IDX)`)}</div>`;
+        let v=lm.refItems[k]||{qtyValue:'',qtyUnit:'portion',remark:'',photos:[]};
+        let u=v.qtyUnit||'portion';
+        html+=`<div class="audit-item"><div class="audit-title">${esc(it.l)} <span style="color:var(--gold);font-weight:900">· disposé ${esc(it.q)}</span></div><div class="qty-row"><input class="fc qty-input" type="number" step="any" inputmode="decimal" placeholder="Quantité restante" value="${esc(v.qtyValue)}" onchange="setLeftoverRef('${k}','qtyValue',this.value)"><div class="unit-toggle"><button class="unit-btn ${u==='kg'?'active':''}" onclick="setLeftoverRef('${k}','qtyUnit','kg')">kg</button><button class="unit-btn ${u==='portion'?'active':''}" onclick="setLeftoverRef('${k}','qtyUnit','portion')">portion</button><button class="unit-btn ${u==='unite'?'active':''}" onclick="setLeftoverRef('${k}','qtyUnit','unite')">unité</button></div></div><input class="fc" style="margin-top:8px" placeholder="Remarque" value="${esc(v.remark)}" onchange="setLeftoverRef('${k}','remark',this.value)"><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverRef('${k}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForLeftoverRef('${k}')">📁 Importer</button></div>${photoStrip(v.photos||[],`removeLeftoverRefPhoto('${k}',IDX)`)}</div>`;
       });
       html+=`</div>`;
     });
   }
-  html+=`<div class="card"><div class="card-head"><div class="label">Produit hors cahier (optionnel)</div></div><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="rst_item" class="fc" placeholder="Ex : Saumon fumé"></div><div class="fg"><label class="fl">Qté mise à disposition</label><input id="rst_qs" class="fc" placeholder="Ex : 20 tranches"></div><div class="fg"><label class="fl">Qté restante</label><input id="rst_ql" class="fc" placeholder="Ex : 4 tranches"></div></div><div class="fg"><label class="fl">Remarque</label><input id="rst_remark" class="fc" placeholder="Observation, cause probable..."></div><button class="btn btn-gold btn-full" onclick="addLeftoverExtra()">+ Ajouter</button><div class="list" style="margin-top:12px">${lm.extra.length?lm.extra.map(l=>{let pct=leftoverPct(l); return `<div class="li"><div class="thumb">🍽️</div><div><h3>${esc(l.item)}</h3><p>Disposé : ${esc(l.qtyServed)||'-'} · Restant : ${esc(l.qtyLeft)||'-'} ${leftoverBadge(pct)}</p>${l.remark?`<p>${esc(l.remark)}</p>`:''}</div><div class="actions"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverExtra('${l.id}')">📷</button><button class="btn btn-sm btn-red" onclick="delLeftoverExtra('${l.id}')">Suppr.</button></div></div>${photoStrip(l.photos||[],`removeLeftoverExtraPhoto('${l.id}',IDX)`)}`}).join(''):'<div class="empty">Aucun produit hors cahier</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Produit hors cahier (optionnel)</div></div><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="rst_item" class="fc" placeholder="Ex : Saumon fumé"></div><div class="fg"><label class="fl">Famille</label><select id="rst_family" class="fc">${LEFTOVER_FAMILIES.map(f=>`<option>${f}</option>`).join('')}</select></div><div class="fg"><label class="fl">Qté disposée (info)</label><input id="rst_qs" class="fc" placeholder="Ex : 20 tranches"></div></div><div class="qty-row"><input id="rst_ql" class="fc qty-input" type="number" step="any" inputmode="decimal" placeholder="Quantité restante"><div class="unit-toggle">${['kg','portion','unite'].map(u=>`<button class="unit-btn ${extraUnitSelected===u?'active':''}" onclick="selectExtraUnit('${u}')">${unitLabel(u)}</button>`).join('')}</div></div><div class="fg" style="margin-top:8px"><label class="fl">Remarque</label><input id="rst_remark" class="fc" placeholder="Observation, cause probable..."></div><button class="btn btn-gold btn-full" style="margin-top:6px" onclick="addLeftoverExtra()">+ Ajouter</button><div class="list" style="margin-top:12px">${lm.extra.length?lm.extra.map(l=>`<div class="li"><div class="thumb">🍽️</div><div><h3>${esc(l.item)} <span class="family-tag">${esc(l.family||'Autre')}</span></h3><p>Disposé : ${esc(l.qtyServed)||'-'} · Restant : ${esc(l.qtyValue)||'-'} ${unitLabel(l.qtyUnit)}</p>${l.remark?`<p>${esc(l.remark)}</p>`:''}</div><div class="actions"><button class="btn btn-sm btn-blue" onclick="openCameraForLeftoverExtra('${l.id}')">📷</button><button class="btn btn-sm btn-red" onclick="delLeftoverExtra('${l.id}')">Suppr.</button></div></div>${photoStrip(l.photos||[],`removeLeftoverExtraPhoto('${l.id}',IDX)`)}`).join(''):'<div class="empty">Aucun produit hors cahier</div>'}</div></div>`;
+  let stats=leftoverStatsByFamily(a);
+  let families=Object.keys(stats).sort((x,y)=>stats[y].kg-stats[x].kg);
+  html+=`<div class="card"><div class="card-head"><div class="label">📊 Statistiques par famille (tous moments)</div></div>`;
+  html+= families.length? families.map(f=>{ let s=stats[f]; return `<div class="stat-row"><div><b>${esc(f)}</b><div class="stat-vals" style="margin-top:4px">${s.kg>0?`<span class="stat-pill">${s.kg.toFixed(1)} kg</span>`:''}${s.portion>0?`<span class="stat-pill">${Math.round(s.portion)} portions</span>`:''}${s.unite>0?`<span class="stat-pill">${Math.round(s.unite)} unités</span>`:''}</div></div><button class="btn btn-sm btn-gold" onclick="addLeftoverActionForFamily('${f}')">🎯 Plan d’action</button></div>`; }).join('') : '<div class="empty">Aucune donnée pour l’instant — renseigne des quantités restantes ci-dessus.</div>';
+  html+=`</div>`;
   $('page-restes').innerHTML=html;
 }
 function renderActions(){let a=current(); let html=`<div class="ph"><div><h1>Actions correctives</h1><div class="sub">Points à traiter avec hôtel / prestataire / nutrition</div></div></div>`; if(!a){$('page-actions').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter une action.</div>`;return} html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Priorité</label><select id="ac_prio" class="fc"><option>Haute</option><option>Moyenne</option><option>Basse</option></select></div><div class="fg"><label class="fl">Responsable</label><input id="ac_owner" class="fc" placeholder="Hôtel / API / Nutri"></div><div class="fg"><label class="fl">Échéance</label><input id="ac_due" type="date" class="fc"></div></div><div class="fg"><label class="fl">Action demandée</label><textarea id="ac_text" class="fc" placeholder="Ex : fournir origine protéines, remplacer produit, revoir stockage brut/préparé..."></textarea></div><button class="btn btn-gold" onclick="addAction()">+ Ajouter action</button></div><div class="list">${a.actions.length?a.actions.map((x,i)=>`<div class="li"><div class="thumb">⚠️</div><div><h3>${esc(x.priority)} · ${x.done?'Réalisée':'Ouverte'}</h3><p>${esc(x.text)} · ${esc(x.owner)} · ${x.due||'Sans date'}</p></div><div class="actions"><button class="btn btn-sm btn-green" onclick="toggleAction(${i})">${x.done?'Rouvrir':'OK'}</button><button class="btn btn-sm btn-red" onclick="delAction(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune action corrective</div>'}</div>`; $('page-actions').innerHTML=html;}
@@ -834,21 +885,29 @@ function exportRestesPDF(){
     let lm=ensureLeftoverMoment(a,m.id);
     let ref=cdc.reference && cdc.reference[m.id];
     let rows=[];
-    if(ref){ ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{ let k=cdcItemKey(m.id,bi,ii); let v=lm.refItems[k]; if(v && v.qtyLeft){ let pct=leftoverPctFromRef(it.q,v.qtyLeft); rows.push([it.l,it.q,v.qtyLeft,pct===null?'-':pct+'%',v.remark||'-']); } })); }
-    lm.extra.forEach(l=>{ let pct=leftoverPct(l); rows.push([l.item,l.qtyServed||'-',l.qtyLeft||'-',pct===null?'-':pct+'%',l.remark||'-']); });
+    if(ref){ ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{ let k=cdcItemKey(m.id,bi,ii); let v=lm.refItems[k]; if(v && v.qtyValue){ rows.push([it.l,b.title,it.q,`${v.qtyValue} ${unitLabel(v.qtyUnit)}`,v.remark||'-']); } })); }
+    lm.extra.forEach(l=>{ if(l.qtyValue){ rows.push([l.item,l.family||'Autre',l.qtyServed||'-',`${l.qtyValue} ${unitLabel(l.qtyUnit)}`,l.remark||'-']); } });
     if(rows.length){ rowsByMoment[m.id]=rows; hasAny=true; }
   });
   if(!hasAny){toast('Aucun reste enregistré');return}
   const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4'); let y=34;
   addHeader(doc,a,'Restes après service');
   doc.setFontSize(16);doc.setFont(undefined,'bold');doc.text(a.hotel||'Hôtel',12,y); y+=8;
-  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10); y+=4;
+  doc.setFont(undefined,'normal'); y=text(doc,`${a.destination||'-'} · ${a.date||'-'} · ${a.match||'-'}`,12,y,180,10); y+=6;
+
+  let stats=leftoverStatsByFamily(a);
+  let families=Object.keys(stats).sort((x,y2)=>stats[y2].kg-stats[x].kg);
+  doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Statistiques par famille (tous moments)',12,y); y+=5;
+  y=drawTableHeader(doc,['Famille','Kg','Portions','Unités','Lignes'],12,y,[76,30,30,30,20]);
+  families.forEach((f,i)=>{ if(y>268){doc.addPage();addHeader(doc,a,'Restes après service');y=34; y=drawTableHeader(doc,['Famille','Kg','Portions','Unités','Lignes'],12,y,[76,30,30,30,20]);} let s=stats[f]; y=drawTableRow(doc,[f,s.kg>0?s.kg.toFixed(1):'-',s.portion>0?Math.round(s.portion):'-',s.unite>0?Math.round(s.unite):'-',s.count],12,y,[76,30,30,30,20],i%2); });
+  y+=8;
+
   CDC_MOMENTS.forEach(m=>{
     let rows=rowsByMoment[m.id]; if(!rows)return;
     if(y>235){doc.addPage();addHeader(doc,a,'Restes après service');y=34}
     doc.setFillColor(197,161,90);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(m.label,14,y+5.5);doc.setTextColor(0,0,0); y+=10;
-    y=drawTableHeader(doc,['Produit','Disposé','Restant','% restant','Remarque'],12,y,[54,32,32,26,42]);
-    rows.forEach((r,i)=>{ if(y>268){doc.addPage();addHeader(doc,a,m.label);y=34; y=drawTableHeader(doc,['Produit','Disposé','Restant','% restant','Remarque'],12,y,[54,32,32,26,42]);} y=drawTableRow(doc,r,12,y,[54,32,32,26,42],i%2); });
+    y=drawTableHeader(doc,['Produit','Famille','Disposé','Restant','Remarque'],12,y,[46,42,30,30,36]);
+    rows.forEach((r,i)=>{ if(y>268){doc.addPage();addHeader(doc,a,m.label);y=34; y=drawTableHeader(doc,['Produit','Famille','Disposé','Restant','Remarque'],12,y,[46,42,30,30,36]);} y=drawTableRow(doc,r,12,y,[46,42,30,30,36],i%2); });
     y+=6;
   });
   finalizePdf(doc); doc.save(filename('restes_apres_service',a));
@@ -884,7 +943,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=11').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=12').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
