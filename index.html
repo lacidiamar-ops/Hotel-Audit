@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V5</title>
-<link rel="manifest" href="/manifest.webmanifest?v=5">
+<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V6</title>
+<link rel="manifest" href="/manifest.webmanifest?v=6">
 <meta name="theme-color" content="#161a24">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=5">
+<link rel="apple-touch-icon" href="/icon192.png?v=6">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -39,7 +39,7 @@
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><div class="logo">API</div><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V5</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><div class="logo">API</div><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V6</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -117,7 +117,7 @@ $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 function toast(msg){let d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
 function current(){return state.audits.find(a=>a.id===state.currentId)||null}
 function ensureAudit(){let a=current(); if(!a){toast('Créer ou sélectionner un audit avant de renseigner.'); showPage('audit'); return null} return a}
-function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:''},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
+function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:'',devis:{reference:'',date:'',fournisseur:'',lines:[]}},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
 function newAuditQuick(){newAudit();}
 function duplicateAudit(id){
   let src=state.audits.find(a=>a.id===id); if(!src)return;
@@ -127,14 +127,16 @@ function duplicateAudit(id){
   copy.products=[]; copy.locals=[];
   if(copy.stadium){
     Object.keys(copy.stadium.items||{}).forEach(k=>{copy.stadium.items[k]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]}});
-    copy.stadium.products=[]; copy.stadium.locals=[];
+    copy.stadium.products=[]; copy.stadium.locals=[]; copy.stadium.devis={reference:'',date:'',fournisseur:'',lines:[]};
   }
   state.audits.unshift(copy); state.currentId=copy.id; save(); renderAll(); showPage('audit');
   toast('Audit dupliqué : hôtel/contacts repris, checklist remise à zéro pour ce nouveau déplacement');
 }
 function deleteAudit(id){if(!confirm('Supprimer cet audit ?'))return; state.audits=state.audits.filter(a=>a.id!==id); if(state.currentId===id)state.currentId=state.audits[0]?.id||null; save(); renderAll();}
 function selectAudit(id){state.currentId=id; save(); renderAll(); showPage('dashboard');}
-function updateAudit(field,val){let a=ensureAudit(); if(!a)return; a[field]=val; save(); renderHeader();}
+let geoDebounceTimer=null;
+function scheduleGeocode(){clearTimeout(geoDebounceTimer); geoDebounceTimer=setTimeout(()=>geocodeHotel(),900);}
+function updateAudit(field,val){let a=ensureAudit(); if(!a)return; a[field]=val; save(); renderHeader(); if(['hotel','address','destination'].includes(field))scheduleGeocode();}
 function completion(a){let total=0,done=0,ko=0,rep=0; Object.values(a.items||{}).forEach(i=>{total++; if(i.status)done++; if(i.status==='non conforme')ko++; if(i.status==='à remplacer')rep++;}); return {total,done,ko,rep,score:total?Math.round(done/total*100):0}}
 function renderHeader(){let a=current(); $('currentAuditName').textContent=a?(a.hotel||'Audit hôtel sans nom'):'Aucun audit sélectionné'; $('currentAuditMeta').textContent=a?`${a.destination||'Destination'} · ${a.date||''}`:'Créer ou choisir un déplacement'; $('topTitle').textContent=a?(a.hotel||'Audit Hôtel Pro'):'Audit Hôtel Pro';}
 function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); renderAudit(); renderChecklist(); renderProducts(); renderLocals(); renderStadium(); renderActions(); renderExports();}
@@ -143,7 +145,47 @@ document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dat
 function toggleSide(){ $('side').classList.toggle('open') }
 function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; let usedMB=storageUsageMB(); if(usedMB>3.5){html+=`<div class="warn">⚠️ Stockage local à ${usedMB.toFixed(1)} Mo (limite navigateur ≈5 Mo). Exporte tes PDF puis supprime les audits terminés depuis l'historique pour libérer de la place.</div>`} if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4"><div class="kpi gold"><div class="v">${c.score}%</div><div class="l">Audit renseigné</div></div><div class="kpi green"><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi blue"><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi red"><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div></div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="badge b-ok">${a.date||today()}</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="row3" style="margin-top:14px"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
  html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map(x=>{let c=completion(x);return `<div class="li"><div class="thumb">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · ${c.score}% renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-blue" onclick="duplicateAudit('${x.id}')">Dupliquer</button><button class="btn btn-sm btn-red" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
-function renderAudit(){let a=current(); let html=`<div class="ph"><div><h1>Déplacement / Hôtel</h1><div class="sub">Créer le contexte de l’audit qualité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouveau</button></div>`; if(!a){html+=`<div class="empty">Clique sur “Nouveau” pour démarrer.</div>`} else html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Date</label><input class="fc" type="date" value="${a.date||''}" onchange="updateAudit('date',this.value)"></div><div class="fg"><label class="fl">Destination</label><input class="fc" value="${esc(a.destination)}" placeholder="Ex : Rennes, Bruges, Lorient" onchange="updateAudit('destination',this.value)"></div></div><div class="row"><div class="fg"><label class="fl">Hôtel / prestataire</label><input class="fc" value="${esc(a.hotel)}" placeholder="Nom de l’hôtel" onchange="updateAudit('hotel',this.value)"></div><div class="fg"><label class="fl">Match / déplacement</label><input class="fc" value="${esc(a.match)}" placeholder="Ex : OM vs ..." onchange="updateAudit('match',this.value)"></div></div><div class="fg"><label class="fl">Adresse / contact hôtel</label><input class="fc" value="${esc(a.address)}" placeholder="Adresse, chef, contact opérationnel" onchange="updateAudit('address',this.value)"></div><div class="row"><div class="fg"><label class="fl">Auditeur</label><input class="fc" value="${esc(a.auditor)}" onchange="updateAudit('auditor',this.value)"></div><div class="fg"><label class="fl">Chef / interlocuteur hôtel</label><input class="fc" value="${esc(a.chefHotel)}" onchange="updateAudit('chefHotel',this.value)"></div></div><div class="fg"><label class="fl">Type de prestation</label><input class="fc" value="${esc(a.mealType)}" onchange="updateAudit('mealType',this.value)"></div><div class="fg"><label class="fl">Tour d’horizon / note générale</label><textarea class="fc" placeholder="Impression globale, niveau de qualité, points forts, vigilance..." onchange="updateAudit('notes',this.value)">${esc(a.notes)}</textarea></div></div>`; $('page-audit').innerHTML=html;}
+async function geocodeHotel(){
+  let a=ensureAudit(); if(!a)return;
+  let query=[a.hotel,a.address,a.destination].filter(Boolean).join(', ');
+  if(query.trim().length<4)return;
+  let statusEl=$('geoStatus'); if(statusEl)statusEl.textContent='Recherche de la localisation...';
+  try{
+    let res=await fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q='+encodeURIComponent(query));
+    let data=await res.json();
+    if(!data||!data.length){ if(statusEl)statusEl.textContent='Localisation introuvable — vérifie l’adresse.'; return }
+    let lat=parseFloat(data[0].lat), lon=parseFloat(data[0].lon), displayName=data[0].display_name;
+    let mapUrl=`https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lon}&zoom=16&size=560x300&maptype=mapnik&markers=${lat},${lon},lightblue1`;
+    let mapImage=null;
+    try{
+      let imgRes=await fetch(mapUrl);
+      let blob=await imgRes.blob();
+      mapImage=await new Promise(resolve=>{let r=new FileReader(); r.onload=()=>resolve(r.result); r.onerror=()=>resolve(null); r.readAsDataURL(blob)});
+    }catch(e){mapImage=null}
+    a.geo={lat,lon,displayName,mapUrl,mapImage,updatedAt:nowText()};
+    save(); renderAudit(); toast('Localisation trouvée');
+  }catch(e){
+    if(statusEl)statusEl.textContent='Localisation indisponible (hors-ligne ou service inaccessible).';
+  }
+}
+function locationCardHtml(a){
+  if(!a)return '';
+  let html=`<div class="card"><div class="card-head"><div class="label">Fiche de localisation</div><button class="btn btn-sm btn-blue" onclick="geocodeHotel()">📍 Localiser</button></div>`;
+  if(a.geo){
+    html+=`<img src="${a.geo.mapUrl}" style="width:100%;border-radius:12px;border:1px solid var(--border);margin-bottom:10px" onerror="this.style.display='none'">
+    <p style="font-size:12px;color:var(--muted);line-height:1.5">${esc(a.geo.displayName)}<br>GPS : ${a.geo.lat.toFixed(5)}, ${a.geo.lon.toFixed(5)} · maj ${a.geo.updatedAt}</p>
+    <div class="row3" style="margin-top:10px">
+      <a class="btn btn-sec btn-full" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${a.geo.lat},${a.geo.lon}">Google Maps</a>
+      <a class="btn btn-sec btn-full" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${a.geo.lat},${a.geo.lon}&navigate=yes">Waze</a>
+      <a class="btn btn-sec btn-full" style="text-decoration:none;text-align:center" target="_blank" rel="noopener" href="https://maps.apple.com/?ll=${a.geo.lat},${a.geo.lon}">Plans</a>
+    </div>`;
+  }else{
+    html+=`<p id="geoStatus" style="font-size:12px;color:var(--dim)">Renseigne l’hôtel + l’adresse : la localisation se génère automatiquement (ou clique sur "Localiser").</p>`;
+  }
+  html+=`</div>`;
+  return html;
+}
+function renderAudit(){let a=current(); let html=`<div class="ph"><div><h1>Déplacement / Hôtel</h1><div class="sub">Créer le contexte de l’audit qualité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouveau</button></div>`; if(!a){html+=`<div class="empty">Clique sur “Nouveau” pour démarrer.</div>`} else html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Date</label><input class="fc" type="date" value="${a.date||''}" onchange="updateAudit('date',this.value)"></div><div class="fg"><label class="fl">Destination</label><input class="fc" value="${esc(a.destination)}" placeholder="Ex : Rennes, Bruges, Lorient" onchange="updateAudit('destination',this.value)"></div></div><div class="row"><div class="fg"><label class="fl">Hôtel / prestataire</label><input class="fc" value="${esc(a.hotel)}" placeholder="Nom de l’hôtel" onchange="updateAudit('hotel',this.value)"></div><div class="fg"><label class="fl">Match / déplacement</label><input class="fc" value="${esc(a.match)}" placeholder="Ex : OM vs ..." onchange="updateAudit('match',this.value)"></div></div><div class="fg"><label class="fl">Adresse / contact hôtel</label><input class="fc" value="${esc(a.address)}" placeholder="Adresse, chef, contact opérationnel" onchange="updateAudit('address',this.value)"></div><div class="row"><div class="fg"><label class="fl">Auditeur</label><input class="fc" value="${esc(a.auditor)}" onchange="updateAudit('auditor',this.value)"></div><div class="fg"><label class="fl">Chef / interlocuteur hôtel</label><input class="fc" value="${esc(a.chefHotel)}" onchange="updateAudit('chefHotel',this.value)"></div></div><div class="fg"><label class="fl">Type de prestation</label><input class="fc" value="${esc(a.mealType)}" onchange="updateAudit('mealType',this.value)"></div><div class="fg"><label class="fl">Tour d’horizon / note générale</label><textarea class="fc" placeholder="Impression globale, niveau de qualité, points forts, vigilance..." onchange="updateAudit('notes',this.value)">${esc(a.notes)}</textarea></div></div>`; html+=locationCardHtml(a); $('page-audit').innerHTML=html;}
 function renderChecklist(){let a=current(); let html=`<div class="ph"><div><h1>Audit PMS</h1><div class="sub">Hygiène · traçabilité · cahier des charges · produits</div></div></div>`; if(!a){$('page-checklist').innerHTML=html+`<div class="empty">Créer un audit avant de renseigner le PMS.</div>`;return} CHECK_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div><button class="btn btn-sm btn-green" onclick="setAllSection('${sec.name}','conforme',false)">✅ Tout conforme</button></div>`; sec.items.forEach(it=>{let v=a.items[it]||{status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / cuisson" value="${esc(v.temp||v.cooking||'')}" onchange="setItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / agrément / action" value="${esc(v.remarks||'')}" onchange="setItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setItem('${key(it)}','notify',this.checked)"> À communiquer nutrition</label></div>${photoStrip(v.photos||[],`removeItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`}); $('page-checklist').innerHTML=html;}
 function setAllSection(sectionName,status,isStadium){
   let a=ensureAudit(); if(!a)return;
@@ -175,12 +217,32 @@ function renderLocals(){let a=current(); let html=`<div class="ph"><div><h1>Loca
 function saveLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.locals.unshift({zone:$('l_zone').value,status:$('l_status').value,comment:$('l_comment').value,photo,at:nowText()}); save(); renderLocals(); renderDashboard(); toast('Contrôle locaux enregistré');}
 function delLocal(i){let a=ensureAudit(); a.locals.splice(i,1); save(); renderLocals(); renderDashboard();}
 
+function ensureDevis(a){if(!a.stadium.devis)a.stadium.devis={reference:'',date:'',fournisseur:'',lines:[]}; return a.stadium.devis}
+function updateDevisField(field,val){let a=ensureAudit(); if(!a)return; let d=ensureDevis(a); d[field]=val; save();}
+function addDevisLine(){let a=ensureAudit(); if(!a)return; let d=ensureDevis(a); let name=($('dv_name').value||'').trim(); if(!name){toast('Nom du produit requis');return} d.lines.push({id:uid(),name,qty:$('dv_qty').value,unit:$('dv_unit').value}); $('dv_name').value=''; $('dv_qty').value=''; $('dv_unit').value=''; save(); renderStadium(); toast('Ligne ajoutée au devis');}
+function delDevisLine(id){let a=ensureAudit(); if(!a||!a.stadium.devis)return; a.stadium.devis.lines=a.stadium.devis.lines.filter(l=>l.id!==id); save(); renderStadium();}
+function normName(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();}
+function compareDevisReception(a){
+  let lines=a.stadium?.devis?.lines||[]; let received=a.stadium?.products||[]; let used=new Set();
+  let rows=lines.map(dl=>{
+    let idx=received.findIndex((r,i)=>!used.has(i)&&normName(r.name)===normName(dl.name));
+    if(idx===-1) return {name:dl.name,qtyPrevu:dl.qty,unit:dl.unit,qtyRecu:'-',status:'Manquant'};
+    used.add(idx); let r=received[idx];
+    let qp=parseFloat(dl.qty), qr=parseFloat(r.qty);
+    let status = (!isNaN(qp)&&!isNaN(qr)) ? (Math.abs(qp-qr)<0.001?'Conforme':(qr<qp?'Manque partiel':'Surplus')) : 'Reçu (qté à vérifier)';
+    return {name:dl.name,qtyPrevu:dl.qty,unit:dl.unit,qtyRecu:r.qty||'-',status};
+  });
+  received.forEach((r,i)=>{ if(!used.has(i)) rows.push({name:r.name,qtyPrevu:'-',unit:'',qtyRecu:r.qty||'-',status:'Non prévu au devis'}); });
+  return rows;
+}
+function devisBadgeClass(status){ if(status==='Conforme')return 'b-ok'; if(status==='Manquant'||status==='Manque partiel')return 'b-ko'; if(status==='Non prévu au devis')return 'b-rep'; return 'b-nc'; }
 function migrateAuditData(){
   state.audits.forEach(a=>{
     if(!a.stadium) a.stadium={items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:''};
     if(!a.stadium.items) a.stadium.items={};
     if(!a.stadium.products) a.stadium.products=[];
     if(!a.stadium.locals) a.stadium.locals=[];
+    if(!a.stadium.devis) a.stadium.devis={reference:'',date:'',fournisseur:'',lines:[]};
     STADIUM_SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(!a.stadium.items[it]) a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};}));
   });
 }
@@ -191,6 +253,9 @@ function renderStadium(){
   html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Traiteur / prestataire stade</label><input class="fc" value="${esc(st.provider||'')}" placeholder="Ex : Metsens" onchange="updateStadium('provider',this.value)"></div><div class="fg"><label class="fl">Contact opérationnel</label><input class="fc" value="${esc(st.contact||'')}" placeholder="Nom / téléphone" onchange="updateStadium('contact',this.value)"></div><div class="fg"><label class="fl">Heure livraison stade</label><input class="fc" value="${esc(st.deliveryTime||'')}" placeholder="Ex : 70e minute / 23h30" onchange="updateStadium('deliveryTime',this.value)"></div></div><div class="fg"><label class="fl">Note générale traiteur stade</label><textarea class="fc" placeholder="Qualité globale, respect menu, remarques vestiaire, retours joueurs/staff..." onchange="updateStadium('notes',this.value)">${esc(st.notes||'')}</textarea></div></div>`;
   STADIUM_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div><button class="btn btn-sm btn-green" onclick="setAllSection('${sec.name}','conforme',true)">✅ Tout conforme</button></div>`; sec.items.forEach(it=>{let v=st.items[it]||{status:'',temp:'',remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setStadiumItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setStadiumItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setStadiumItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setStadiumItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / heure / valeur" value="${esc(v.temp||'')}" onchange="setStadiumItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / origine / action" value="${esc(v.remarks||'')}" onchange="setStadiumItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForStadiumItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForStadiumItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setStadiumItem('${key(it)}','notify',this.checked)"> À communiquer</label></div>${photoStrip(v.photos||[],`removeStadiumItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`});
   html+=`<div class="card"><div class="card-head"><div class="label">Étiquettes traiteur stade</div></div><div class="row3"><button class="btn btn-gold btn-full" onclick="addStadiumProductForm()">+ Produit stade</button><button class="btn btn-blue btn-full" onclick="quickPhotoStadiumProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportStadiumProduct()">📁 Importer étiquette</button></div><div id="stadiumProdForm" style="margin-top:12px"></div><div class="list" style="margin-top:12px">${st.products.length?st.products.map((p,i)=>`<div class="li"><img class="thumb" src="${p.photo||''}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit stade sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editStadiumProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delStadiumProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette traiteur stade enregistrée</div>'}</div></div>`;
+  let devis=ensureDevis(a); let cmp=compareDevisReception(a);
+  html+=`<div class="card"><div class="card-head"><div class="label">Devis fournisseur stade</div></div><div class="row3"><div class="fg"><label class="fl">Référence devis</label><input class="fc" value="${esc(devis.reference)}" onchange="updateDevisField('reference',this.value)"></div><div class="fg"><label class="fl">Date devis</label><input type="date" class="fc" value="${esc(devis.date)}" onchange="updateDevisField('date',this.value)"></div><div class="fg"><label class="fl">Fournisseur</label><input class="fc" value="${esc(devis.fournisseur)}" placeholder="Ex : Metsens" onchange="updateDevisField('fournisseur',this.value)"></div></div><div class="row3"><div class="fg"><label class="fl">Produit prévu</label><input id="dv_name" class="fc" placeholder="Ex : Filet de poulet"></div><div class="fg"><label class="fl">Quantité prévue</label><input id="dv_qty" class="fc" type="number" step="any" placeholder="Ex : 10"></div><div class="fg"><label class="fl">Unité</label><input id="dv_unit" class="fc" placeholder="kg, pièce, carton..."></div></div><button class="btn btn-gold btn-full" onclick="addDevisLine()">+ Ajouter la ligne au devis</button><div class="list" style="margin-top:12px">${devis.lines.length?devis.lines.map(l=>`<div class="li"><div class="thumb">📋</div><div><h3>${esc(l.name)}</h3><p>Prévu : ${esc(l.qty)||'-'} ${esc(l.unit||'')}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delDevisLine('${l.id}')">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune ligne de devis renseignée</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Comparaison devis / réception</div></div>${!devis.lines.length?'<div class="empty">Ajoute des lignes de devis ci-dessus pour activer la comparaison à la réception.</div>':`<div class="list">${cmp.map(r=>`<div class="li"><div class="thumb">${r.status==='Conforme'?'✅':(r.status==='Non prévu au devis'?'❔':'⚠️')}</div><div><h3>${esc(r.name)}</h3><p>Prévu : ${esc(r.qtyPrevu)||'-'} ${esc(r.unit||'')} · Reçu : ${esc(r.qtyRecu)}</p></div><span class="badge ${devisBadgeClass(r.status)}" style="margin-left:auto;flex-shrink:0">${esc(r.status)}</span></div>`).join('')}</div>`}</div>`;
   html+=`<div class="card"><div class="card-head"><div class="label">Photos locaux / conditionnement stade</div></div><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="st_l_zone" class="fc"><option>Production traiteur</option><option>Allotissement stade</option><option>Étuves / maintien chaud</option><option>Chambres froides</option><option>Transport / housses thermiques</option><option>Vestiaire stade</option><option>Buffet / distribution</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="st_l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="st_l_comment" class="fc" placeholder="Conditionnement, température, propreté, transport, remise vestiaire..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveStadiumLocalPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveStadiumLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumLocalPhoto('')">Enregistrer sans photo</button></div><div class="list" style="margin-top:12px">${st.locals.length?st.locals.map((l,i)=>`<div class="li"><img class="thumb" src="${l.photo||''}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delStadiumLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo traiteur stade enregistrée</div>'}</div></div>`;
   $('page-stadium').innerHTML=html;
 }
@@ -200,11 +265,11 @@ function setStadiumItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=s
 function openCameraForStadiumItem(k){openCamera(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
 function importForStadiumItem(k){pickFile(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
 function removeStadiumItemPhoto(k,i){let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos.splice(i,1); save(); renderStadium();}
-function stadiumProductForm(p={},i=null){return `<div class="card"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="sp_name" class="fc" value="${esc(p.name||'')}" placeholder="Produit / préparation"></div><div class="fg"><label class="fl">Marque</label><input id="sp_brand" class="fc" value="${esc(p.brand||'')}"></div><div class="fg"><label class="fl">Origine</label><input id="sp_origin" class="fc" value="${esc(p.origin||'')}"></div></div><div class="row3"><div class="fg"><label class="fl">Lot</label><input id="sp_lot" class="fc" value="${esc(p.lot||'')}"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="sp_dlc" class="fc" value="${esc(p.dlc||'')}"></div><div class="fg"><label class="fl">Qualité</label><select id="sp_quality" class="fc"><option ${p.quality==='Très bon'?'selected':''}>Très bon</option><option ${p.quality==='Correct'?'selected':''}>Correct</option><option ${p.quality==='À revoir'?'selected':''}>À revoir</option><option ${p.quality==='Refusé'?'selected':''}>Refusé</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="sp_comment" class="fc">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="sp_photo_preview">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempStadiumPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempStadiumPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumProduct(${i===null?'null':i})">Enregistrer</button></div><input type="hidden" id="sp_photo" value="${p.photo||''}"></div>`}
+function stadiumProductForm(p={},i=null){return `<div class="card"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="sp_name" class="fc" value="${esc(p.name||'')}" placeholder="Produit / préparation"></div><div class="fg"><label class="fl">Marque</label><input id="sp_brand" class="fc" value="${esc(p.brand||'')}"></div><div class="fg"><label class="fl">Origine</label><input id="sp_origin" class="fc" value="${esc(p.origin||'')}"></div></div><div class="row3"><div class="fg"><label class="fl">Lot</label><input id="sp_lot" class="fc" value="${esc(p.lot||'')}"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="sp_dlc" class="fc" value="${esc(p.dlc||'')}"></div><div class="fg"><label class="fl">Qualité</label><select id="sp_quality" class="fc"><option ${p.quality==='Très bon'?'selected':''}>Très bon</option><option ${p.quality==='Correct'?'selected':''}>Correct</option><option ${p.quality==='À revoir'?'selected':''}>À revoir</option><option ${p.quality==='Refusé'?'selected':''}>Refusé</option></select></div></div><div class="fg"><label class="fl">Quantité reçue (comparaison devis)</label><input id="sp_qty" class="fc" value="${esc(p.qty||'')}" placeholder="Ex : 10 kg, 25 pièces..."></div><div class="fg"><label class="fl">Commentaire</label><textarea id="sp_comment" class="fc">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="sp_photo_preview">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempStadiumPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempStadiumPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumProduct(${i===null?'null':i})">Enregistrer</button></div><input type="hidden" id="sp_photo" value="${p.photo||''}"></div>`}
 function addStadiumProductForm(){$('stadiumProdForm').innerHTML=stadiumProductForm()}
 function editStadiumProduct(i){let a=ensureAudit(); $('stadiumProdForm').innerHTML=stadiumProductForm(a.stadium.products[i],i)}
 function setTempStadiumPhoto(d){$('sp_photo').value=d;$('sp_photo_preview').innerHTML=`<img class="thumb" src="${d}">`}
-function saveStadiumProduct(i){let a=ensureAudit(); if(!a)return; let p={name:$('sp_name').value,brand:$('sp_brand').value,origin:$('sp_origin').value,lot:$('sp_lot').value,dlc:$('sp_dlc').value,quality:$('sp_quality').value,comment:$('sp_comment').value,photo:$('sp_photo').value||'',at:nowText()}; if(i===null)a.stadium.products.unshift(p); else a.stadium.products[i]=p; save(); renderStadium(); toast('Produit stade enregistré');}
+function saveStadiumProduct(i){let a=ensureAudit(); if(!a)return; let p={name:$('sp_name').value,brand:$('sp_brand').value,origin:$('sp_origin').value,lot:$('sp_lot').value,dlc:$('sp_dlc').value,quality:$('sp_quality').value,qty:$('sp_qty').value,comment:$('sp_comment').value,photo:$('sp_photo').value||'',at:nowText()}; if(i===null)a.stadium.products.unshift(p); else a.stadium.products[i]=p; save(); renderStadium(); toast('Produit stade enregistré');}
 function quickPhotoStadiumProduct(){addStadiumProductForm(); openCamera(d=>setTempStadiumPhoto(d));}
 function quickImportStadiumProduct(){addStadiumProductForm(); pickFile(d=>setTempStadiumPhoto(d));}
 function delStadiumProduct(i){let a=ensureAudit(); a.stadium.products.splice(i,1); save(); renderStadium();}
@@ -342,6 +407,15 @@ function exportGeneralPDF(){
   doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Tour d’horizon / contexte du déplacement',12,y); y+=6;
   doc.setFont(undefined,'normal'); y=text(doc,a.notes||'Aucun commentaire général renseigné.',12,y,180,9); y+=5;
 
+  if(a.geo && a.geo.lat){
+    if(y>200){doc.addPage();addHeader(doc,a,'Rapport audit hôtel complet');y=34}
+    doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Localisation',12,y); y+=5;
+    if(a.geo.mapImage){try{let fmt=a.geo.mapImage.indexOf('image/png')!==-1?'PNG':'JPEG'; doc.addImage(a.geo.mapImage,fmt,12,y,90,50)}catch(e){}}
+    doc.setFont(undefined,'normal');
+    y=text(doc,a.geo.displayName||'-',12,y+55,180,8);
+    y=text(doc,`Coordonnées GPS : ${a.geo.lat.toFixed(5)}, ${a.geo.lon.toFixed(5)}`,12,y+1,180,8); y+=4;
+  }
+
   doc.setFont(undefined,'bold');doc.setFontSize(11);doc.text('Score par secteur',12,y); y+=5;
   y=drawTableHeader(doc,['Secteur','Score','OK','KO','À reprendre','Photos'],12,y,[70,22,18,18,32,26]);
   stats.forEach((s,i)=>{if(y>265){doc.addPage();addHeader(doc,a,'Rapport audit hôtel complet');y=34} y=drawTableRow(doc,[s.name,`${s.score}%`,s.ok,s.ko,s.rep,s.photos],12,y,[70,22,18,18,32,26],i%2)});
@@ -401,6 +475,14 @@ function exportStadiumPDF(){
   y=text(doc,`Contact : ${a.stadium.contact||'-'} · Livraison : ${a.stadium.deliveryTime||'-'}`,12,y,180,9);
   y=text(doc,a.stadium.notes||'Aucune note générale renseignée.',12,y,180,9); y+=5;
   STADIUM_SECTIONS.forEach(sec=>{if(y>240){doc.addPage();addHeader(doc,a,'Rapport traiteur stade complet');y=34} doc.setFillColor(20,33,61);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text(sec.name,14,y+5.5);doc.setTextColor(0,0,0); y+=10; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]); sec.items.forEach((it,idx)=>{let v=a.stadium.items[it]||{}; if(y>268){doc.addPage();addHeader(doc,a,sec.name);y=34; y=drawTableHeader(doc,['Point contrôlé','Statut','T°/heure','Photos','Remarque'],12,y,[72,24,24,18,48]);} y=drawTableRow(doc,[it,statusLabel(v.status),v.temp||'-',(v.photos||[]).length,v.remarks||'-'],12,y,[72,24,24,18,48],idx%2);});});
+  let devis=a.stadium.devis, cmp=compareDevisReception(a);
+  if(devis && devis.lines && devis.lines.length){
+    if(y>230){doc.addPage();addHeader(doc,a,'Rapport traiteur stade complet');y=34}
+    doc.setFillColor(197,161,90);doc.rect(12,y,186,8,'F');doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.setFontSize(10);doc.text('Comparaison devis / réception',14,y+5.5);doc.setTextColor(0,0,0); y+=10;
+    doc.setFont(undefined,'normal');doc.setFontSize(8);doc.text(`Devis ${devis.reference||'-'} · ${devis.date||'-'} · Fournisseur : ${devis.fournisseur||'-'}`,12,y); y+=5;
+    y=drawTableHeader(doc,['Produit','Qté prévue','Qté reçue','Statut'],12,y,[74,38,38,36]);
+    cmp.forEach((r,idx)=>{ if(y>268){doc.addPage();addHeader(doc,a,'Comparaison devis / réception');y=34; y=drawTableHeader(doc,['Produit','Qté prévue','Qté reçue','Statut'],12,y,[74,38,38,36]);} y=drawTableRow(doc,[r.name,`${r.qtyPrevu||'-'} ${r.unit||''}`,r.qtyRecu,r.status],12,y,[74,38,38,36],idx%2); });
+  }
   finalizePdf(doc); doc.save(filename('rapport_traiteur_stade',a));
 }
 function exportStadiumProductsPDF(){
@@ -416,7 +498,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=5').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=6').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
