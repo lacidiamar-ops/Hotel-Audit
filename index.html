@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
-<link rel="manifest" href="/manifest.webmanifest?v=18">
+<link rel="manifest" href="/manifest.webmanifest?v=19">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=18">
+<link rel="apple-touch-icon" href="/icon192.png?v=19">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -288,13 +288,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=18" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=19" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=18" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=19" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -698,7 +698,44 @@ function renderActions(){let a=current(); let html=`<div class="ph"><div><h1>Act
 function addAction(){let a=ensureAudit(); a.actions.unshift({priority:$('ac_prio').value,owner:$('ac_owner').value,due:$('ac_due').value,text:$('ac_text').value,done:false,at:nowText()}); save(); renderActions();}
 function toggleAction(i){let a=ensureAudit(); a.actions[i].done=!a.actions[i].done; save(); renderActions();}
 function delAction(i){let a=ensureAudit(); a.actions.splice(i,1); save(); renderActions();}
-function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button><button class="btn btn-gold btn-full" onclick="exportCdcPDF()">📖 Contrôle Cahier des Charges</button><button class="btn btn-blue btn-full" onclick="exportRestesPDF()">🍽️ Restes après service</button></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
+function renderExports(){let a=current(); let html=`<div class="ph"><div><h1>Exports DDPP</h1><div class="sub">Rapport complet sectorisé + annexes photos grand format</div></div></div>`; if(!a){$('page-exports').innerHTML=html+`<div class="empty">Créer un audit avant d’exporter.</div><div class="card"><div class="card-head"><div class="label">📥 Recevoir un audit d'un collègue</div></div><p style="color:var(--muted);font-size:12px;margin-bottom:10px">Si un collègue t'a envoyé un fichier d'audit (.json), importe-le ici — même sans audit actif.</p><button class="btn btn-blue btn-full" onclick="importAuditJSON()">📥 Importer un audit (.json)</button></div>`;return} html+=`<div class="warn">Les exports sont sectorisés pour un contrôle propre : rapport complet avec synthèse et tableaux, puis annexes photos en grand format pour les étiquettes, les locaux et le traiteur stade.</div><div class="grid g3"><button class="btn btn-gold btn-full" onclick="exportGeneralPDF()">📄 Rapport audit complet</button><button class="btn btn-blue btn-full" onclick="exportProductsPDF()">🏷️ PDF étiquettes hôtel</button><button class="btn btn-sec btn-full" onclick="exportLocalsPDF()">📷 PDF locaux hôtel</button><button class="btn btn-gold btn-full" onclick="exportStadiumPDF()">🏟️ Rapport traiteur stade</button><button class="btn btn-blue btn-full" onclick="exportStadiumProductsPDF()">🏷️ Étiquettes stade</button><button class="btn btn-sec btn-full" onclick="exportStadiumLocalsPDF()">📷 Locaux stade</button><button class="btn btn-gold btn-full" onclick="exportCdcPDF()">📖 Contrôle Cahier des Charges</button><button class="btn btn-blue btn-full" onclick="exportRestesPDF()">🍽️ Restes après service</button></div><div class="card"><div class="card-head"><div class="label">👥 Partager cet audit entre appareils</div></div><p style="color:var(--muted);font-size:12px;margin-bottom:10px">L'app ne synchronise pas encore automatiquement entre téléphones. En attendant : exporte cet audit en fichier et envoie-le (WhatsApp, mail...) à ton collègue, qui l'importera de son côté — photos comprises.</p><div class="row"><button class="btn btn-gold btn-full" onclick="exportAuditJSON()">💾 Exporter cet audit (.json)</button><button class="btn btn-blue btn-full" onclick="importAuditJSON()">📥 Importer un audit (.json)</button></div></div><div class="card"><div class="card-head"><div class="label">Synthèse export</div></div><p style="color:var(--muted);line-height:1.6">${a.hotel||'Hôtel'} · ${a.destination||'Destination'} · ${a.date||''}<br>${a.products.length} produits hôtel · ${a.locals.length} photos hôtel · ${(a.stadium?.products?.length||0)} produits stade · ${(a.stadium?.locals?.length||0)} photos stade · ${a.actions.length} actions correctives</p></div>`; $('page-exports').innerHTML=html;}
+function jsonFilename(a){let base=['audit_partage',a.date,a.destination,a.hotel].filter(Boolean).join('_').replace(/[^a-z0-9_\-]+/gi,'_'); return base+'.json';}
+function exportAuditJSON(){
+  let a=ensureAudit(); if(!a)return;
+  try{
+    let blob=new Blob([JSON.stringify(a)],{type:'application/json'});
+    let url=URL.createObjectURL(blob);
+    let link=document.createElement('a'); link.href=url; link.download=jsonFilename(a);
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast('Audit exporté — envoie ce fichier à ton collègue');
+  }catch(e){ toast('Erreur lors de l’export'); console.error(e); }
+}
+function importAuditJSON(){
+  let input=document.createElement('input'); input.type='file'; input.accept='application/json,.json';
+  input.onchange=()=>{
+    let f=input.files[0]; if(!f)return;
+    let r=new FileReader();
+    r.onload=()=>{
+      try{
+        let imported=JSON.parse(r.result);
+        if(!imported||typeof imported!=='object'||!imported.id){ toast('Fichier invalide — ce n’est pas un export d’audit'); return; }
+        let existingIdx=state.audits.findIndex(x=>x.id===imported.id);
+        if(existingIdx>=0){
+          if(!confirm(`Un audit "${imported.hotel||'sans nom'}" (${imported.date||''}) existe déjà sur cet appareil. Le remplacer par la version importée ?`))return;
+          state.audits[existingIdx]=imported;
+        } else {
+          state.audits.unshift(imported);
+        }
+        state.currentId=imported.id;
+        migrateAuditData(); save(); renderAll(); showPage('dashboard');
+        toast('Audit importé avec succès');
+      }catch(e){ toast('Erreur : fichier JSON invalide'); console.error(e); }
+    };
+    r.readAsText(f);
+  };
+  input.click();
+}
 function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
 function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}" aria-label="Supprimer la photo">×</button></div>`).join('')}</div>`}
 async function openCamera(cb){photoCallback=cb; $('cameraModal').classList.add('open'); try{await startCamera(true)}catch(e){toast('Caméra indisponible. Utilise importer photo.'); console.warn(e)}}
@@ -1027,7 +1064,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=18').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=19').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
