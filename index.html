@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V12</title>
-<link rel="manifest" href="/manifest.webmanifest?v=17">
+<link rel="manifest" href="/manifest.webmanifest?v=18">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Audit Hôtel Pro">
-<link rel="apple-touch-icon" href="/icon192.png?v=17">
+<link rel="apple-touch-icon" href="/icon192.png?v=18">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -288,13 +288,13 @@ textarea.fc{min-height:92px;resize:vertical}
 <body>
 <div id="login">
   <div class="login-card">
-    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=17" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
+    <div class="brand"><img class="login-logo-img" src="/audithotellogo.png?v=18" alt="API Contrôle"><div class="brand-title">Audit Hôtel Pro</div><div class="brand-sub">OM PRO 05147 · Déplacements · Qualité & PMS</div></div>
     <div class="fg"><label class="fl">Code d’accès</label><div class="pinbox"><input id="pin" class="fc" type="password" inputmode="numeric" placeholder="Code"><button class="btn btn-gold" onclick="login()">Entrer</button></div><div class="hint">Manager : 05147 · Auditeur : 1234. Les données sont stockées sur l’appareil. Export PDF disponible pour envoi au client, nutritionniste ou direction.</div></div>
   </div>
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=17" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=18" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V12</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -879,6 +879,17 @@ function exportGeneralPDF(){
   y=drawTableHeader(doc,['Priorité','Action demandée','Responsable','Échéance','Statut'],12,y,[28,82,32,24,20]);
   if(!a.actions.length){doc.text('Aucune action corrective enregistrée.',12,y+8)}
   a.actions.forEach((x,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Plan d’actions correctives');y=34; y=drawTableHeader(doc,['Priorité','Action demandée','Responsable','Échéance','Statut'],12,y,[28,82,32,24,20]);} y=drawTableRow(doc,[x.priority,x.text,x.owner,x.due,x.done?'Réalisée':'Ouverte'],12,y,[28,82,32,24,20],i%2);});
+  let hasChecklistPhotos = CHECK_SECTIONS.some(sec=>sec.items.some(it=>((a.items[it]||{}).photos||[]).length));
+  if(hasChecklistPhotos){
+    CHECK_SECTIONS.forEach(sec=>{
+      sec.items.forEach(it=>{
+        let v=a.items[it]||{}; let photos=v.photos||[];
+        photos.forEach((p,i)=>{
+          addImagePage(doc,a,'Annexe photos · Contrôle PMS',p.src,{title:it,meta:`${sec.name}${photos.length>1?` · Photo ${i+1}/${photos.length}`:''}${v.remarks?` · ${v.remarks}`:''}`});
+        });
+      });
+    });
+  }
   finalizePdf(doc); doc.save(filename('rapport_audit_hotel_complet',a));
 }
 function addImagePage(doc,a,title,img,infos){doc.addPage(); addHeader(doc,a,title); let y=36; doc.setFont(undefined,'bold');doc.setFontSize(12); y=text(doc,infos.title||'',12,y,180,11); doc.setFont(undefined,'normal'); y=text(doc,infos.meta||'',12,y,180,9); y+=3; if(img){try{let props=doc.getImageProperties(img); let maxW=186, maxH=210; let ratio=Math.min(maxW/props.width,maxH/props.height); let w=props.width*ratio,h=props.height*ratio; doc.addImage(img,'JPEG',(210-w)/2,y,w,h)}catch(e){doc.text('Photo non disponible',12,y)}}else doc.text('Photo non disponible',12,y)}
@@ -911,6 +922,19 @@ function exportCdcPDF(){
     y+=6;
   });
   if(!any){toast('Aucune donnée à exporter pour ce cahier des charges');return}
+  let hasCdcPhotos=CDC_MOMENTS.some(m=>{let ctrl=cdc.controls[m.id]||{}; return Object.values(ctrl).some(v=>(v.photos||[]).length)});
+  if(hasCdcPhotos){
+    CDC_MOMENTS.forEach(m=>{
+      let ref=cdc.reference[m.id]; if(!ref)return;
+      let ctrl=cdc.controls[m.id]||{};
+      ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{
+        let k=cdcItemKey(m.id,bi,ii); let v=ctrl[k]||{}; let photos=v.photos||[];
+        photos.forEach((p,i)=>{
+          addImagePage(doc,a,'Annexe photos · Cahier des charges',p.src,{title:it.l,meta:`${m.label} · ${b.title}${photos.length>1?` · Photo ${i+1}/${photos.length}`:''}${v.remark?` · ${v.remark}`:''}`});
+        });
+      }));
+    });
+  }
   finalizePdf(doc); doc.save(filename('controle_cahier_des_charges',a));
 }
 function exportRestesPDF(){
@@ -945,6 +969,20 @@ function exportRestesPDF(){
     rows.forEach((r,i)=>{ if(y>268){doc.addPage();addHeader(doc,a,m.label);y=34; y=drawTableHeader(doc,['Produit','Famille','Disposé','Restant','Remarque'],12,y,[46,42,30,30,36]);} y=drawTableRow(doc,r,12,y,[46,42,30,30,36],i%2); });
     y+=6;
   });
+  let hasRestesPhotos=CDC_MOMENTS.some(m=>{let lm=ensureLeftoverMoment(a,m.id); return Object.values(lm.refItems).some(v=>(v.photos||[]).length) || lm.extra.some(l=>(l.photos||[]).length)});
+  if(hasRestesPhotos){
+    CDC_MOMENTS.forEach(m=>{
+      let lm=ensureLeftoverMoment(a,m.id);
+      let ref=cdc.reference && cdc.reference[m.id];
+      if(ref){ ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{
+        let k=cdcItemKey(m.id,bi,ii); let v=lm.refItems[k]; let photos=(v&&v.photos)||[];
+        photos.forEach((p,i)=>{ addImagePage(doc,a,'Annexe photos · Restes après service',p.src,{title:it.l,meta:`${m.label} · ${b.title}${photos.length>1?` · Photo ${i+1}/${photos.length}`:''}${v.remark?` · ${v.remark}`:''}`}); });
+      })); }
+      lm.extra.forEach(l=>{ (l.photos||[]).forEach((p,i)=>{
+        addImagePage(doc,a,'Annexe photos · Restes après service',p.src,{title:l.item,meta:`${m.label} · ${l.family||'Autre'}${l.photos.length>1?` · Photo ${i+1}/${l.photos.length}`:''}${l.remark?` · ${l.remark}`:''}`});
+      }); });
+    });
+  }
   finalizePdf(doc); doc.save(filename('restes_apres_service',a));
 }
 function exportStadiumPDF(){
@@ -963,6 +1001,17 @@ function exportStadiumPDF(){
     y=drawTableHeader(doc,['Produit','Qté prévue','Qté reçue','Statut'],12,y,[74,38,38,36]);
     cmp.forEach((r,idx)=>{ if(y>268){doc.addPage();addHeader(doc,a,'Comparaison devis / réception');y=34; y=drawTableHeader(doc,['Produit','Qté prévue','Qté reçue','Statut'],12,y,[74,38,38,36]);} y=drawTableRow(doc,[r.name,`${r.qtyPrevu||'-'} ${r.unit||''}`,r.qtyRecu,r.status],12,y,[74,38,38,36],idx%2); });
   }
+  let hasStadiumChecklistPhotos = STADIUM_SECTIONS.some(sec=>sec.items.some(it=>((a.stadium.items[it]||{}).photos||[]).length));
+  if(hasStadiumChecklistPhotos){
+    STADIUM_SECTIONS.forEach(sec=>{
+      sec.items.forEach(it=>{
+        let v=a.stadium.items[it]||{}; let photos=v.photos||[];
+        photos.forEach((p,i)=>{
+          addImagePage(doc,a,'Annexe photos · Contrôle traiteur stade',p.src,{title:it,meta:`${sec.name}${photos.length>1?` · Photo ${i+1}/${photos.length}`:''}${v.remarks?` · ${v.remarks}`:''}`});
+        });
+      });
+    });
+  }
   finalizePdf(doc); doc.save(filename('rapport_traiteur_stade',a));
 }
 function exportStadiumProductsPDF(){
@@ -978,7 +1027,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=17').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=18').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
