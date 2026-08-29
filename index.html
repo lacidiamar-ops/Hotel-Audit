@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V20</title>
+<title>Audit Hôtel Pro · API Restauration · OM Pro 05147 · V22</title>
 <link rel="manifest" href="/manifest.webmanifest?v=20">
 <meta name="theme-color" content="#f4f7fc">
 <meta name="application-name" content="Audit Hôtel Pro">
@@ -188,6 +188,25 @@ textarea.fc{min-height:92px;resize:vertical}
   .thumb{width:54px;height:54px}
   .cam-tools{grid-template-columns:1fr}
 }
+@media(max-width:600px) and (orientation:portrait){
+  html{-webkit-text-size-adjust:100%}
+  .content{padding:10px 8px 84px;max-width:100%;overflow-x:hidden}
+  .card{padding:13px;border-radius:14px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:7px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;min-height:44px;white-space:nowrap}
+  .audit-item{padding:10px;border-radius:12px}
+  .audit-meta{grid-template-columns:minmax(0,1fr)}
+  .audit-meta .fc{font-size:16px;min-height:44px}
+  .status{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .status button{min-height:42px;font-size:10px;padding:7px 5px}
+  .bottom{padding:7px 2px max(9px,env(safe-area-inset-bottom));gap:0}
+  .bottom button{min-width:0;font-size:8.5px;line-height:1.1;padding:0 1px}
+  .bottom .bi{font-size:19px}
+  .top{padding-left:max(10px,env(safe-area-inset-left));padding-right:max(10px,env(safe-area-inset-right))}
+  .ph{align-items:flex-start;gap:8px}.ph h1{font-size:20px;overflow-wrap:anywhere}
+  .btn{min-height:44px}
+}
 @media print{
   body{overflow:auto;background:#fff;color:#000}
   .side,.top,.bottom,.btn,.mo{display:none!important}
@@ -359,7 +378,8 @@ const STADIUM_SECTIONS=[
 ];
 const CDC_FUNCTION_URL='https://gytabinhioceawwgfsly.supabase.co/functions/v1/get-cdc-reference';
 const CDC_ANON_KEY='sb_publishable_czR-qnp1qxaJhAZts7nGzw_8_O92lxp';
-const CDC_MOMENTS=[{id:'pdj',label:'Petit-déjeuner'},{id:'dej_3a',label:'3A Déjeuner match'},{id:'dej',label:'Déjeuner'},{id:'din',label:'Dîner'},{id:'col',label:'Collation'}];
+const CDC_SOURCE_VERSION='2026-07-01-v1';
+const CDC_MOMENTS=[{id:'din',label:'1 Dîner veille de match'},{id:'pdj',label:'2 PDJ jour de match'},{id:'dej_3a',label:'3A Déjeuner + collation'},{id:'dej',label:'3B Dernier repas avant match'},{id:'col',label:'4 Collation jour de match'}];
 let cdcActiveMoment='pdj', restesActiveMoment='pdj', cdcFetchInFlight=false;
 const SYNC_FUNCTION_URL='https://gytabinhioceawwgfsly.supabase.co/functions/v1/sync-audit';
 let sessionPin='', cloudPushTimer=null, syncPollInterval=null;
@@ -625,7 +645,7 @@ async function fetchCdcReference(force){
     if(json.error) throw new Error(json.error);
     let doc=(json.documents||[])[0];
     if(!doc){ if(statusEl)statusEl.textContent='Aucun cahier des charges trouvé côté serveur.'; return; }
-    cdc.reference=doc.payload; cdc.referenceFetchedAt=nowText(); cdc.referenceVersion=doc.version;
+    cdc.reference=doc.payload; cdc.referenceFetchedAt=nowText(); cdc.referenceVersion=doc.version; cdc.referenceSource=CDC_SOURCE_VERSION;
     save(); renderCdc(); renderRestes(); toast('Cahier des charges chargé');
   }catch(e){
     if(statusEl)statusEl.textContent='Impossible de charger le cahier des charges (hors-ligne ou service indisponible).'+(cdc.reference?' Version précédente conservée.':'');
@@ -648,12 +668,16 @@ function renderCdc(){
   let html=`<div class="ph"><div><h1>Contrôle Cahier des Charges</h1><div class="sub">Produits/quantités attendus (OM) vs présence hôtel</div></div></div>`;
   if(!a){ $('page-cdc').innerHTML=html+'<div class="empty">Créer un audit avant de faire ce contrôle.</div>'; return }
   let cdc=ensureCdc(a);
+  if(cdc.reference && cdc.referenceSource!==CDC_SOURCE_VERSION && !cdcFetchInFlight){
+    cdcFetchInFlight=true;
+    fetchCdcReference(true).finally(()=>cdcFetchInFlight=false);
+  }
   html+=`<div class="card"><div class="card-head"><div class="label">Référence cahier des charges</div><button class="btn btn-sm btn-blue" onclick="fetchCdcReference(true)">🔄 Recharger</button></div>`;
   html+= cdc.reference ? `<p style="font-size:12px;color:var(--muted)">Chargé le ${esc(cdc.referenceFetchedAt)}.</p>` : `<p id="cdcStatus" style="font-size:12px;color:var(--dim)">Chargement du cahier des charges...</p>`;
   html+=`</div>`;
   html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${cdcActiveMoment===m.id?'active':''}" onclick="selectCdcMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
   let ref=cdc.reference && cdc.reference[cdcActiveMoment];
-  if(!ref){ html+=`<div class="empty" style="margin-top:12px">Pas de données pour ce moment pour l’instant.</div>`; $('page-cdc').innerHTML=html; if(!cdcFetchInFlight && !cdc.reference){ cdcFetchInFlight=true; fetchCdcReference().finally(()=>cdcFetchInFlight=false); } return }
+  if(!ref){ html+=`<div class="empty" style="margin-top:12px">Pas de données pour ce moment pour l’instant.</div>`; $('page-cdc').innerHTML=html; if(!cdcFetchInFlight && (!cdc.reference || cdc.referenceSource!==CDC_SOURCE_VERSION)){ cdcFetchInFlight=true; fetchCdcReference(true).finally(()=>cdcFetchInFlight=false); } return }
   let sc=cdcMomentScore(a,cdcActiveMoment);
   html+=`<div class="card" style="margin-top:12px"><div class="card-head"><div class="label">${esc(ref.title)}</div><span class="badge b-ok">${sc.ok}/${sc.total} conforme</span></div><p style="font-size:12px;color:var(--muted)">${esc(ref.subtitle||'')}</p></div>`;
   let ctrl=cdc.controls[cdcActiveMoment]||{};
@@ -1124,7 +1148,7 @@ function exportStadiumLocalsPDF(){
   finalizePdf(doc); doc.save(filename('photos_locaux_traiteur_stade',a));
 }
 
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=20').catch(()=>{}))}
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=22').catch(()=>{}))}
 load(); renderAll();
 </script>
 </body>
