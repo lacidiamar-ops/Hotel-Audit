@@ -1,4 +1,4 @@
-const CACHE_NAME='audit-hotel-pro-v21-writing-photos-scores';
+const CACHE_NAME='audit-hotel-pro-v22-cdc-mobile';
 const APP_SHELL=['/','/index.html','/manifest.webmanifest','/icon192.png','/icon512.png','/fixes-v21.js'];
 const PATCH_TAG='<script src="/fixes-v21.js?v=21"></script>';
 
