@@ -147,6 +147,8 @@ textarea.fc{min-height:92px;resize:vertical}
 .photo-mini{position:relative}
 .photo-mini img{width:82px;height:82px;object-fit:cover;border-radius:11px;border:1px solid var(--border2)}
 .photo-mini button{position:absolute;top:-8px;right:-8px;border:0;background:var(--red);color:#fff;border-radius:50%;width:26px;height:26px;font-weight:900;font-size:15px;line-height:1}
+.chip.off{opacity:.45;border-style:dashed;font-style:italic}
+.chip.off.active{opacity:.8}
 .mo{display:none;position:fixed;inset:0;z-index:80;background:rgba(13,21,38,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px}
 .mo.open{display:flex}
 .mo-box{width:100%;max-width:560px;max-height:94vh;overflow:auto;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border:1px solid var(--border2);border-radius:24px;box-shadow:var(--glow)}
@@ -321,7 +323,7 @@ textarea.fc{min-height:92px;resize:vertical}
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=23" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V23.2</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=23" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V25</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p><p id="syncStatus" style="font-size:10px;font-weight:800;color:var(--dim);margin-top:4px">☁️ —</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -330,7 +332,8 @@ textarea.fc{min-height:92px;resize:vertical}
       <button data-page="checklist"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path class="ic-check" d="M8 12.3l2.8 2.8 5.2-6" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Audit PMS</button>
       <button data-page="products"><span class="ico"><svg class="nsvg ic-swing" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h7l9 9-7 7-9-9V4z" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.3" fill="var(--gold)" stroke="none"/></svg></span> Produits & étiquettes</button>
       <button data-page="locals"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" stroke-linejoin="round"/><circle class="ic-lens" cx="12" cy="13" r="3.4" fill="none" stroke="var(--gold)" stroke-width="1.8"/></svg></span> Locaux & photos</button>
-      <button data-page="stadium"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4.2" ry="2.8"/><circle class="ic-orbit" r="1.3" fill="var(--gold)" stroke="none"/></svg></span> Traiteur stade</button>
+      <button data-page="salle"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/><line x1="12" y1="3.8" x2="12" y2="8.6" stroke-linecap="round"/></svg></span> Salle restaurant</button>
+<button data-page="stadium"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4.2" ry="2.8"/><circle class="ic-orbit" r="1.3" fill="var(--gold)" stroke="none"/></svg></span> Traiteur stade</button>
       <button data-page="actions"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3.5 21 20H3L12 3.5z" stroke-linejoin="round"/><line class="ic-blink" x1="12" y1="9.5" x2="12" y2="14" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/><circle class="ic-blink" cx="12" cy="16.7" r="1.1" fill="var(--gold)" stroke="none"/></svg></span> Actions correctives</button>
       <div class="nav-title">Cahier des charges OM</div>
       <button data-page="cdc"><span class="ico"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5.5c-1.8-1.2-4-1.7-6.5-1.5v13c2.5-.2 4.7.3 6.5 1.5" stroke-linecap="round" stroke-linejoin="round"/><path class="ic-page" d="M12 5.5c1.8-1.2 4-1.7 6.5-1.5v13c-2.5-.2-4.7.3-6.5 1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Contrôle Cahier des Charges</button>
@@ -349,7 +352,8 @@ textarea.fc{min-height:92px;resize:vertical}
       <div class="page" id="page-checklist"></div>
       <div class="page" id="page-products"></div>
       <div class="page" id="page-locals"></div>
-      <div class="page" id="page-stadium"></div>
+      <div class="page" id="page-salle"></div>
+<div class="page" id="page-stadium"></div>
       <div class="page" id="page-actions"></div>
       <div class="page" id="page-cdc"></div>
       <div class="page" id="page-restes"></div>
@@ -362,7 +366,8 @@ textarea.fc{min-height:92px;resize:vertical}
   <button data-page="audit"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V8l8-5 8 5v12" stroke-linecap="round" stroke-linejoin="round"/><rect class="ic-win" x="8.5" y="9" width="2.4" height="2.4" fill="var(--gold)" stroke="none"/><rect class="ic-win" style="animation-delay:.5s" x="13.1" y="9" width="2.4" height="2.4" fill="var(--gold)" stroke="none"/><rect class="ic-win" style="animation-delay:1s" x="8.5" y="13" width="2.4" height="2.4" fill="var(--gold)" stroke="none"/><rect class="ic-win" style="animation-delay:1.5s" x="13.1" y="13" width="2.4" height="2.4" fill="var(--gold)" stroke="none"/><path d="M9.5 20v-4h5v4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Hôtel</button>
   <button data-page="checklist"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path class="ic-check" d="M8 12.3l2.8 2.8 5.2-6" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>PMS</button>
   <button data-page="products"><span class="bi"><svg class="nsvg ic-swing" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h7l9 9-7 7-9-9V4z" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.3" fill="var(--gold)" stroke="none"/></svg></span>Photos</button>
-  <button data-page="stadium"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4.2" ry="2.8"/><circle class="ic-orbit" r="1.3" fill="var(--gold)" stroke="none"/></svg></span>Stade</button>
+  <button data-page="salle"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="3.4"/><line x1="12" y1="3.8" x2="12" y2="8.6" stroke-linecap="round"/></svg></span>Salle</button>
+<button data-page="stadium"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="12" rx="9" ry="6"/><ellipse cx="12" cy="12" rx="4.2" ry="2.8"/><circle class="ic-orbit" r="1.3" fill="var(--gold)" stroke="none"/></svg></span>Stade</button>
   <button data-page="exports"><span class="bi"><svg class="nsvg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l4 4v14H7z" stroke-linejoin="round"/><path class="ic-arrow" d="M12 11v6m0 0-2.3-2.3M12 17l2.3-2.3" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>PDF</button>
 </div>
 <div class="mo" id="cameraModal"><div class="mo-box"><div class="mo-h"><h2>Prise photo</h2><button class="x" onclick="closeCamera()" aria-label="Fermer">×</button></div><div class="mo-body"><div class="cam-preview"><video id="video" autoplay playsinline muted></video></div><div class="cam-tools"><button class="btn btn-gold btn-full" onclick="capturePhoto()">📸 Capturer</button><button class="btn btn-sec btn-full" onclick="forceRearCamera()">📷 Caméra arrière</button><button class="btn btn-sec btn-full" onclick="forceFrontCamera()">🤳 Caméra avant</button><button class="btn btn-sec btn-full" onclick="switchCamera()">🔁 Changer caméra</button></div><div class="hint">La caméra arrière est forcée en priorité. Si le téléphone ouvre la caméra selfie, appuie sur “Caméra arrière”. Le site doit être en HTTPS.</div></div></div></div>
@@ -377,6 +382,50 @@ const CHECK_SECTIONS=[
  {name:'Locaux & organisation', color:'orange', items:['Flux propres / sales cohérents','Plan de travail dégagé et désinfecté','Zone de stockage sèche propre et rangée','Poubelles fermées et évacuées','Tenues professionnelles propres','Matériel nécessaire disponible pour prestation OM']}
 ];
 
+/* ============================================================================
+   V25 · AUDIT SALLE DE RESTAURANT
+   La salle est le seul endroit où l'on observe ce qui arrive réellement au
+   joueur : dressage, température au buffet, réactivité du service, contact.
+   Même structure que l'audit cuisine (statut, relevé, remarque, photos), donc
+   même ergonomie de saisie et même logique d'export.
+   ========================================================================== */
+const SALLE_SECTIONS=[
+ {name:'Salle · Agencement & espace', color:'blue', items:[
+   'Configuration de la salle adaptée au nombre de convives',
+   'Espacement entre les tables et fluidité de circulation',
+   'Dressage des tables homogène et complet',
+   'Accès au buffet dégagé, sans croisement de flux',
+   'Éclairage, température ambiante et niveau sonore',
+   'Salle privatisée et préservée des autres clients']},
+ {name:'Salle · Propreté & matériel', color:'green', items:[
+   'Propreté des tables, chaises et banquettes',
+   'Propreté des sols et des abords du buffet',
+   'Vaisselle, verrerie et couverts sans trace ni ébréchure',
+   'Linge de table et de service propre et en bon état',
+   'Matériel de buffet (chafing, vitrines, présentoirs) propre et fonctionnel']},
+ {name:'Salle · Service & disposition', color:'gold', items:[
+   'Buffet dressé et complet à l’heure annoncée',
+   'Ordre et logique de disposition des éléments du buffet',
+   'Identification et étiquetage des plats',
+   'Réactivité au réassort des plats et des boissons',
+   'Réactivité au débarrassage des tables',
+   'Personnel présent et disponible pendant tout le service',
+   'Respect du timing de service et de fin de repas']},
+ {name:'Salle · Maîtrise sanitaire & températures', color:'orange', items:[
+   'Température des plats chauds au buffet',
+   'Température des plats froids au buffet',
+   'Relevés de température tracés pendant le service',
+   'Protection des aliments : vitrines, cloches, écrans',
+   'Ustensiles de service dédiés à chaque plat',
+   'Gel hydroalcoolique à disposition des convives',
+   'Gestion des plats non consommés en fin de service']},
+ {name:'Salle · Personnel & contact client', color:'purple', items:[
+   'Tenue professionnelle propre et complète',
+   'Accueil et prise en charge des convives',
+   'Amabilité et qualité du contact client',
+   'Connaissance des plats et des allergènes',
+   'Discrétion et adaptation au cadre sportif']}
+];
 const STADIUM_SECTIONS=[
  {name:'Traiteur stade · Hygiène & PMS', color:'green', items:['Propreté zone de production traiteur stade','Propreté zone dressage / conditionnement','Respect chaîne du froid avant transport','Respect chaîne du chaud avant départ','Séparation brut / cuit / préparé','Hygiène du personnel et tenues propres']},
  {name:'Traiteur stade · Produits & traçabilité', color:'blue', items:['Traçabilité viandes halal : lots, agrément, origine','Traçabilité poissons / produits sensibles','Contrôle DLC / DDM produits utilisés','Étiquettes produits photographiées','Marques utilisées conformes au niveau OM','Origine des produits clairement renseignée']},
@@ -527,7 +576,7 @@ $('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
 function toast(msg){let d=document.createElement('div');d.className='toast';d.textContent=msg;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
 function current(){return state.audits.find(a=>a.id===state.currentId)||null}
 function ensureAudit(){let a=current(); if(!a){toast('Créer ou sélectionner un audit avant de renseigner.'); showPage('audit'); return null} return a}
-function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:'',devis:{reference:'',date:'',fournisseur:'',lines:[]}},cdc:{reference:null,referenceFetchedAt:null,controls:{}},leftovers:{},actions:[]}; CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
+function newAudit(){let a={id:uid(),date:today(),destination:'',hotel:'',address:'',match:'',auditor:'Amar Lacidi',chefHotel:'',mealType:'Déplacement équipe professionnelle',createdAt:nowText(),notes:'',items:{},products:[],locals:[],stadium:{items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:'',devis:{reference:'',date:'',fournisseur:'',lines:[]}},salle:{items:{},notes:'',couverts:'',service:'',responsable:''},cdc:{reference:null,referenceFetchedAt:null,controls:{}},leftovers:{},actions:[]}; SALLE_SECTIONS.forEach(s=>s.items.forEach(it=>a.salle.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); CHECK_SECTIONS.forEach(s=>s.items.forEach(it=>a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); STADIUM_SECTIONS.forEach(s=>s.items.forEach(it=>a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]})); state.audits.unshift(a); state.currentId=a.id; save(); renderAll(); showPage('audit'); toast('Nouvel audit créé');}
 function newAuditQuick(){newAudit();}
 function duplicateAudit(id){
   let src=state.audits.find(a=>a.id===id); if(!src)return;
@@ -662,13 +711,18 @@ let renderErrors=[];
    à rafraîchir et rendues au moment où l'on y arrive.
    Les noms sont résolus sur window à l'appel, pour rester compatible avec la
    couche de décoration qui remplace ces fonctions. */
-const PAGE_RENDERERS={dashboard:'renderDashboard',audit:'renderAudit',checklist:'renderChecklist',
+const PAGE_RENDERERS={dashboard:'renderDashboard',audit:'renderAudit',checklist:'renderChecklist',salle:'renderSalle',
   products:'renderProducts',locals:'renderLocals',stadium:'renderStadium',cdc:'renderCdc',
   restes:'renderRestes',actions:'renderActions',exports:'renderExports'};
-const PAGE_LABELS={dashboard:'tableau de bord',audit:'déplacement',checklist:'contrôle PMS',
+const PAGE_LABELS={dashboard:'tableau de bord',audit:'déplacement',checklist:'contrôle PMS',salle:'salle de restaurant',
   products:'étiquettes',locals:'locaux',stadium:'traiteur stade',cdc:'cahier des charges',
   restes:'restes',actions:'plan d’actions',exports:'exports'};
 let dirtyPages=new Set(), activePage='dashboard';
+/* Marque des pages à rafraîchir sans les reconstruire toutes (cf. V23.1). */
+function markDirty(){
+  for(const p of arguments) if(PAGE_RENDERERS[p]) dirtyPages.add(p);
+  if(dirtyPages.has(activePage)) renderPage(activePage);
+}
 function renderPage(p){
   const fn=window[PAGE_RENDERERS[p]];
   if(typeof fn!=='function')return;
@@ -698,7 +752,18 @@ function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>T
 <div class="kpi green"><div class="kpi-top"><div><div class="v">${a.products.length}</div><div class="l">Produits / étiquettes</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h7l9 9-7 7-9-9V4z" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.3" fill="currentColor" stroke="none"/></svg></div></div></div>
 <div class="kpi blue"><div class="kpi-top"><div><div class="v">${a.locals.length+(a.stadium?.locals?.length||0)}</div><div class="l">Photos locaux/stade</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.2"/></svg></div></div></div>
 <div class="kpi red"><div class="kpi-top"><div><div class="v">${c.ko+c.rep}</div><div class="l">Points sensibles</div></div><div class="kpi-icon"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3.5 21 20H3L12 3.5z" stroke-linejoin="round"/><line x1="12" y1="9.5" x2="12" y2="14" stroke-linecap="round"/><circle cx="12" cy="16.7" r="1" fill="currentColor" stroke="none"/></svg></div></div></div>
-</div><div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="status-pill"><span class="dot"></span>En cours</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="action-grid-2"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
+</div>${(()=>{const sc=cdcScores(a),on=cdcMoments(a);return `<div class="card"><div class="card-head"><div class="label">Cahier des charges OM</div><span class="badge ${on.length?'b-ok':'b-ko'}">${on.length}/${CDC_MOMENTS.length} repas retenus</span></div>
+${(()=>{const h=hotelScore(a),sl=salleScore(a),tr=traiteurScore(a),g=siteScore(a);
+const f=v=>v===null?'—':v+'%';
+const cell=(t,x,tone)=>`<div class="v21-score ${tone}"><div><b>${t}</b><strong>${f(x.score)}</strong></div><small>${x.ok}/${x.considered} conformes<br>${x.answered}/${x.total} renseignés<br>${x.bad} à traiter</small></div>`;
+return `<div class="card"><div class="card-head"><div class="label">Notes du site</div><span class="badge ${g.score===null?'':(g.score>=85?'b-ok':(g.score>=60?'b-warn':'b-ko'))}">Global ${f(g.score)}</span></div>
+<div class="v21-grid v21-grid-3">${cell('Cuisine',h,'hotel')}${cell('Salle',sl,'salle')}${cell('Traiteur',tr,'stadium')}</div>
+<div class="hint">La note globale cumule les points évalués des trois audits (${g.ok}/${g.considered}). Un audit non commencé ne pèse pas dans le calcul.</div>
+<div class="row" style="margin-top:10px"><button class="btn btn-sec btn-full" onclick="showPage('salle')">🍽️ Auditer la salle</button></div></div>`})()}
+<div class="v21-grid"><div class="v21-score hotel"><div><b>Avant service</b><strong>${scoreTxt(sc.before)}</strong></div><small>${sc.ok}/${sc.considered} conformes<br>présence &amp; quantités</small></div>
+<div class="v21-score stadium"><div><b>Après service</b><strong>${scoreTxt(sc.after)}</strong></div><small>${sc.rate===null?'aucune mesure':Math.round(sc.rate*100)+'% de reste moyen'}<br>${sc.mesures} produit(s) mesuré(s)</small></div></div>
+<div class="hint">${on.length?esc(activeMoments(a).map(m=>m.label).join(' · ')):'Aucun repas retenu — configure le déplacement.'}</div></div>`})()}
+<div class="card"><div class="card-head"><div class="label">Audit actif</div><span class="status-pill"><span class="dot"></span>En cours</span></div><h2>${a.hotel||'Hôtel à renseigner'}</h2><p style="color:var(--muted);margin-top:5px">${a.destination||'Destination à renseigner'} · ${a.match||'Match / déplacement à renseigner'}</p><div class="action-grid-2"><button class="btn btn-sec btn-full" onclick="showPage('checklist')">✅ Continuer PMS</button><button class="btn btn-blue btn-full" onclick="showPage('products')">🏷️ Ajouter étiquette</button><button class="btn btn-sec btn-full" onclick="showPage('stadium')">🏟️ Traiteur stade</button><button class="btn btn-gold btn-full" onclick="showPage('exports')">📄 Exporter PDF</button></div></div>`}
  html+=`<div class="card"><div class="card-head"><div class="label">Historique audits</div></div><div class="list">${state.audits.length?state.audits.map((x,i)=>{let c=completion(x);return `<div class="li"><div class="hist-thumb ${i%2===0?'g1':'g2'}">🏨</div><div><h3>${x.hotel||'Audit sans hôtel'}</h3><p>${x.destination||'Destination'} · ${x.date||''} · <b style="color:${c.score>=80?'var(--green)':(c.score>=50?'var(--orange)':'var(--red)')}">${c.score}%</b> renseigné</p></div><div class="actions"><button class="btn btn-sm btn-sec pill-btn" onclick="selectAudit('${x.id}')">Ouvrir</button><button class="btn btn-sm btn-blue pill-btn" onclick="duplicateAudit('${x.id}')">Dupliquer</button><button class="btn btn-sm btn-red pill-btn" onclick="deleteAudit('${x.id}')">Suppr.</button></div></div>`}).join(''):'<div class="empty">Aucun audit enregistré</div>'}</div></div>`; $('page-dashboard').innerHTML=html;}
 async function geocodeHotel(){
   let a=ensureAudit(); if(!a)return;
@@ -740,7 +805,34 @@ function locationCardHtml(a){
   html+=`</div>`;
   return html;
 }
-function renderAudit(){let a=current(); let html=`<div class="ph"><div><h1>Déplacement / Hôtel</h1><div class="sub">Créer le contexte de l’audit qualité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouveau</button></div>`; if(!a){html+=`<div class="empty">Clique sur “Nouveau” pour démarrer.</div>`} else html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Date</label><input class="fc" type="date" value="${a.date||''}" onchange="updateAudit('date',this.value)"></div><div class="fg"><label class="fl">Destination</label><input class="fc" value="${esc(a.destination)}" placeholder="Ex : Rennes, Bruges, Lorient" onchange="updateAudit('destination',this.value)"></div></div><div class="row"><div class="fg"><label class="fl">Hôtel / prestataire</label><input class="fc" value="${esc(a.hotel)}" placeholder="Nom de l’hôtel" onchange="updateAudit('hotel',this.value)"></div><div class="fg"><label class="fl">Match / déplacement</label><input class="fc" value="${esc(a.match)}" placeholder="Ex : OM vs ..." onchange="updateAudit('match',this.value)"></div></div><div class="fg"><label class="fl">Adresse / contact hôtel</label><input class="fc" value="${esc(a.address)}" placeholder="Adresse, chef, contact opérationnel" onchange="updateAudit('address',this.value)"></div><div class="row"><div class="fg"><label class="fl">Auditeur</label><input class="fc" value="${esc(a.auditor)}" onchange="updateAudit('auditor',this.value)"></div><div class="fg"><label class="fl">Chef / interlocuteur hôtel</label><input class="fc" value="${esc(a.chefHotel)}" onchange="updateAudit('chefHotel',this.value)"></div></div><div class="fg"><label class="fl">Type de prestation</label><input class="fc" value="${esc(a.mealType)}" onchange="updateAudit('mealType',this.value)"></div><div class="fg"><label class="fl">Tour d’horizon / note générale</label><textarea class="fc" placeholder="Impression globale, niveau de qualité, points forts, vigilance..." onchange="updateAudit('notes',this.value)">${esc(a.notes)}</textarea></div></div>`; html+=locationCardHtml(a); $('page-audit').innerHTML=html;}
+function momentConfigCard(a){
+  const on=cdcMoments(a);
+  return `<div class="card"><div class="card-head"><div class="label">Configuration du déplacement</div><span class="badge ${on.length?'b-ok':'b-ko'}">${on.length}/${CDC_MOMENTS.length} repas</span></div>
+  <p style="color:var(--muted);font-size:12px;margin-bottom:10px">Coche les repas que l’équipe prend réellement sur ce déplacement. Les repas non retenus restent consultables mais sortent des deux notes.</p>
+  <div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${isMomentOn(a,m.id)?'active':'off'}" onclick="toggleMoment('${m.id}')">${isMomentOn(a,m.id)?'✓ ':''}${m.label}</button>`).join('')}</div></div>`;
+}
+function renderAudit(){let a=current(); let html=`<div class="ph"><div><h1>Déplacement / Hôtel</h1><div class="sub">Créer le contexte de l’audit qualité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouveau</button></div>`; if(!a){html+=`<div class="empty">Clique sur “Nouveau” pour démarrer.</div>`} else html+=momentConfigCard(a)+`<div class="card"><div class="row"><div class="fg"><label class="fl">Date</label><input class="fc" type="date" value="${a.date||''}" onchange="updateAudit('date',this.value)"></div><div class="fg"><label class="fl">Destination</label><input class="fc" value="${esc(a.destination)}" placeholder="Ex : Rennes, Bruges, Lorient" onchange="updateAudit('destination',this.value)"></div></div><div class="row"><div class="fg"><label class="fl">Hôtel / prestataire</label><input class="fc" value="${esc(a.hotel)}" placeholder="Nom de l’hôtel" onchange="updateAudit('hotel',this.value)"></div><div class="fg"><label class="fl">Match / déplacement</label><input class="fc" value="${esc(a.match)}" placeholder="Ex : OM vs ..." onchange="updateAudit('match',this.value)"></div></div><div class="fg"><label class="fl">Adresse / contact hôtel</label><input class="fc" value="${esc(a.address)}" placeholder="Adresse, chef, contact opérationnel" onchange="updateAudit('address',this.value)"></div><div class="row"><div class="fg"><label class="fl">Auditeur</label><input class="fc" value="${esc(a.auditor)}" onchange="updateAudit('auditor',this.value)"></div><div class="fg"><label class="fl">Chef / interlocuteur hôtel</label><input class="fc" value="${esc(a.chefHotel)}" onchange="updateAudit('chefHotel',this.value)"></div></div><div class="fg"><label class="fl">Type de prestation</label><input class="fc" value="${esc(a.mealType)}" onchange="updateAudit('mealType',this.value)"></div><div class="fg"><label class="fl">Tour d’horizon / note générale</label><textarea class="fc" placeholder="Impression globale, niveau de qualité, points forts, vigilance..." onchange="updateAudit('notes',this.value)">${esc(a.notes)}</textarea></div></div>`; html+=locationCardHtml(a); $('page-audit').innerHTML=html;}
+function renderSalle(){
+  const a=current();
+  let html=`<div class="ph"><div><h1>Audit salle de restaurant</h1><div class="sub">Agencement · propreté · service · températures · contact client</div></div></div>`;
+  if(!a){ $('page-salle').innerHTML=html+`<div class="empty">Créer un audit avant de contrôler la salle.</div>`; return }
+  const sa=ensureSalle(a), sc=salleScore(a);
+  html+=`<div class="card"><div class="card-head"><div class="label">Note de salle</div><span class="badge ${sc.score===null?'':(sc.score>=85?'b-ok':(sc.score>=60?'b-warn':'b-ko'))}">${sc.score===null?'—':sc.score+'%'}</span></div>
+  <p style="color:var(--muted);font-size:12px">${sc.ok}/${sc.considered} conformes · ${sc.answered}/${sc.total} points renseignés · ${sc.bad} à traiter · ${sc.photos} photo(s). Les points « N/C » sont exclus de la note.</p>
+  <div class="row3" style="margin-top:10px"><div class="fg"><label class="fl">Couverts servis</label><input class="fc" value="${esc(sa.couverts||'')}" placeholder="Nb de convives" onchange="updateSalle('couverts',this.value)"></div><div class="fg"><label class="fl">Service audité</label><input class="fc" value="${esc(sa.service||'')}" placeholder="Dîner, PDJ, déjeuner..." onchange="updateSalle('service',this.value)"></div><div class="fg"><label class="fl">Responsable de salle</label><input class="fc" value="${esc(sa.responsable||'')}" placeholder="Nom" onchange="updateSalle('responsable',this.value)"></div></div>
+  <div class="fg" style="margin-top:8px"><label class="fl">Observation générale sur le service en salle</label><textarea class="fc" placeholder="Ambiance, déroulé, incidents, points forts, actions demandées..." onchange="updateSalle('notes',this.value)">${esc(sa.notes||'')}</textarea></div></div>`;
+  SALLE_SECTIONS.forEach(sec=>{
+    html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div><button class="btn btn-sm btn-green" onclick="setAllSalle('${sec.name}')">✅ Tout conforme</button></div>`;
+    sec.items.forEach(it=>{
+      const v=sa.items[it]||{status:'',temp:'',remarks:'',photos:[]};
+      const kk=key(it);
+      const isTemp=/température/i.test(it);
+      html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setSalleItem('${kk}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setSalleItem('${kk}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setSalleItem('${kk}','status','à remplacer')">À reprendre</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setSalleItem('${kk}','status','non concerné')">N/C</button></div><input class="fc" placeholder="${isTemp?'T° relevée':'Relevé / valeur'}" value="${esc(v.temp||'')}" onchange="setSalleItem('${kk}','temp',this.value)"><input class="fc" placeholder="Remarque / action demandée" value="${esc(v.remarks||'')}" onchange="setSalleItem('${kk}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForSalle('${kk}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForSalle('${kk}')">📁 Importer plusieurs photos</button></div>${photoStrip(v.photos||[],`removeSallePhoto('${kk}',IDX)`)}</div>`;
+    });
+    html+=`</div>`;
+  });
+  $('page-salle').innerHTML=html;
+}
 function renderChecklist(){let a=current(); let html=`<div class="ph"><div><h1>Audit PMS</h1><div class="sub">Hygiène · traçabilité · cahier des charges · produits</div></div></div>`; if(!a){$('page-checklist').innerHTML=html+`<div class="empty">Créer un audit avant de renseigner le PMS.</div>`;return} CHECK_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div><button class="btn btn-sm btn-green" onclick="setAllSection('${sec.name}','conforme',false)">✅ Tout conforme</button></div>`; sec.items.forEach(it=>{let v=a.items[it]||{status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / cuisson" value="${esc(v.temp||v.cooking||'')}" onchange="setItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / agrément / action" value="${esc(v.remarks||'')}" onchange="setItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setItem('${key(it)}','notify',this.checked)"> À communiquer nutrition</label></div>${photoStrip(v.photos||[],`removeItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`}); $('page-checklist').innerHTML=html;}
 function setAllSection(sectionName,status,isStadium){
   let a=ensureAudit(); if(!a)return;
@@ -793,6 +885,9 @@ function compareDevisReception(a){
 function devisBadgeClass(status){ if(status==='Conforme')return 'b-ok'; if(status==='Manquant'||status==='Manque partiel')return 'b-ko'; if(status==='Non prévu au devis')return 'b-rep'; return 'b-nc'; }
 function migrateAuditData(){
   state.audits.forEach(a=>{
+    if(!a.salle) a.salle={items:{},notes:'',couverts:'',service:'',responsable:''};
+    if(!a.salle.items) a.salle.items={};
+    SALLE_SECTIONS.forEach(sec=>sec.items.forEach(it=>{if(!a.salle.items[it]) a.salle.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};}));
     if(!a.stadium) a.stadium={items:{},products:[],locals:[],notes:'',provider:'Traiteur stade',contact:'',deliveryTime:''};
     if(!a.stadium.items) a.stadium.items={};
     if(!a.stadium.products) a.stadium.products=[];
@@ -818,6 +913,68 @@ function renderStadium(){
   $('page-stadium').innerHTML=html;
 }
 function updateStadium(k,v){let a=ensureAudit(); if(!a)return; if(!a.stadium)migrateAuditData(); a.stadium[k]=v; save(); renderHeader();}
+function salleKey(k){let all=[];SALLE_SECTIONS.forEach(s=>all.push(...s.items));return all.find(x=>key(x)===k)||k}
+function ensureSalle(a){ if(!a.salle)a.salle={items:{},notes:'',couverts:'',service:'',responsable:''}; if(!a.salle.items)a.salle.items={}; return a.salle }
+function salleSlot(a,it){ const sa=ensureSalle(a); if(!sa.items[it])sa.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]}; if(!Array.isArray(sa.items[it].photos))sa.items[it].photos=[]; return sa.items[it] }
+function setSalleItem(k,field,val){ const a=ensureAudit(); if(!a)return; salleSlot(a,salleKey(k))[field]=val; save(); if(field==='status'||field==='notify')markDirty('salle','dashboard','exports'); }
+function updateSalle(field,val){ const a=ensureAudit(); if(!a)return; ensureSalle(a)[field]=val; save(); }
+function addSallePhotos(k,list){
+  const a=ensureAudit(); if(!a)return;
+  const slot=salleSlot(a,salleKey(k));
+  (Array.isArray(list)?list:[list]).forEach(src=>{ if(src)slot.photos.push({src,at:nowText(),type:'Salle'}) });
+  save(); markDirty('salle','exports');
+  toast(`✅ ${slot.photos.length} photo(s) sur ce point`);
+}
+function openCameraForSalle(k){ openCamera(d=>addSallePhotos(k,d)) }
+function importForSalle(k){ pickFiles(imgs=>addSallePhotos(k,imgs)) }
+function removeSallePhoto(k,i){ const a=ensureAudit(); if(!a)return; salleSlot(a,salleKey(k)).photos.splice(i,1); save(); markDirty('salle','exports'); }
+function setAllSalle(sectionName){
+  const a=ensureAudit(); if(!a)return;
+  const sec=SALLE_SECTIONS.find(x=>x.name===sectionName); if(!sec)return;
+  sec.items.forEach(it=>{ salleSlot(a,it).status='conforme' });
+  save(); markDirty('salle','dashboard','exports'); toast(`${sec.name} · tout conforme`);
+}
+/* Sélecteur multi-photos partagé, sans passer par la couche de décoration. */
+function pickFiles(cb){
+  const i=document.createElement('input');
+  i.type='file'; i.accept='image/*'; i.multiple=true; i.hidden=true;
+  document.body.appendChild(i);
+  i.onchange=async()=>{
+    try{
+      const out=[];
+      for(const f of Array.from(i.files||[])){
+        if(!f.type.startsWith('image/'))continue;
+        const raw=await new Promise((r,j)=>{const x=new FileReader();x.onload=()=>r(x.result);x.onerror=j;x.readAsDataURL(f)});
+        out.push(await compressImage(raw));
+      }
+      if(out.length)cb(out);
+    }catch(e){ console.error('pickFiles',e); toast('⚠️ Import photo impossible : '+(e.message||e)) }
+    finally{ i.remove() }
+  };
+  i.click();
+}
+/* Note d'un ensemble de secteurs. Les points « non concerné » sont exclus. */
+function sectionsScore(sections,bucket){
+  let total=0,answered=0,considered=0,ok=0,bad=0,photos=0;
+  sections.forEach(sec=>sec.items.forEach(it=>{
+    total++;
+    const v=(bucket||{})[it]||{};
+    if(v.status)answered++;
+    photos+=(v.photos||[]).length;
+    if(v.status&&v.status!=='non concerné'){ considered++; v.status==='conforme'?ok++:bad++ }
+  }));
+  return {total,answered,considered,ok,bad,photos,score:considered?Math.round(ok/considered*100):null};
+}
+function salleScore(a){ return sectionsScore(SALLE_SECTIONS,(a.salle||{}).items) }
+function hotelScore(a){ return sectionsScore(CHECK_SECTIONS,a.items) }
+function traiteurScore(a){ return sectionsScore(STADIUM_SECTIONS,(a.stadium||{}).items) }
+/* Note globale du site : cumul des points évalués des trois audits. Un audit
+   non commencé ne pèse rien, il ne tire pas la note vers le bas. */
+function siteScore(a){
+  const parts=[hotelScore(a),salleScore(a),traiteurScore(a)];
+  const ok=parts.reduce((t,p)=>t+p.ok,0), considered=parts.reduce((t,p)=>t+p.considered,0);
+  return {ok,considered,score:considered?Math.round(ok/considered*100):null};
+}
 function stadiumKey(k){let all=[];STADIUM_SECTIONS.forEach(s=>all.push(...s.items));return all.find(x=>key(x)===k)||k}
 function setStadiumItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); if(!a.stadium.items[it]) a.stadium.items[it]={status:'',temp:'',remarks:'',photos:[]}; a.stadium.items[it][field]=val; save(); renderStadium();}
 function openCameraForStadiumItem(k){openCamera(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
@@ -835,7 +992,128 @@ function saveStadiumLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.stadi
 function delStadiumLocal(i){let a=ensureAudit(); a.stadium.locals.splice(i,1); save(); renderStadium();}
 
 function ensureCdc(a){ if(!a.cdc) a.cdc={reference:null,referenceFetchedAt:null,controls:{}}; if(!a.cdc.controls) a.cdc.controls={}; return a.cdc; }
+
+/* ============================================================================
+   V24 · CONFIGURATION DU DÉPLACEMENT ET DOUBLE NOTATION
+   Chaque déplacement ne comporte pas les mêmes repas : parfois dîner + PDJ +
+   déjeuner + collation, parfois pas de dîner, parfois seulement le déjeuner et
+   la collation. La référence compte 271 points répartis sur 5 moments ; les
+   imposer tous à chaque déplacement noyait le contrôle réel.
+   L'auditeur choisit désormais les repas, et deux notes indépendantes sont
+   calculées sur ces repas seulement :
+     • avant service — présence des produits et respect des quantités
+     • après service — gestion des restes, en % de la quantité livrée
+   ========================================================================== */
+function cdcMoments(a){
+  const c=ensureCdc(a);
+  if(!Array.isArray(c.moments)||!c.moments.length) c.moments=CDC_MOMENTS.map(m=>m.id);
+  return c.moments;
+}
+function isMomentOn(a,id){ return cdcMoments(a).indexOf(id)!==-1 }
+function toggleMoment(id){
+  const a=ensureAudit(); if(!a)return;
+  const list=cdcMoments(a); const i=list.indexOf(id);
+  if(i===-1)list.push(id); else list.splice(i,1);
+  ensureCdc(a).moments=list;
+  save(); markDirty('audit','cdc','restes','dashboard','exports');
+  const m=CDC_MOMENTS.find(x=>x.id===id);
+  toast(`${m?m.label:id} · ${i===-1?'ajouté au déplacement':'retiré de la notation'}`);
+}
+function activeMoments(a){ return CDC_MOMENTS.filter(m=>isMomentOn(a,m.id)) }
+
+/* Lecture d'une quantité écrite en langage naturel : "1,5 kg", "500 g",
+   "20 tranches", "1 L". Renvoie null pour "-", "20 + 6", "1 pot de chaque
+   arôme" et les autres formulations non chiffrables. */
+const QTY_UNITS={kg:'kg',kilo:'kg',kilos:'kg',kilogramme:'kg',kilogrammes:'kg',
+  g:'kg',gr:'kg',gramme:'kg',grammes:'kg',
+  l:'L',litre:'L',litres:'L',cl:'L',ml:'L',
+  portion:'portion',portions:'portion',part:'portion',parts:'portion',
+  unite:'unite','unité':'unite','unités':'unite',unites:'unite',
+  piece:'unite','pièce':'unite','pièces':'unite',pieces:'unite',
+  tranche:'unite',tranches:'unite',pot:'unite',pots:'unite',
+  boite:'unite','boîte':'unite','boîtes':'unite',boites:'unite'};
+function parseQty(txt){
+  if(txt==null)return null;
+  let s=String(txt).toLowerCase().replace(',','.').trim();
+  if(!s||s==='-')return null;
+  if(/\d\s*(\+|à|-)\s*\d/.test(s))return null;   /* "20 + 6", "250 à 300 g" : ambigu */
+  if(/chaque|personne|\/pers/.test(s))return null;
+  const m=s.match(/^(\d+(?:\.\d+)?)\s*([a-zà-ÿ]+)?/);
+  if(!m)return null;
+  let v=parseFloat(m[1]); if(isNaN(v)||v<=0)return null;
+  const raw=(m[2]||'').trim();
+  let u=QTY_UNITS[raw];
+  if(!u)return null;
+  if(/^(g|gr|gramme|grammes)$/.test(raw))v=v/1000;
+  if(raw==='cl')v=v/100;
+  if(raw==='ml')v=v/1000;
+  return {v,u};
+}
+/* Quantité de référence pour le calcul du taux de reste.
+   On privilégie ce que l'auditeur a constaté sur place (avec son unité), et on
+   retombe sur le cahier des charges quand il est chiffrable. */
+function deliveredQty(a,moment,k,it){
+  const ctrl=(ensureCdc(a).controls[moment]||{})[k];
+  if(ctrl&&ctrl.qty!==''&&ctrl.qty!=null){
+    const n=parseFloat(String(ctrl.qty).replace(',','.'));
+    if(!isNaN(n)&&n>0){
+      const fallback=parseQty(it&&it.q);
+      return {v:n,u:ctrl.qtyUnit||(fallback&&fallback.u)||'portion',src:'constatée'};
+    }
+  }
+  const p=parseQty(it&&it.q);
+  return p?{v:p.v,u:p.u,src:'cahier des charges'}:null;
+}
+/* Les deux notes. Calculées uniquement sur les repas retenus. */
+function cdcScores(a){
+  const cdc=ensureCdc(a), act=cdcMoments(a);
+  let ok=0,considered=0,total=0;
+  let ratios=[],incalculables=0;
+  CDC_MOMENTS.forEach(m=>{
+    if(act.indexOf(m.id)===-1)return;
+    const ref=cdc.reference&&cdc.reference[m.id]; if(!ref)return;
+    const ctrl=cdc.controls[m.id]||{};
+    const lm=(a.leftovers&&a.leftovers[m.id])||{refItems:{}};
+    ref.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{
+      total++;
+      const k=cdcItemKey(m.id,bi,ii);
+      const v=ctrl[k]; const st=v&&v.status;
+      if(st&&st!=='nc'){ considered++; if(st==='conforme')ok++; }
+      /* Le taux de reste ne porte que sur les produits effectivement livrés. */
+      if(st==='conforme'||st==='qte'){
+        const d=deliveredQty(a,m.id,k,it);
+        const r=(lm.refItems||{})[k];
+        const rv=r?parseFloat(String(r.qtyValue).replace(',','.')):NaN;
+        if(!d){ if(rv>0)incalculables++; return }
+        if(!rv||isNaN(rv)||rv<=0){ ratios.push(0); return }   /* rien de noté = pas de reste */
+        if((r.qtyUnit||'portion')!==d.u){ incalculables++; return }
+        ratios.push(Math.min(1,rv/d.v));
+      }
+    }));
+  });
+  const before=considered?Math.round(ok/considered*100):null;
+  const rate=ratios.length?ratios.reduce((x,y)=>x+y,0)/ratios.length:null;
+  const after=rate===null?null:Math.round((1-rate)*100);
+  return {before,ok,considered,total,after,rate,mesures:ratios.length,incalculables};
+}
+function scoreTone(v){ return v===null?'':(v>=85?'b-ok':(v>=60?'b-warn':'b-ko')) }
+function scoreTxt(v){ return v===null?'—':v+'%' }
 function cdcItemKey(moment,bi,ii){ return moment+'__'+bi+'__'+ii; }
+/* Reconstruit les clés positionnelles après changement de la référence, en
+   appariant sur (titre du bloc + libellé du produit). Ce qui ne trouve pas de
+   correspondance est conservé sous son ancienne clé : on ne perd rien. */
+function remapByLabel(oldRef,newRef,bucket,momentId){
+  if(!oldRef||!newRef||!bucket||!oldRef.blocks||!newRef.blocks)return{bucket:bucket||{},moved:0,lost:0};
+  const sigOf={},target={};
+  oldRef.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{ sigOf[cdcItemKey(momentId,bi,ii)]=(b.title||'')+'\u0000'+(it.l||'') }));
+  newRef.blocks.forEach((b,bi)=>b.items.forEach((it,ii)=>{ target[(b.title||'')+'\u0000'+(it.l||'')]=cdcItemKey(momentId,bi,ii) }));
+  const out={}; let moved=0,lost=0;
+  Object.keys(bucket).forEach(k=>{
+    const nk=sigOf[k]?target[sigOf[k]]:null;
+    if(nk){ out[nk]=bucket[k]; if(nk!==k)moved++ } else { out[k]=bucket[k]; lost++ }
+  });
+  return{bucket:out,moved,lost};
+}
 async function fetchCdcReference(force){
   let a=ensureAudit(); if(!a)return;
   let cdc=ensureCdc(a);
@@ -847,8 +1125,24 @@ async function fetchCdcReference(force){
     if(json.error) throw new Error(json.error);
     let doc=(json.documents||[])[0];
     if(!doc){ if(statusEl)statusEl.textContent='Aucun cahier des charges trouvé côté serveur.'; return; }
+    /* V24 : les contrôles sont indexés par POSITION dans la référence
+       (moment__bloc__ligne). Si un produit était ajouté ou déplacé côté
+       serveur, tous les contrôles et leurs photos devenaient orphelins :
+       toujours présents dans la donnée, invisibles à l'écran et absents des
+       PDF. On les réaligne désormais sur le libellé du produit. */
+    const oldRef=cdc.reference;
     cdc.reference=doc.payload; cdc.referenceFetchedAt=nowText(); cdc.referenceVersion=doc.version; cdc.referenceSource=CDC_SOURCE_VERSION;
-    save(); renderCdc(); renderRestes(); toast('Cahier des charges chargé');
+    if(oldRef){
+      let moved=0,orphelins=0;
+      CDC_MOMENTS.forEach(m=>{
+        if(cdc.controls[m.id]){ const r=remapByLabel(oldRef[m.id],doc.payload[m.id],cdc.controls[m.id],m.id); cdc.controls[m.id]=r.bucket; moved+=r.moved; orphelins+=r.lost; }
+        const lm=a.leftovers&&a.leftovers[m.id];
+        if(lm&&lm.refItems){ const r=remapByLabel(oldRef[m.id],doc.payload[m.id],lm.refItems,m.id); lm.refItems=r.bucket; moved+=r.moved; orphelins+=r.lost; }
+      });
+      if(moved||orphelins)console.info('Réalignement cahier des charges :',moved,'déplacé(s),',orphelins,'sans correspondance');
+      if(moved)toast(`Cahier des charges mis à jour · ${moved} contrôle(s) réaligné(s)`);
+    }
+    save(); markDirty('cdc','restes','exports','dashboard'); if(!oldRef)toast('Cahier des charges chargé');
   }catch(e){
     if(statusEl)statusEl.textContent='Impossible de charger le cahier des charges (hors-ligne ou service indisponible).'+(cdc.reference?' Version précédente conservée.':'');
     console.error(e);
@@ -856,9 +1150,29 @@ async function fetchCdcReference(force){
 }
 function selectCdcMoment(id){ cdcActiveMoment=id; renderCdc(); }
 function setCdcControl(k,field,val){ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k][field]=val; save(); renderCdc(); }
-function openCameraForCdc(k){ openCamera(d=>{ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k].photos.push({src:d,at:nowText()}); save(); renderCdc(); }) }
-function importForCdc(k){ pickFile(d=>{ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); if(!cdc.controls[cdcActiveMoment])cdc.controls[cdcActiveMoment]={}; if(!cdc.controls[cdcActiveMoment][k])cdc.controls[cdcActiveMoment][k]={status:'',qty:'',remark:'',photos:[]}; cdc.controls[cdcActiveMoment][k].photos.push({src:d,at:nowText()}); save(); renderCdc(); }) }
-function removeCdcPhoto(k,i){ let a=ensureAudit(); if(!a)return; let cdc=ensureCdc(a); cdc.controls[cdcActiveMoment][k].photos.splice(i,1); save(); renderCdc(); }
+/* V24 : le moment était relu au moment du callback, donc après la prise de vue.
+   Il est désormais figé à l'ouverture de l'appareil photo. Le tableau photos
+   est créé s'il manque — un contrôle issu d'une version antérieure pouvait ne
+   pas l'avoir, et .push() levait alors une exception silencieuse. */
+function cdcSlot(a,moment,k){
+  const cdc=ensureCdc(a);
+  if(!cdc.controls[moment])cdc.controls[moment]={};
+  const c=cdc.controls[moment];
+  if(!c[k])c[k]={status:'',qty:'',qtyUnit:'portion',remark:'',photos:[]};
+  if(!Array.isArray(c[k].photos))c[k].photos=[];
+  return c[k];
+}
+function addCdcPhotos(moment,k,list){
+  const a=ensureAudit(); if(!a)return;
+  const slot=cdcSlot(a,moment,k);
+  (Array.isArray(list)?list:[list]).forEach(src=>{ if(src)slot.photos.push({src,at:nowText()}) });
+  save(); markDirty('cdc','exports');
+  const m=CDC_MOMENTS.find(x=>x.id===moment);
+  toast(`✅ ${slot.photos.length} photo(s) sur ce point${m&&m.id!==cdcActiveMoment?' · '+m.label:''}`);
+}
+function openCameraForCdc(k){ const moment=cdcActiveMoment; openCamera(d=>addCdcPhotos(moment,k,d)) }
+function importForCdc(k){ const moment=cdcActiveMoment; pickFile(d=>addCdcPhotos(moment,k,d)) }
+function removeCdcPhoto(k,i){ const a=ensureAudit(); if(!a)return; cdcSlot(a,cdcActiveMoment,k).photos.splice(i,1); save(); markDirty('cdc','exports'); }
 function cdcMomentScore(a,momentId){
   let cdc=ensureCdc(a); let ref=cdc.reference&&cdc.reference[momentId]; if(!ref)return{total:0,ok:0};
   let ctrl=cdc.controls[momentId]||{}; let total=0,ok=0;
@@ -877,7 +1191,11 @@ function renderCdc(){
   html+=`<div class="card"><div class="card-head"><div class="label">Référence cahier des charges</div><button class="btn btn-sm btn-blue" onclick="fetchCdcReference(true)">🔄 Recharger</button></div>`;
   html+= cdc.reference ? `<p style="font-size:12px;color:var(--muted)">Chargé le ${esc(cdc.referenceFetchedAt)}.</p>` : `<p id="cdcStatus" style="font-size:12px;color:var(--dim)">Chargement du cahier des charges...</p>`;
   html+=`</div>`;
-  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${cdcActiveMoment===m.id?'active':''}" onclick="selectCdcMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  const cs=cdcScores(a);
+  html+=`<div class="card"><div class="card-head"><div class="label">Note avant service</div><span class="badge ${scoreTone(cs.before)}">${scoreTxt(cs.before)}</span></div>
+  <p style="color:var(--muted);font-size:12px">Présence des produits et respect des quantités · ${cs.ok}/${cs.considered} conformes sur les repas retenus. Les points « N/C » sont exclus du calcul.</p></div>`;
+  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${cdcActiveMoment===m.id?'active':''} ${isMomentOn(a,m.id)?'':'off'}" onclick="selectCdcMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  if(!isMomentOn(a,cdcActiveMoment)) html+=`<div class="warn" style="margin-top:10px">Ce repas n’est pas retenu dans la configuration du déplacement : il reste consultable mais n’entre pas dans les notes. Tu peux l’activer depuis la fiche Déplacement.</div>`;
   let ref=cdc.reference && cdc.reference[cdcActiveMoment];
   if(!ref){ html+=`<div class="empty" style="margin-top:12px">Pas de données pour ce moment pour l’instant.</div>`; $('page-cdc').innerHTML=html; if(!cdcFetchInFlight && (!cdc.reference || cdc.referenceSource!==CDC_SOURCE_VERSION)){ cdcFetchInFlight=true; fetchCdcReference(true).finally(()=>cdcFetchInFlight=false); } return }
   let sc=cdcMomentScore(a,cdcActiveMoment);
@@ -886,8 +1204,8 @@ function renderCdc(){
   ref.blocks.forEach((b,bi)=>{
     html+=`<div class="card"><div class="card-head"><div class="label">${esc(b.title)}</div></div>`;
     b.items.forEach((it,ii)=>{
-      let k=cdcItemKey(cdcActiveMoment,bi,ii); let v=ctrl[k]||{status:'',qty:'',remark:'',photos:[]};
-      html+=`<div class="audit-item"><div class="audit-title">${esc(it.l)} <span style="color:var(--gold);font-weight:900">· prévu ${esc(it.q)}</span></div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setCdcControl('${k}','status','conforme')">Conforme</button><button class="${v.status==='absent'?'on ko':''}" onclick="setCdcControl('${k}','status','absent')">Absent</button><button class="${v.status==='qte'?'on rep':''}" onclick="setCdcControl('${k}','status','qte')">Qté N/C</button><button class="${v.status==='nc'?'on nc':''}" onclick="setCdcControl('${k}','status','nc')">N/C</button></div><input class="fc" placeholder="Quantité constatée" value="${esc(v.qty)}" onchange="setCdcControl('${k}','qty',this.value)"><input class="fc" placeholder="Remarque" value="${esc(v.remark)}" onchange="setCdcControl('${k}','remark',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForCdc('${k}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForCdc('${k}')">📁 Importer</button></div>${photoStrip(v.photos||[],`removeCdcPhoto('${k}',IDX)`)}</div>`;
+      let k=cdcItemKey(cdcActiveMoment,bi,ii); let v=ctrl[k]||{status:'',qty:'',qtyUnit:'portion',remark:'',photos:[]};
+      html+=`<div class="audit-item"><div class="audit-title">${esc(it.l)} <span style="color:var(--gold);font-weight:900">· prévu ${esc(it.q)}</span></div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setCdcControl('${k}','status','conforme')">Conforme</button><button class="${v.status==='absent'?'on ko':''}" onclick="setCdcControl('${k}','status','absent')">Absent</button><button class="${v.status==='qte'?'on rep':''}" onclick="setCdcControl('${k}','status','qte')">Qté N/C</button><button class="${v.status==='nc'?'on nc':''}" onclick="setCdcControl('${k}','status','nc')">N/C</button></div><div class="qty-row"><input class="fc qty-input" type="number" step="any" inputmode="decimal" placeholder="Qté constatée" value="${esc(v.qty)}" onchange="setCdcControl('${k}','qty',this.value)"><div class="unit-toggle">${['kg','portion','unite'].map(u=>`<button class="unit-btn ${(v.qtyUnit||'portion')===u?'active':''}" onclick="setCdcControl('${k}','qtyUnit','${u}')">${u==='unite'?'unité':u}</button>`).join('')}</div></div><input class="fc" style="margin-top:8px" placeholder="Remarque" value="${esc(v.remark)}" onchange="setCdcControl('${k}','remark',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForCdc('${k}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForCdc('${k}')">📁 Importer</button></div>${photoStrip(v.photos||[],`removeCdcPhoto('${k}',IDX)`)}</div>`;
     });
     html+=`</div>`;
   });
@@ -954,7 +1272,12 @@ function renderRestes(){
   let html=`<div class="ph"><div><h1>Restes après service</h1><div class="sub">Lignes pré-remplies depuis le cahier des charges — quantité + unité seulement</div></div></div>`;
   if(!a){ $('page-restes').innerHTML=html+'<div class="empty">Créer un audit avant de renseigner les restes.</div>'; return }
   let cdc=ensureCdc(a);
-  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${restesActiveMoment===m.id?'active':''}" onclick="selectRestesMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  const rs=cdcScores(a);
+  html+=`<div class="card"><div class="card-head"><div class="label">Note après service</div><span class="badge ${scoreTone(rs.after)}">${scoreTxt(rs.after)}</span></div>
+  <p style="color:var(--muted);font-size:12px">Gestion des restes · ${rs.rate===null?'aucune mesure exploitable pour l’instant':'taux de reste moyen '+Math.round(rs.rate*100)+'% de la quantité livrée, sur '+rs.mesures+' produit(s)'}.${rs.incalculables?` ${rs.incalculables} produit(s) non calculable(s) : quantité livrée absente ou unité différente du reste.`:''}</p>
+  <p style="color:var(--dim);font-size:11px;margin-top:6px">Un produit livré sans reste saisi est compté comme « pas de reste ».</p></div>`;
+  html+=`<div class="chips">${CDC_MOMENTS.map(m=>`<button class="chip ${restesActiveMoment===m.id?'active':''} ${isMomentOn(a,m.id)?'':'off'}" onclick="selectRestesMoment('${m.id}')">${m.label}</button>`).join('')}</div>`;
+  if(!isMomentOn(a,restesActiveMoment)) html+=`<div class="warn" style="margin-top:10px">Repas non retenu dans la configuration du déplacement : hors notation.</div>`;
   let ref=cdc.reference && cdc.reference[restesActiveMoment];
   let lm=ensureLeftoverMoment(a,restesActiveMoment);
   if(!ref){
@@ -1126,7 +1449,26 @@ async function compactPhotos(){
   let after=storageUsageMB(true);
   toast(touched?`✅ ${touched} photo(s) optimisée(s) · ${before.toFixed(1)} → ${after.toFixed(1)} Mo`:'Photos déjà optimisées');
 }
-function capturePhoto(){let v=$('video');let c=document.createElement('canvas');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;let ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);let data=c.toDataURL('image/jpeg',0.86);closeCamera(); compressImage(data).then(d=>{if(photoCallback)photoCallback(d)})}
+/* V24 : si le flux vidéo n'était pas prêt, videoWidth valait 0, on dessinait
+   une image vide dans un canvas 1280x720 et on enregistrait une photo noire —
+   sans le moindre message. On refuse désormais la capture, et on confirme
+   explicitement quand elle aboutit. */
+function capturePhoto(){
+  const v=$('video');
+  const w=v&&v.videoWidth, h=v&&v.videoHeight;
+  if(!w||!h){ toast('⚠️ La caméra n’est pas encore prête — attends l’image puis réessaie, ou utilise « Importer ».'); return }
+  const c=document.createElement('canvas'); c.width=w; c.height=h;
+  c.getContext('2d').drawImage(v,0,0,w,h);
+  let data;
+  try{ data=c.toDataURL('image/jpeg',0.86) }
+  catch(e){ console.error('capturePhoto',e); toast('⚠️ Capture impossible sur cet appareil — utilise « Importer ».'); return }
+  const cb=photoCallback;
+  closeCamera();
+  compressImage(data).then(d=>{
+    if(typeof cb!=='function'){ toast('⚠️ Photo perdue : aucune destination active.'); return }
+    try{ cb(d) }catch(e){ console.error('callback photo',e); toast('⚠️ Enregistrement de la photo impossible : '+(e.message||e)) }
+  }).catch(e=>{ console.error('compressImage',e); toast('⚠️ Compression de la photo impossible.') });
+}
 function pickFile(cb){let input=$('filePicker'); input.value=''; input.onchange=()=>{let f=input.files[0]; if(!f)return; let r=new FileReader(); r.onload=()=>{compressImage(r.result).then(cb)}; r.readAsDataURL(f)}; input.click();}
 /* ============================================================================
    V23 · CHARTE GRAPHIQUE DES RAPPORTS PDF
@@ -1314,11 +1656,12 @@ function exportGeneralPDF(){
   const stats=sectorStats(a); const totalItems=stats.reduce((s,x)=>s+x.total,0); const okItems=stats.reduce((s,x)=>s+x.ok,0);
   const score=Math.round((okItems/Math.max(totalItems,1))*100);
   const sensibles=stats.reduce((s,x)=>s+x.ko+x.rep,0);
+  const gSc=siteScore(a), hSc=hotelScore(a), sSc=salleScore(a);
   pdfCover(doc,a,'Rapport d’audit hôtel complet',[
-    {value:totalItems?score:null,label:totalItems?'Conformité globale du site':'Audit non renseigné'},
-    {value:`${okItems}/${totalItems}`,label:'Points conformes'},
+    {value:gSc.score,label:gSc.score===null?'Audit non renseigné':'Note globale du site'},
+    {value:hSc.score===null?'\u2014':hSc.score+'%',unit:'',label:'Cuisine'},
+    {value:sSc.score===null?'\u2014':sSc.score+'%',unit:'',label:'Salle de restaurant'},
     {value:sensibles,label:'Points sensibles'},
-    {value:a.products.length,label:'Étiquettes tracées'},
     {value:a.actions.filter(x=>!x.done).length,label:'Actions ouvertes'}
   ]);
 
@@ -1379,6 +1722,37 @@ function exportGeneralPDF(){
     if((a.stadium.products||[]).length){doc.addPage();addHeader(doc,a,'Produits traiteur stade');y=30; y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC','Qualité'],12,y,[42,32,32,28,24,28]); a.stadium.products.forEach((p,i)=>{if(y>268){doc.addPage();addHeader(doc,a,'Produits traiteur stade');y=30; y=drawTableHeader(doc,['Produit','Marque','Origine','Lot','DLC','Qualité'],12,y,[42,32,32,28,24,28]);} y=drawTableRow(doc,[p.name,p.brand,p.origin,p.lot,p.dlc,p.quality],12,y,[42,32,32,28,24,28],i%2);});}
   }
 
+  /* V25 : l'audit salle prolonge directement l'audit cuisine dans le même
+     rapport — même document, mêmes tableaux, même mise en page. */
+  const slSc=salleScore(a);
+  if(slSc.answered){
+    const sa=ensureSalle(a);
+    doc.addPage(); addHeader(doc,a,'Audit salle de restaurant'); y=30;
+    y=sectionTitle(doc,'Salle de restaurant — synthèse',y);
+    fill(doc,PDF.zebra); doc.roundedRect(PDF.M,y,PDF.W,26,3,3,'F');
+    stroke(doc,PDF.line); doc.roundedRect(PDF.M,y,PDF.W,26,3,3,'S');
+    const slCol=slSc.score===null?PDF.muted:scoreColor(slSc.score);
+    fill(doc,slCol); doc.roundedRect(PDF.M,y,3,26,1.5,1.5,'F');
+    ink(doc,slCol); doc.setFont(undefined,'bold'); doc.setFontSize(22);
+    doc.text(slSc.score===null?'\u2014':slSc.score+'%',PDF.M+9,y+17);
+    ink(doc,PDF.muted); doc.setFont(undefined,'normal'); doc.setFontSize(8);
+    doc.text(`${slSc.ok}/${slSc.considered} conformes \u00b7 ${slSc.answered}/${slSc.total} points renseign\u00e9s \u00b7 ${slSc.bad} \u00e0 traiter`,PDF.M+42,y+11);
+    doc.text(`Service audit\u00e9 : ${sa.service||'-'}   \u00b7   Couverts : ${sa.couverts||'-'}   \u00b7   Responsable de salle : ${sa.responsable||'-'}`,PDF.M+42,y+18);
+    ink(doc,PDF.ink); y+=34;
+    y=text(doc,sa.notes||'Aucune observation g\u00e9n\u00e9rale renseign\u00e9e sur le service en salle.',PDF.M,y,PDF.W,9.5); y+=6;
+    SALLE_SECTIONS.forEach(sec=>{
+      if(y>240){doc.addPage();addHeader(doc,a,'Audit salle de restaurant');y=30}
+      fill(doc,PDF.navy2);doc.rect(PDF.M,y,PDF.W,7.5,'F');fill(doc,PDF.green);doc.rect(PDF.M,y,2,7.5,'F');
+      ink(doc,PDF.white);doc.setFont(undefined,'bold');doc.setFontSize(9);doc.text(sec.name,PDF.M+5,y+5.2);ink(doc,PDF.ink); y+=10;
+      y=drawTableHeader(doc,['Point contr\u00f4l\u00e9','Statut','T\u00b0 / relev\u00e9','Photos','Remarque'],PDF.M,y,[70,24,24,16,48]);
+      sec.items.forEach((it,idx)=>{
+        const v=(sa.items||{})[it]||{};
+        if(y>268){doc.addPage();addHeader(doc,a,sec.name);y=30; y=drawTableHeader(doc,['Point contr\u00f4l\u00e9','Statut','T\u00b0 / relev\u00e9','Photos','Remarque'],PDF.M,y,[70,24,24,16,48]);}
+        y=drawTableRow(doc,[it,statusLabel(v.status),v.temp||'-',(v.photos||[]).length||'-',v.remarks||'-'],PDF.M,y,[70,24,24,16,48],idx%2);
+      });
+    });
+  }
+
   doc.addPage(); addHeader(doc,a,'Plan d’actions correctives'); y=30;
   y=drawTableHeader(doc,['Priorité','Action demandée','Responsable','Échéance','Statut'],12,y,[28,82,32,24,20]);
   if(!a.actions.length){doc.text('Aucune action corrective enregistrée.',12,y+8)}
@@ -1393,6 +1767,14 @@ function exportGeneralPDF(){
         });
       });
     });
+  }
+  const saItems=(a.salle||{}).items||{};
+  if(SALLE_SECTIONS.some(sec=>sec.items.some(it=>((saItems[it]||{}).photos||[]).length))){
+    SALLE_SECTIONS.forEach(sec=>sec.items.forEach(it=>{
+      const v=saItems[it]||{}; const photos=v.photos||[];
+      photos.forEach((p,i)=>addImagePage(doc,a,'Annexe photos \u00b7 Salle de restaurant',p.src,
+        {title:it,meta:`${sec.name}${photos.length>1?` \u00b7 Photo ${i+1}/${photos.length}`:''}${v.remarks?` \u00b7 ${v.remarks}`:''}`}));
+    }));
   }
   finalizePdf(doc); doc.save(filename('rapport_audit_hotel_complet',a));
 }
@@ -1422,11 +1804,23 @@ function exportCdcPDF(){
   const {jsPDF}=window.jspdf; let doc=new jsPDF('p','mm','a4');
   let cdcOk=0,cdcTot=0;
   CDC_MOMENTS.forEach(m=>{const sc=cdcMomentScore(a,m.id); if(sc&&sc.total){cdcOk+=sc.ok||0; cdcTot+=sc.total||0}});
+  const sc=cdcScores(a);
   pdfCover(doc,a,'Contrôle du cahier des charges OM',[
-    {value:cdcTot?Math.round(cdcOk/cdcTot*100):null,label:cdcTot?'Conformité au cahier des charges':'Cahier des charges non contrôlé'},
-    {value:`${cdcOk}/${cdcTot}`,label:'Prestations conformes'},
-    {value:(cdc.referenceFetchedAt||'-').slice(0,10),label:'Référence chargée le'}
+    {value:sc.before,label:sc.before===null?'Aucun contrôle renseigné':'Avant service · présence et quantités'},
+    {value:sc.after===null?'—':sc.after+'%',unit:'',label:'Après service · gestion des restes'},
+    {value:`${sc.ok}/${sc.considered}`,label:'Produits conformes'},
+    {value:cdcMoments(a).length+'/'+CDC_MOMENTS.length,label:'Repas retenus au déplacement'}
   ]);
+  doc.addPage(); addHeader(doc,a,'Configuration du déplacement'); let yc=30;
+  yc=sectionTitle(doc,'Repas retenus pour ce déplacement',yc);
+  yc=drawTableHeader(doc,['Moment du déplacement','Retenu','Avant service','Restes'],PDF.M,yc,[92,26,32,32]);
+  CDC_MOMENTS.forEach((m,i)=>{
+    const on=isMomentOn(a,m.id), ms=cdcMomentScore(a,m.id);
+    yc=drawTableRow(doc,[m.label,on?'Oui':'Non',ms.total?`${ms.ok}/${ms.total}`:'-',on?'noté':'hors notation'],PDF.M,yc,[92,26,32,32],i%2);
+  });
+  yc+=8;
+  yc=text(doc,`Note avant service : ${scoreTxt(sc.before)} — présence des produits et respect des quantités, sur les repas retenus. Les points « non concerné » sont exclus du calcul.`,PDF.M,yc,PDF.W,9.5);
+  yc=text(doc,`Note après service : ${scoreTxt(sc.after)} — ${sc.rate===null?'aucune mesure exploitable.':'taux de reste moyen de '+Math.round(sc.rate*100)+'% de la quantité livrée, sur '+sc.mesures+' produit(s).'}${sc.incalculables?' '+sc.incalculables+' produit(s) non calculable(s) faute de quantité livrée comparable.':''}`,PDF.M,yc,PDF.W,9.5);
   doc.addPage(); addHeader(doc,a,'Contrôle Cahier des Charges'); let y=30;
   let any=false;
   CDC_MOMENTS.forEach(m=>{
@@ -1478,7 +1872,9 @@ function exportRestesPDF(){
   let statsPre=leftoverStatsByFamily(a);
   let totKg=Object.values(statsPre).reduce((t,x)=>t+(x.kg||0),0);
   let totLignes=Object.values(statsPre).reduce((t,x)=>t+(x.count||0),0);
+  const rsc=cdcScores(a);
   pdfCover(doc,a,'Restes après service · analyse du gaspillage',[
+    {value:rsc.after,label:rsc.after===null?'Aucune mesure exploitable':'Note de gestion des restes'},
     {value:Math.round(totKg*10)/10,unit:' kg',label:'Restes relevés au total'},
     {value:totLignes,label:'Lignes relevées'},
     {value:Object.keys(statsPre).length,label:'Familles concernées'}
@@ -1595,7 +1991,7 @@ window.__AHP_BOOT=load().then(()=>{renderAll()}).catch(e=>{console.error('Démar
 (()=>{
 'use strict';
 if(window.__AHP_PATCHED)return; window.__AHP_PATCHED='V23';
-const V='V23.2';
+const V='V25';
 const O={renderAll,renderDashboard,renderChecklist,renderStadium,renderCdc,renderRestes,renderLocals,renderExports,exportGeneralPDF};
 let t=null,pending=false,dirty=false;
 const editing=()=>{const e=document.activeElement;return !!(e&&(e.matches&&e.matches('input.fc,textarea.fc')||e.isContentEditable))};
@@ -1627,7 +2023,7 @@ async function readImages(files){const out=[];for(const f of Array.from(files||[
 function pickMany(cb){const i=document.createElement('input');i.type='file';i.accept='image/*';i.multiple=true;i.hidden=true;document.body.appendChild(i);i.onchange=async()=>{try{const a=await readImages(i.files);if(a.length)cb(a)}catch(e){console.error(e);toast('Import photo impossible')}finally{i.remove()}};i.click()}
 window.importForItem=k=>pickMany(imgs=>{const a=ensureAudit();if(!a)return;const v=hotelItem(a,unkey(k));imgs.forEach(src=>v.photos.push({src,at:nowText(),type:'PMS'}));qsave(true);O.renderChecklist();decorateChecklist();toast(`${imgs.length} photo(s) ajout\u00e9e(s)`) });
 window.importForStadiumItem=k=>pickMany(imgs=>{const a=ensureAudit();if(!a)return;const v=stadiumItem(a,stadiumKey(k));imgs.forEach(src=>v.photos.push({src,at:nowText(),type:'Traiteur'}));qsave(true);O.renderStadium();decorateStadium();toast(`${imgs.length} photo(s) ajout\u00e9e(s)`) });
-window.importForCdc=k=>pickMany(imgs=>{const a=ensureAudit();if(!a)return;const c=ensureCdc(a);c.controls[cdcActiveMoment]=c.controls[cdcActiveMoment]||{};c.controls[cdcActiveMoment][k]=c.controls[cdcActiveMoment][k]||{status:'',qty:'',remark:'',photos:[]};const v=c.controls[cdcActiveMoment][k];v.photos=v.photos||[];imgs.forEach(src=>v.photos.push({src,at:nowText()}));qsave(true);O.renderCdc();decorateCdc();toast(`${imgs.length} photo(s) ajout\u00e9e(s)`) });
+window.importForCdc=k=>{const moment=cdcActiveMoment; pickMany(imgs=>{addCdcPhotos(moment,k,imgs);O.renderCdc();decorateCdc()})};
 window.importForLeftoverRef=k=>pickMany(imgs=>{const a=ensureAudit();if(!a)return;const l=ensureLeftoverMoment(a,restesActiveMoment);l.refItems[k]=l.refItems[k]||{qtyValue:'',qtyUnit:'portion',remark:'',photos:[]};const v=l.refItems[k];v.photos=v.photos||[];imgs.forEach(src=>v.photos.push({src,at:nowText()}));qsave(true);O.renderRestes();decorateRestes();toast(`${imgs.length} photo(s) ajout\u00e9e(s)`) });
 window.importManyLocals=()=>{const a=ensureAudit();if(!a)return;const z=($('l_zone')||{}).value||'Autre',s=($('l_status')||{}).value||'Conforme',c=($('l_comment')||{}).value||'';pickMany(imgs=>{imgs.slice().reverse().forEach(src=>a.locals.unshift({zone:z,status:s,comment:c,photo:src,at:nowText(),groupId:uid()}));qsave(true);O.renderLocals();decorateLocals();O.renderDashboard();decorateDashboard();toast(`${imgs.length} photo(s) ajout\u00e9e(s) au m\u00eame sujet`)})};
 window.importManyStadiumLocals=()=>{const a=ensureAudit();if(!a)return;if(!a.stadium)migrateAuditData();const z=($('st_l_zone')||{}).value||'Stade',s=($('st_l_status')||{}).value||'Conforme',c=($('st_l_comment')||{}).value||'';pickMany(imgs=>{imgs.slice().reverse().forEach(src=>a.stadium.locals.unshift({zone:z,status:s,comment:c,photo:src,at:nowText(),groupId:uid()}));qsave(true);O.renderStadium();decorateStadium();toast(`${imgs.length} photo(s) ajout\u00e9e(s) au m\u00eame sujet`)})};
@@ -1644,7 +2040,7 @@ function decorateStadium(){const p=$('page-stadium');labels(p,'importForStadiumI
 function decorateExports(){const p=$('page-exports'),a=current();if(!p||!a)return;const hb=Array.from(p.querySelectorAll('button')).find(b=>(b.getAttribute('onclick')||'')==='exportGeneralPDF()'),sb=Array.from(p.querySelectorAll('button')).find(b=>(b.getAttribute('onclick')||'')==='exportStadiumPDF()');if(hb)hb.textContent='\U0001F3E8 Rapport Audit H\u00f4tel uniquement';if(sb)sb.textContent='\U0001F3DF\uFE0F Rapport Audit Traiteur uniquement';const w=p.querySelector('.warn');if(w)w.textContent='Les rapports H\u00f4tel et Traiteur sont dissoci\u00e9s, avec des notes de conformit\u00e9 ind\u00e9pendantes. Chaque rapport s\u2019ouvre sur une page de garde API Contr\u00f4le.';if(!p.querySelector('#v21exportscores')){const h=stats(CHECK_SECTIONS,a.items||{}),s=stats(STADIUM_SECTIONS,(a.stadium&&a.stadium.items)||{}),d=document.createElement('div');d.id='v21exportscores';d.className='card';d.innerHTML=`<div class="label" style="margin-bottom:10px">Synth\u00e8se avant export</div><div class="v21-grid">${card('H\u00f4tel',h,'hotel')}${card('Traiteur',s,'stadium')}</div>`;if(w)w.insertAdjacentElement('afterend',d)}}
 window.renderDashboard=()=>{O.renderDashboard();decorateDashboard()};window.renderChecklist=()=>{O.renderChecklist();decorateChecklist()};window.renderStadium=()=>{O.renderStadium();decorateStadium()};window.renderCdc=()=>{O.renderCdc();decorateCdc()};window.renderRestes=()=>{O.renderRestes();decorateRestes()};window.renderLocals=()=>{O.renderLocals();decorateLocals()};window.renderExports=()=>{O.renderExports();decorateExports()};
 window.exportGeneralPDF=function(){const a=ensureAudit();if(!a)return;const st=a.stadium;try{a.stadium=null;O.exportGeneralPDF()}catch(e){console.error('exportGeneralPDF',e);toast('Erreur pendant la g\u00e9n\u00e9ration du PDF')}finally{a.stadium=st}};
-function style(){if($('v21style'))return;const s=document.createElement('style');s.id='v21style';s.textContent='.v21-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v21-score{display:flex;justify-content:space-between;gap:15px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--bg3)}.v21-score.hotel{box-shadow:inset 4px 0 var(--blue)}.v21-score.stadium{box-shadow:inset 4px 0 var(--gold)}.v21-score b{display:block;font-size:12px;text-transform:uppercase;color:var(--muted)}.v21-score strong{display:block;font:900 30px var(--mono);margin-top:3px}.v21-score small{color:var(--muted);line-height:1.55;text-align:right}@media(max-width:700px){.v21-grid{grid-template-columns:1fr}.v21-score small{text-align:left}}';document.head.appendChild(s)}
+function style(){if($('v21style'))return;const s=document.createElement('style');s.id='v21style';s.textContent='.v21-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v21-score{display:flex;justify-content:space-between;gap:15px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--bg3)}.v21-score.hotel{box-shadow:inset 4px 0 var(--blue)}.v21-score.stadium{box-shadow:inset 4px 0 var(--gold)}.v21-score.salle{box-shadow:inset 4px 0 var(--green)}.v21-grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}@media(max-width:900px){.v21-grid-3{grid-template-columns:1fr}}.v21-score b{display:block;font-size:12px;text-transform:uppercase;color:var(--muted)}.v21-score strong{display:block;font:900 30px var(--mono);margin-top:3px}.v21-score small{color:var(--muted);line-height:1.55;text-align:right}@media(max-width:700px){.v21-grid{grid-template-columns:1fr}.v21-score small{text-align:left}}';document.head.appendChild(s)}
 function decorateAll(){style();decorateDashboard();decorateChecklist();decorateStadium();decorateCdc();decorateRestes();decorateLocals();decorateExports()}
 window.__AHP_DECORATE=decorateAll;
 (window.__AHP_BOOT||Promise.resolve()).then(()=>decorateAll()).catch(()=>decorateAll());
