@@ -104,7 +104,7 @@ body{background-image:radial-gradient(circle at 8% 4%,rgba(197,161,90,.09),trans
 .kpi .v{font-family:var(--mono);font-size:31px;font-weight:900;letter-spacing:-.5px}
 .kpi .l{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}
 .btn{border:0;border-radius:12px;padding:10px 16px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:7px;font-size:13px}
-.btn:active{transform:scale(.97)}
+.btn:active{filter:brightness(.93)}
 .btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--navy)}
 .btn-sec{background:var(--bg3);border:1px solid var(--border2);color:var(--text)}
 .btn-blue{background:rgba(61,123,255,.1);border:1px solid rgba(61,123,255,.35);color:#2158d1}
@@ -289,18 +289,26 @@ textarea.fc{min-height:92px;resize:vertical}
   .kpi.red:before{background-image:linear-gradient(90deg,var(--red),#ffb3bd,var(--red))}
   .kpi.blue:before{background-image:linear-gradient(90deg,var(--blue),var(--navy),var(--blue))}
 }
-.card,.kpi,.audit-item,.li{transition:transform .38s cubic-bezier(.2,.7,.3,1),box-shadow .38s ease}
+.card,.kpi,.audit-item,.li{transition:box-shadow .28s ease,background .2s ease,border-color .2s ease}
 @media (hover:hover) and (pointer:fine){
-  .card:hover,.kpi:hover{transform:translateY(-4px) rotateX(2deg) rotateY(-2deg);box-shadow:0 24px 48px rgba(64,80,160,.14)}
-  .li:hover{transform:translateY(-2px) rotateX(1deg);box-shadow:0 14px 30px rgba(64,80,160,.12)}
+  /* V23.2 : ces règles déplaçaient l'élément survolé. Le curseur sortait donc
+     de sa zone, le survol s'annulait, l'élément revenait — en boucle. D'où le
+     tremblement et le curseur qui alterne entre la main et la flèche.
+     Aggravé par l'imbrication : survoler « Ouvrir » déplaçait à la fois le
+     bouton, la ligne d'historique et la carte, soit 8 px cumulés.
+     On garde la profondeur (ombre, fond) sans jamais toucher à la géométrie. */
+  .card:hover,.kpi:hover{box-shadow:0 24px 48px rgba(64,80,160,.14)}
+  .li:hover{box-shadow:0 14px 30px rgba(64,80,160,.12);background:rgba(255,255,255,.94);border-color:rgba(197,161,90,.5)}
 }
-.card:active,.kpi:active,.li:active{transform:translateY(-1px) scale(.995);transition-duration:.12s}
-.btn{transition:transform .16s ease,box-shadow .16s ease}
+/* V23.2 : un conteneur qui se déplace pendant le clic emmène le bouton avec
+   lui — le relâchement tombe alors à côté et le clic est perdu. */
+.card:active,.kpi:active,.li:active{transition-duration:.12s}
+.btn{transition:box-shadow .16s ease,filter .12s ease}
 @media (hover:hover) and (pointer:fine){
-  .btn:hover{transform:translateY(-2px)}
+  .btn:hover{box-shadow:0 8px 20px rgba(20,35,70,.16);filter:brightness(1.04)}
   .btn-gold:hover{box-shadow:0 12px 28px rgba(197,161,90,.45)}
 }
-.btn:active{transform:translateY(0) scale(.96)}
+.btn:active{filter:brightness(.93);box-shadow:inset 0 2px 6px rgba(20,35,70,.18)}
 .btn-gold{box-shadow:0 8px 20px rgba(197,161,90,.35)}
 </style>
 </head>
@@ -313,7 +321,7 @@ textarea.fc{min-height:92px;resize:vertical}
 </div>
 <div id="app">
   <aside class="side" id="side">
-    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=23" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V23</div></div></div></div>
+    <div class="side-head"><div class="logo-row"><img class="logo-img" src="/audithotellogo.png?v=23" alt="API Contrôle"><div><div class="appname">Audit Hôtel Pro</div><div class="site">OM PRO 05147 · V23.2</div></div></div></div>
     <div class="current"><b id="currentAuditName">Aucun audit sélectionné</b><p id="currentAuditMeta">Créer ou choisir un déplacement</p><p id="syncStatus" style="font-size:10px;font-weight:800;color:var(--dim);margin-top:4px">☁️ —</p></div>
     <nav class="nav">
       <div class="nav-title">Pilotage</div>
@@ -429,14 +437,48 @@ function refreshStorageEstimate(){
     navigator.storage.estimate().then(e=>{storageEstimate={usedMB:(e.usage||0)/1048576,quotaMB:(e.quota||0)/1048576}}).catch(()=>{});
   }
 }
-function storageUsageMB(){try{return JSON.stringify(state).length/1024/1024}catch(e){return 0}}
+/* V23.1 : cette fonction sérialise l'état entier. Sur l'audit Mariott (5 Mo)
+   elle coûte ~30 ms, et elle était appelée deux fois par rendu complet
+   (tableau de bord + exports). Résultat : interface qui semble bloquée à
+   chaque navigation. On met le résultat en cache, invalidé à l'écriture. */
+/* V23.1 : les vignettes étaient injectées en base64 directement dans le HTML.
+   La page Contrôle PMS de l'audit Mariott pesait 2,26 Mo de chaîne HTML, et
+   renderChecklist() est rappelée à chaque changement de statut : ~2 s de
+   blocage par tap. On convertit chaque photo une seule fois en URL blob : le
+   HTML redevient minuscule et le navigateur garde l'image décodée en cache. */
+const _photoUrls=new Map();
+function photoKey(src){return src.length+'|'+src.slice(-28)}
+function photoUrl(src){
+  if(!src||typeof src!=='string'||src.slice(0,5)!=='data:')return src||'';
+  const k=photoKey(src);
+  const hit=_photoUrls.get(k); if(hit)return hit;
+  try{
+    const comma=src.indexOf(','); if(comma<0)return src;
+    const mime=(src.slice(0,comma).match(/:(.*?);/)||[])[1]||'image/jpeg';
+    const bin=atob(src.slice(comma+1));
+    const arr=new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    const url=URL.createObjectURL(new Blob([arr],{type:mime}));
+    if(_photoUrls.size>400){const first=_photoUrls.keys().next().value; try{URL.revokeObjectURL(_photoUrls.get(first))}catch(e){} _photoUrls.delete(first)}
+    _photoUrls.set(k,url);
+    return url;
+  }catch(e){return src}
+}
+let _sizeCache={mb:0,at:0};
+function invalidateSizeCache(){_sizeCache.at=0}
+function storageUsageMB(force){
+  const now=Date.now();
+  if(!force&&_sizeCache.at&&now-_sizeCache.at<20000)return _sizeCache.mb;
+  try{_sizeCache={mb:JSON.stringify(state).length/1048576,at:now}}catch(e){_sizeCache={mb:0,at:now}}
+  return _sizeCache.mb;
+}
 function storageQuotaMB(){return storageEstimate.quotaMB||0}
 function photoCount(a){
   let n=0;
   const walk=b=>{Object.values(b||{}).forEach(v=>{n+=((v&&v.photos)||[]).length})};
   walk(a.items); walk(a.stadium&&a.stadium.items);
   Object.values((a.cdc&&a.cdc.controls)||{}).forEach(walk);
-  Object.values(a.leftovers||{}).forEach(m=>{walk(m.refItems); (m.extras||[]).forEach(x=>{n+=((x&&x.photos)||[]).length})});
+  Object.values(a.leftovers||{}).forEach(m=>{walk(m.refItems); (m.extra||m.extras||[]).forEach(x=>{n+=((x&&x.photos)||[]).length})});
   n+=(a.products||[]).filter(p=>p.photo).length;
   n+=(a.locals||[]).filter(l=>l.photo).length;
   n+=((a.stadium&&a.stadium.products)||[]).filter(p=>p.photo).length;
@@ -445,7 +487,7 @@ function photoCount(a){
 }
 let _saveTimer=null,_savePending=false;
 function persist(){
-  return idbPut(state).then(()=>{_savePending=false; refreshStorageEstimate(); return true}).catch(e=>{
+  return idbPut(state).then(()=>{_savePending=false; invalidateSizeCache(); refreshStorageEstimate(); return true}).catch(e=>{
     console.error('Échec sauvegarde IndexedDB',e);
     try{localStorage.setItem(LS_KEY,JSON.stringify(state)); _savePending=false; return true}
     catch(_){toast('⚠️ Sauvegarde impossible — libère de l’espace sur l’appareil.'); return false}
@@ -458,7 +500,14 @@ function save(){
   _saveTimer=setTimeout(()=>{_saveTimer=null; persist()},200);
   scheduleCloudPush();
 }
-function saveNow(){clearTimeout(_saveTimer); _saveTimer=null; return persist()}
+/* V23.1 : écrire dans IndexedDB clone l'état entier (5 Mo sur le Mariott).
+   Inutile de le faire quand rien n'a changé — c'était le cas à chaque perte
+   de focus, donc à chaque tap sur un bouton. */
+function saveNow(){
+  clearTimeout(_saveTimer); _saveTimer=null;
+  if(!_savePending)return Promise.resolve(true);
+  return persist();
+}
 async function load(){
   let data=null;
   try{data=await idbGet()}catch(e){console.warn('IndexedDB indisponible, repli localStorage',e)}
@@ -494,7 +543,16 @@ function duplicateAudit(id){
   toast('Audit dupliqué : hôtel/contacts repris, checklist remise à zéro pour ce nouveau déplacement');
 }
 function deleteAudit(id){if(!confirm('Supprimer cet audit ?'))return; state.audits=state.audits.filter(a=>a.id!==id); if(state.currentId===id)state.currentId=state.audits[0]?.id||null; save(); renderAll(); if(sessionPin){syncCall({action:'delete',audit_id:id}).catch(()=>{});}}
-function selectAudit(id){state.currentId=id; save(); renderAll(); showPage('dashboard');}
+/* V23.1 : la navigation passe AVANT le rendu. Si un secteur du rendu échoue,
+   l'écran change quand même — le bouton ne peut plus paraître mort. */
+function selectAudit(id){
+  state.currentId=id;
+  showPage('dashboard');
+  save();
+  renderAll();
+  const a=current();
+  toast(a?`Audit ouvert : ${a.hotel||'sans nom'}`:'Audit introuvable');
+}
 let geoDebounceTimer=null;
 function scheduleGeocode(){clearTimeout(geoDebounceTimer); geoDebounceTimer=setTimeout(()=>geocodeHotel(),900);}
 function updateAudit(field,val){let a=ensureAudit(); if(!a)return; a[field]=val; save(); renderHeader(); if(['hotel','address','destination'].includes(field))scheduleGeocode();}
@@ -589,8 +647,47 @@ function startSyncPolling(){
   syncPollInterval=setInterval(()=>cloudPullAll(true),30000);
   document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') cloudPullAll(true); });
 }
-function renderAll(){migrateAuditData(); renderHeader(); renderDashboard(); renderAudit(); renderChecklist(); renderProducts(); renderLocals(); renderStadium(); renderCdc(); renderRestes(); renderActions(); renderExports();}
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); $('page-'+p).classList.add('active'); document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); $('side').classList.remove('open'); $('sideBackdrop').classList.remove('show'); window.scrollTo(0,0)}
+/* V23.1 : renderAll enchaînait 12 rendus. Si l'un levait une exception — par
+   exemple sur un audit venu du cloud avec une structure d'une version
+   antérieure — tous les suivants étaient abandonnés ET l'appelant n'atteignait
+   jamais showPage(). Chaque secteur est désormais isolé. */
+function safeRender(nom,fn){
+  try{fn()}catch(e){console.error('Rendu « '+nom+' » en échec',e); renderErrors.push(nom+' : '+(e&&e.message||e))}
+}
+let renderErrors=[];
+/* V23.1 : renderAll reconstruisait les 12 pages à chaque appel. Sur l'audit
+   Mariott cela réinjectait 4,4 Mo de photos base64 dans le DOM à chaque
+   navigation, soit près de 2 secondes de blocage : les boutons semblaient
+   morts. On ne rend désormais que la page affichée ; les autres sont marquées
+   à rafraîchir et rendues au moment où l'on y arrive.
+   Les noms sont résolus sur window à l'appel, pour rester compatible avec la
+   couche de décoration qui remplace ces fonctions. */
+const PAGE_RENDERERS={dashboard:'renderDashboard',audit:'renderAudit',checklist:'renderChecklist',
+  products:'renderProducts',locals:'renderLocals',stadium:'renderStadium',cdc:'renderCdc',
+  restes:'renderRestes',actions:'renderActions',exports:'renderExports'};
+const PAGE_LABELS={dashboard:'tableau de bord',audit:'déplacement',checklist:'contrôle PMS',
+  products:'étiquettes',locals:'locaux',stadium:'traiteur stade',cdc:'cahier des charges',
+  restes:'restes',actions:'plan d’actions',exports:'exports'};
+let dirtyPages=new Set(), activePage='dashboard';
+function renderPage(p){
+  const fn=window[PAGE_RENDERERS[p]];
+  if(typeof fn!=='function')return;
+  safeRender(PAGE_LABELS[p]||p,fn);
+  dirtyPages.delete(p);
+}
+function renderAll(){
+  renderErrors=[];
+  safeRender('migration',migrateAuditData);
+  safeRender('en-tête',renderHeader);
+  dirtyPages=new Set(Object.keys(PAGE_RENDERERS));
+  renderPage(activePage);
+  if(activePage!=='dashboard')renderPage('dashboard');
+  if(renderErrors.length)toast('⚠️ Affichage partiel — '+renderErrors[0]);
+}
+function showPage(p){
+  activePage=p;
+  if(dirtyPages.has(p))renderPage(p);
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); $('page-'+p).classList.add('active'); document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); $('side').classList.remove('open'); $('sideBackdrop').classList.remove('show'); window.scrollTo(0,0)}
 document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>showPage(b.dataset.page));
 function toggleSide(){ $('side').classList.toggle('open'); $('sideBackdrop').classList.toggle('show'); }
 function renderDashboard(){let a=current(); let html=`<div class="ph"><div><h1>Tableau de bord</h1><div class="sub">Suivi audits hôtels · produits · hygiène · traçabilité</div></div><button class="btn btn-gold" onclick="newAudit()">+ Nouvel audit</button></div>`; let usedMB=storageUsageMB(), quotaMB=storageQuotaMB(); if(quotaMB&&storageEstimate.usedMB>quotaMB*0.8){html+=`<div class="warn">⚠️ Espace de l’appareil à ${storageEstimate.usedMB.toFixed(0)} Mo sur ${quotaMB.toFixed(0)} Mo disponibles. Exporte tes PDF puis supprime les audits terminés.</div>`} else if(usedMB>12){html+=`<div class="warn">📷 ${usedMB.toFixed(1)} Mo de données et photos. Tu peux alléger avec « Optimiser les photos » dans Exports.</div>`} if(!a){html+=`<div class="empty">Aucun audit actif. Crée un audit pour ton prochain déplacement hôtel.</div>`} else {let c=completion(a); html+=`<div class="grid g4">
@@ -662,16 +759,16 @@ function setItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=unkey(k)
 function openCameraForItem(k){openCamera(data=>{let a=ensureAudit();let it=unkey(k);a.items[it].photos=a.items[it].photos||[];a.items[it].photos.push({src:data,at:nowText(),type:'PMS'});save();renderChecklist();})}
 function importForItem(k){pickFile(data=>{let a=ensureAudit();let it=unkey(k);a.items[it].photos=a.items[it].photos||[];a.items[it].photos.push({src:data,at:nowText(),type:'PMS'});save();renderChecklist();})}
 function removeItemPhoto(k,i){let a=ensureAudit();let it=unkey(k);a.items[it].photos.splice(i,1);save();renderChecklist();}
-function renderProducts(){let a=current(); let html=`<div class="ph"><div><h1>Produits & étiquettes</h1><div class="sub">Qualité · marques · origine · DLC/DDM · lots avec photo</div></div></div>`; if(!a){$('page-products').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des produits.</div>`;return} html+=`<div class="card"><div class="row3"><button class="btn btn-gold btn-full" onclick="addProductForm()">+ Produit</button><button class="btn btn-blue btn-full" onclick="quickPhotoProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportProduct()">📁 Importer étiquette</button></div></div><div id="prodForm"></div><div class="list">${a.products.length?a.products.map((p,i)=>`<div class="li"><img class="thumb" src="${p.photo||''}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette produit enregistrée</div>'}</div>`; $('page-products').innerHTML=html;}
-function productForm(p={},i=-1){return `<div class="card"><div class="card-head"><div class="label">${i>=0?'Modifier produit':'Nouveau produit'}</div></div><div class="row"><div class="fg"><label class="fl">Produit</label><input id="p_name" class="fc" value="${esc(p.name||'')}" placeholder="Ex : filet de poulet, saumon, skyr"></div><div class="fg"><label class="fl">Marque</label><input id="p_brand" class="fc" value="${esc(p.brand||'')}" placeholder="Marque / fournisseur"></div></div><div class="row3"><div class="fg"><label class="fl">Origine</label><input id="p_origin" class="fc" value="${esc(p.origin||'')}" placeholder="France, local, UE..."></div><div class="fg"><label class="fl">Lot</label><input id="p_lot" class="fc" value="${esc(p.lot||'')}" placeholder="N° lot"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="p_dlc" class="fc" value="${esc(p.dlc||'')}" placeholder="JJ/MM/AAAA"></div></div><div class="row"><div class="fg"><label class="fl">Catégorie</label><select id="p_cat" class="fc"><option>Viande / volaille</option><option>Poisson / marée</option><option>Fruits & légumes</option><option>Épicerie</option><option>Crèmerie / œufs</option><option>Produit local</option><option>Autre</option></select></div><div class="fg"><label class="fl">Qualité observée</label><select id="p_quality" class="fc"><option>Très bonne</option><option>Conforme</option><option>Moyenne</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="p_comment" class="fc" placeholder="Observation qualité, origine, remarque nutrition, remplacement...">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="p_photo_preview">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3" style="margin-top:10px"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempProductPhoto(d))">📷 Appareil photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempProductPhoto(d))">📁 Galerie</button><button class="btn btn-gold btn-full" onclick="saveProduct(${i})">Enregistrer</button></div><input type="hidden" id="p_photo" value="${p.photo||''}"></div>`}
+function renderProducts(){let a=current(); let html=`<div class="ph"><div><h1>Produits & étiquettes</h1><div class="sub">Qualité · marques · origine · DLC/DDM · lots avec photo</div></div></div>`; if(!a){$('page-products').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des produits.</div>`;return} html+=`<div class="card"><div class="row3"><button class="btn btn-gold btn-full" onclick="addProductForm()">+ Produit</button><button class="btn btn-blue btn-full" onclick="quickPhotoProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportProduct()">📁 Importer étiquette</button></div></div><div id="prodForm"></div><div class="list">${a.products.length?a.products.map((p,i)=>`<div class="li"><img class="thumb" loading="lazy" src="${photoUrl(p.photo)}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette produit enregistrée</div>'}</div>`; $('page-products').innerHTML=html;}
+function productForm(p={},i=-1){return `<div class="card"><div class="card-head"><div class="label">${i>=0?'Modifier produit':'Nouveau produit'}</div></div><div class="row"><div class="fg"><label class="fl">Produit</label><input id="p_name" class="fc" value="${esc(p.name||'')}" placeholder="Ex : filet de poulet, saumon, skyr"></div><div class="fg"><label class="fl">Marque</label><input id="p_brand" class="fc" value="${esc(p.brand||'')}" placeholder="Marque / fournisseur"></div></div><div class="row3"><div class="fg"><label class="fl">Origine</label><input id="p_origin" class="fc" value="${esc(p.origin||'')}" placeholder="France, local, UE..."></div><div class="fg"><label class="fl">Lot</label><input id="p_lot" class="fc" value="${esc(p.lot||'')}" placeholder="N° lot"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="p_dlc" class="fc" value="${esc(p.dlc||'')}" placeholder="JJ/MM/AAAA"></div></div><div class="row"><div class="fg"><label class="fl">Catégorie</label><select id="p_cat" class="fc"><option>Viande / volaille</option><option>Poisson / marée</option><option>Fruits & légumes</option><option>Épicerie</option><option>Crèmerie / œufs</option><option>Produit local</option><option>Autre</option></select></div><div class="fg"><label class="fl">Qualité observée</label><select id="p_quality" class="fc"><option>Très bonne</option><option>Conforme</option><option>Moyenne</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="p_comment" class="fc" placeholder="Observation qualité, origine, remarque nutrition, remplacement...">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="p_photo_preview">${p.photo?`<img class="thumb" loading="lazy" src="${photoUrl(p.photo)}">`:''}</div><div class="row3" style="margin-top:10px"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempProductPhoto(d))">📷 Appareil photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempProductPhoto(d))">📁 Galerie</button><button class="btn btn-gold btn-full" onclick="saveProduct(${i})">Enregistrer</button></div><input type="hidden" id="p_photo" value="${p.photo||''}"></div>`}
 function addProductForm(){renderProducts(); $('prodForm').innerHTML=productForm();}
 function editProduct(i){renderProducts(); $('prodForm').innerHTML=productForm(current().products[i],i); $('p_cat').value=current().products[i].category||'Autre'; $('p_quality').value=current().products[i].quality||'Conforme';}
-function setTempProductPhoto(d){$('p_photo').value=d;$('p_photo_preview').innerHTML=`<img class="thumb" src="${d}">`}
+function setTempProductPhoto(d){$('p_photo').value=d;$('p_photo_preview').innerHTML=`<img class="thumb" loading="lazy" src="${photoUrl(d)}">`}
 function saveProduct(i){let a=ensureAudit(); if(!a)return; let p={name:$('p_name').value,brand:$('p_brand').value,origin:$('p_origin').value,lot:$('p_lot').value,dlc:$('p_dlc').value,category:$('p_cat').value,quality:$('p_quality').value,comment:$('p_comment').value,photo:$('p_photo').value,at:nowText()}; if(i>=0)a.products[i]=p; else a.products.unshift(p); save(); renderProducts(); renderDashboard(); toast('Produit enregistré');}
 function delProduct(i){let a=ensureAudit(); if(!confirm('Supprimer ce produit ?'))return; a.products.splice(i,1); save(); renderProducts();renderDashboard();}
 function quickPhotoProduct(){addProductForm(); openCamera(d=>setTempProductPhoto(d));}
 function quickImportProduct(){addProductForm(); pickFile(d=>setTempProductPhoto(d));}
-function renderLocals(){let a=current(); let html=`<div class="ph"><div><h1>Locaux & photos</h1><div class="sub">Zone chaude · froid · réserve · matériel · organisation</div></div></div>`; if(!a){$('page-locals').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des photos.</div>`;return} html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="l_zone" class="fc"><option>Zone chaude</option><option>Préparation froide</option><option>Chambre froide positive</option><option>Chambre froide négative</option><option>Réserve sèche</option><option>Plonge</option><option>Vestiaires / hygiène personnel</option><option>Matériel cuisson</option><option>Distribution / buffet</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="l_comment" class="fc" placeholder="Observation, propreté, rangement, flux, matériel, action demandée..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveLocalPhoto(d))">📷 Photo locaux</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveLocalPhoto('')">Enregistrer sans photo</button></div></div><div class="list">${a.locals.length?a.locals.map((l,i)=>`<div class="li"><img class="thumb" src="${l.photo||''}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo de locaux enregistrée</div>'}</div>`; $('page-locals').innerHTML=html;}
+function renderLocals(){let a=current(); let html=`<div class="ph"><div><h1>Locaux & photos</h1><div class="sub">Zone chaude · froid · réserve · matériel · organisation</div></div></div>`; if(!a){$('page-locals').innerHTML=html+`<div class="empty">Créer un audit avant d’ajouter des photos.</div>`;return} html+=`<div class="card"><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="l_zone" class="fc"><option>Zone chaude</option><option>Préparation froide</option><option>Chambre froide positive</option><option>Chambre froide négative</option><option>Réserve sèche</option><option>Plonge</option><option>Vestiaires / hygiène personnel</option><option>Matériel cuisson</option><option>Distribution / buffet</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="l_comment" class="fc" placeholder="Observation, propreté, rangement, flux, matériel, action demandée..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveLocalPhoto(d))">📷 Photo locaux</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveLocalPhoto('')">Enregistrer sans photo</button></div></div><div class="list">${a.locals.length?a.locals.map((l,i)=>`<div class="li"><img class="thumb" loading="lazy" src="${photoUrl(l.photo)}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo de locaux enregistrée</div>'}</div>`; $('page-locals').innerHTML=html;}
 function saveLocalPhoto(photo){let a=ensureAudit(); if(!a)return; a.locals.unshift({zone:$('l_zone').value,status:$('l_status').value,comment:$('l_comment').value,photo,at:nowText()}); save(); renderLocals(); renderDashboard(); toast('Contrôle locaux enregistré');}
 function delLocal(i){let a=ensureAudit(); a.locals.splice(i,1); save(); renderLocals(); renderDashboard();}
 
@@ -713,11 +810,11 @@ function renderStadium(){
   if(!a.stadium) migrateAuditData(); let st=a.stadium;
   html+=`<div class="card"><div class="row3"><div class="fg"><label class="fl">Traiteur / prestataire stade</label><input class="fc" value="${esc(st.provider||'')}" placeholder="Ex : Metsens" onchange="updateStadium('provider',this.value)"></div><div class="fg"><label class="fl">Contact opérationnel</label><input class="fc" value="${esc(st.contact||'')}" placeholder="Nom / téléphone" onchange="updateStadium('contact',this.value)"></div><div class="fg"><label class="fl">Heure livraison stade</label><input class="fc" value="${esc(st.deliveryTime||'')}" placeholder="Ex : 70e minute / 23h30" onchange="updateStadium('deliveryTime',this.value)"></div></div><div class="fg"><label class="fl">Note générale traiteur stade</label><textarea class="fc" placeholder="Qualité globale, respect menu, remarques vestiaire, retours joueurs/staff..." onchange="updateStadium('notes',this.value)">${esc(st.notes||'')}</textarea></div></div>`;
   STADIUM_SECTIONS.forEach(sec=>{html+=`<div class="card"><div class="card-head"><div class="label">${sec.name}</div><button class="btn btn-sm btn-green" onclick="setAllSection('${sec.name}','conforme',true)">✅ Tout conforme</button></div>`; sec.items.forEach(it=>{let v=st.items[it]||{status:'',temp:'',remarks:'',photos:[]}; html+=`<div class="audit-item"><div class="audit-title">${it}</div><div class="audit-meta"><div class="status"><button class="${v.status==='conforme'?'on ok':''}" onclick="setStadiumItem('${key(it)}','status','conforme')">Conforme</button><button class="${v.status==='non conforme'?'on ko':''}" onclick="setStadiumItem('${key(it)}','status','non conforme')">Non conforme</button><button class="${v.status==='à remplacer'?'on rep':''}" onclick="setStadiumItem('${key(it)}','status','à remplacer')">À remplacer</button><button class="${v.status==='non concerné'?'on nc':''}" onclick="setStadiumItem('${key(it)}','status','non concerné')">N/C</button></div><input class="fc" placeholder="T° / heure / valeur" value="${esc(v.temp||'')}" onchange="setStadiumItem('${key(it)}','temp',this.value)"><input class="fc" placeholder="Remarque / lot / origine / action" value="${esc(v.remarks||'')}" onchange="setStadiumItem('${key(it)}','remarks',this.value)"></div><div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-blue" onclick="openCameraForStadiumItem('${key(it)}')">📷 Photo</button><button class="btn btn-sm btn-sec" onclick="importForStadiumItem('${key(it)}')">📁 Importer</button><label class="badge ${v.notify?'b-rep':'b-nc'}"><input type="checkbox" ${v.notify?'checked':''} onchange="setStadiumItem('${key(it)}','notify',this.checked)"> À communiquer</label></div>${photoStrip(v.photos||[],`removeStadiumItemPhoto('${key(it)}',IDX)`)}</div>`}); html+=`</div>`});
-  html+=`<div class="card"><div class="card-head"><div class="label">Étiquettes traiteur stade</div></div><div class="row3"><button class="btn btn-gold btn-full" onclick="addStadiumProductForm()">+ Produit stade</button><button class="btn btn-blue btn-full" onclick="quickPhotoStadiumProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportStadiumProduct()">📁 Importer étiquette</button></div><div id="stadiumProdForm" style="margin-top:12px"></div><div class="list" style="margin-top:12px">${st.products.length?st.products.map((p,i)=>`<div class="li"><img class="thumb" src="${p.photo||''}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit stade sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editStadiumProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delStadiumProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette traiteur stade enregistrée</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Étiquettes traiteur stade</div></div><div class="row3"><button class="btn btn-gold btn-full" onclick="addStadiumProductForm()">+ Produit stade</button><button class="btn btn-blue btn-full" onclick="quickPhotoStadiumProduct()">📷 Photo étiquette</button><button class="btn btn-sec btn-full" onclick="quickImportStadiumProduct()">📁 Importer étiquette</button></div><div id="stadiumProdForm" style="margin-top:12px"></div><div class="list" style="margin-top:12px">${st.products.length?st.products.map((p,i)=>`<div class="li"><img class="thumb" loading="lazy" src="${photoUrl(p.photo)}" onerror="this.outerHTML='<div class=thumb>🏷️</div>'"><div><h3>${esc(p.name)||'Produit stade sans nom'}</h3><p>${esc(p.brand)||'Marque ?'} · ${esc(p.origin)||'Origine ?'} · Lot ${esc(p.lot)||'-'} · DLC ${esc(p.dlc)||'-'}</p><p>Qualité : ${esc(p.quality)||'-'} · ${esc(p.comment)||''}</p></div><div class="actions"><button class="btn btn-sm btn-sec" onclick="editStadiumProduct(${i})">Modifier</button><button class="btn btn-sm btn-red" onclick="delStadiumProduct(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune étiquette traiteur stade enregistrée</div>'}</div></div>`;
   let devis=ensureDevis(a); let cmp=compareDevisReception(a);
   html+=`<div class="card"><div class="card-head"><div class="label">Devis fournisseur stade</div></div><div class="row3"><div class="fg"><label class="fl">Référence devis</label><input class="fc" value="${esc(devis.reference)}" onchange="updateDevisField('reference',this.value)"></div><div class="fg"><label class="fl">Date devis</label><input type="date" class="fc" value="${esc(devis.date)}" onchange="updateDevisField('date',this.value)"></div><div class="fg"><label class="fl">Fournisseur</label><input class="fc" value="${esc(devis.fournisseur)}" placeholder="Ex : Metsens" onchange="updateDevisField('fournisseur',this.value)"></div></div><div class="row3"><div class="fg"><label class="fl">Produit prévu</label><input id="dv_name" class="fc" placeholder="Ex : Filet de poulet"></div><div class="fg"><label class="fl">Quantité prévue</label><input id="dv_qty" class="fc" type="number" step="any" placeholder="Ex : 10"></div><div class="fg"><label class="fl">Unité</label><input id="dv_unit" class="fc" placeholder="kg, pièce, carton..."></div></div><button class="btn btn-gold btn-full" onclick="addDevisLine()">+ Ajouter la ligne au devis</button><div class="list" style="margin-top:12px">${devis.lines.length?devis.lines.map(l=>`<div class="li"><div class="thumb">📋</div><div><h3>${esc(l.name)}</h3><p>Prévu : ${esc(l.qty)||'-'} ${esc(l.unit||'')}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delDevisLine('${l.id}')">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune ligne de devis renseignée</div>'}</div></div>`;
   html+=`<div class="card"><div class="card-head"><div class="label">Comparaison devis / réception</div></div>${!devis.lines.length?'<div class="empty">Ajoute des lignes de devis ci-dessus pour activer la comparaison à la réception.</div>':`<div class="list">${cmp.map(r=>`<div class="li"><div class="thumb">${r.status==='Conforme'?'✅':(r.status==='Non prévu au devis'?'❔':'⚠️')}</div><div><h3>${esc(r.name)}</h3><p>Prévu : ${esc(r.qtyPrevu)||'-'} ${esc(r.unit||'')} · Reçu : ${esc(r.qtyRecu)}</p></div><span class="badge ${devisBadgeClass(r.status)}" style="margin-left:auto;flex-shrink:0">${esc(r.status)}</span></div>`).join('')}</div>`}</div>`;
-  html+=`<div class="card"><div class="card-head"><div class="label">Photos locaux / conditionnement stade</div></div><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="st_l_zone" class="fc"><option>Production traiteur</option><option>Allotissement stade</option><option>Étuves / maintien chaud</option><option>Chambres froides</option><option>Transport / housses thermiques</option><option>Vestiaire stade</option><option>Buffet / distribution</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="st_l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="st_l_comment" class="fc" placeholder="Conditionnement, température, propreté, transport, remise vestiaire..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveStadiumLocalPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveStadiumLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumLocalPhoto('')">Enregistrer sans photo</button></div><div class="list" style="margin-top:12px">${st.locals.length?st.locals.map((l,i)=>`<div class="li"><img class="thumb" src="${l.photo||''}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delStadiumLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo traiteur stade enregistrée</div>'}</div></div>`;
+  html+=`<div class="card"><div class="card-head"><div class="label">Photos locaux / conditionnement stade</div></div><div class="row"><div class="fg"><label class="fl">Zone contrôlée</label><select id="st_l_zone" class="fc"><option>Production traiteur</option><option>Allotissement stade</option><option>Étuves / maintien chaud</option><option>Chambres froides</option><option>Transport / housses thermiques</option><option>Vestiaire stade</option><option>Buffet / distribution</option><option>Autre</option></select></div><div class="fg"><label class="fl">Statut</label><select id="st_l_status" class="fc"><option>Conforme</option><option>Point de vigilance</option><option>Non conforme</option><option>À remplacer</option></select></div></div><div class="fg"><label class="fl">Commentaire</label><textarea id="st_l_comment" class="fc" placeholder="Conditionnement, température, propreté, transport, remise vestiaire..."></textarea></div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>saveStadiumLocalPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>saveStadiumLocalPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumLocalPhoto('')">Enregistrer sans photo</button></div><div class="list" style="margin-top:12px">${st.locals.length?st.locals.map((l,i)=>`<div class="li"><img class="thumb" loading="lazy" src="${photoUrl(l.photo)}" onerror="this.outerHTML='<div class=thumb>📷</div>'"><div><h3>${esc(l.zone)} · ${esc(l.status)}</h3><p>${esc(l.comment)||'Sans commentaire'} · ${l.at}</p></div><div class="actions"><button class="btn btn-sm btn-red" onclick="delStadiumLocal(${i})">Suppr.</button></div></div>`).join(''):'<div class="empty">Aucune photo traiteur stade enregistrée</div>'}</div></div>`;
   $('page-stadium').innerHTML=html;
 }
 function updateStadium(k,v){let a=ensureAudit(); if(!a)return; if(!a.stadium)migrateAuditData(); a.stadium[k]=v; save(); renderHeader();}
@@ -726,10 +823,10 @@ function setStadiumItem(k,field,val){let a=ensureAudit(); if(!a)return; let it=s
 function openCameraForStadiumItem(k){openCamera(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
 function importForStadiumItem(k){pickFile(d=>{let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos=(a.stadium.items[it].photos||[]); a.stadium.items[it].photos.push({src:d,at:nowText()}); save(); renderStadium();})}
 function removeStadiumItemPhoto(k,i){let a=ensureAudit(); if(!a)return; let it=stadiumKey(k); a.stadium.items[it].photos.splice(i,1); save(); renderStadium();}
-function stadiumProductForm(p={},i=null){return `<div class="card"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="sp_name" class="fc" value="${esc(p.name||'')}" placeholder="Produit / préparation"></div><div class="fg"><label class="fl">Marque</label><input id="sp_brand" class="fc" value="${esc(p.brand||'')}"></div><div class="fg"><label class="fl">Origine</label><input id="sp_origin" class="fc" value="${esc(p.origin||'')}"></div></div><div class="row3"><div class="fg"><label class="fl">Lot</label><input id="sp_lot" class="fc" value="${esc(p.lot||'')}"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="sp_dlc" class="fc" value="${esc(p.dlc||'')}"></div><div class="fg"><label class="fl">Qualité</label><select id="sp_quality" class="fc"><option ${p.quality==='Très bon'?'selected':''}>Très bon</option><option ${p.quality==='Correct'?'selected':''}>Correct</option><option ${p.quality==='À revoir'?'selected':''}>À revoir</option><option ${p.quality==='Refusé'?'selected':''}>Refusé</option></select></div></div><div class="fg"><label class="fl">Quantité reçue (comparaison devis)</label><input id="sp_qty" class="fc" value="${esc(p.qty||'')}" placeholder="Ex : 10 kg, 25 pièces..."></div><div class="fg"><label class="fl">Commentaire</label><textarea id="sp_comment" class="fc">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="sp_photo_preview">${p.photo?`<img class="thumb" src="${p.photo}">`:''}</div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempStadiumPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempStadiumPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumProduct(${i===null?'null':i})">Enregistrer</button></div><input type="hidden" id="sp_photo" value="${p.photo||''}"></div>`}
+function stadiumProductForm(p={},i=null){return `<div class="card"><div class="row3"><div class="fg"><label class="fl">Produit</label><input id="sp_name" class="fc" value="${esc(p.name||'')}" placeholder="Produit / préparation"></div><div class="fg"><label class="fl">Marque</label><input id="sp_brand" class="fc" value="${esc(p.brand||'')}"></div><div class="fg"><label class="fl">Origine</label><input id="sp_origin" class="fc" value="${esc(p.origin||'')}"></div></div><div class="row3"><div class="fg"><label class="fl">Lot</label><input id="sp_lot" class="fc" value="${esc(p.lot||'')}"></div><div class="fg"><label class="fl">DLC / DDM</label><input id="sp_dlc" class="fc" value="${esc(p.dlc||'')}"></div><div class="fg"><label class="fl">Qualité</label><select id="sp_quality" class="fc"><option ${p.quality==='Très bon'?'selected':''}>Très bon</option><option ${p.quality==='Correct'?'selected':''}>Correct</option><option ${p.quality==='À revoir'?'selected':''}>À revoir</option><option ${p.quality==='Refusé'?'selected':''}>Refusé</option></select></div></div><div class="fg"><label class="fl">Quantité reçue (comparaison devis)</label><input id="sp_qty" class="fc" value="${esc(p.qty||'')}" placeholder="Ex : 10 kg, 25 pièces..."></div><div class="fg"><label class="fl">Commentaire</label><textarea id="sp_comment" class="fc">${esc(p.comment||'')}</textarea></div><div class="photo-row" id="sp_photo_preview">${p.photo?`<img class="thumb" loading="lazy" src="${photoUrl(p.photo)}">`:''}</div><div class="row3"><button class="btn btn-blue btn-full" onclick="openCamera(d=>setTempStadiumPhoto(d))">📷 Photo</button><button class="btn btn-sec btn-full" onclick="pickFile(d=>setTempStadiumPhoto(d))">📁 Importer</button><button class="btn btn-gold btn-full" onclick="saveStadiumProduct(${i===null?'null':i})">Enregistrer</button></div><input type="hidden" id="sp_photo" value="${p.photo||''}"></div>`}
 function addStadiumProductForm(){$('stadiumProdForm').innerHTML=stadiumProductForm()}
 function editStadiumProduct(i){let a=ensureAudit(); $('stadiumProdForm').innerHTML=stadiumProductForm(a.stadium.products[i],i)}
-function setTempStadiumPhoto(d){$('sp_photo').value=d;$('sp_photo_preview').innerHTML=`<img class="thumb" src="${d}">`}
+function setTempStadiumPhoto(d){$('sp_photo').value=d;$('sp_photo_preview').innerHTML=`<img class="thumb" loading="lazy" src="${photoUrl(d)}">`}
 function saveStadiumProduct(i){let a=ensureAudit(); if(!a)return; let p={name:$('sp_name').value,brand:$('sp_brand').value,origin:$('sp_origin').value,lot:$('sp_lot').value,dlc:$('sp_dlc').value,quality:$('sp_quality').value,qty:$('sp_qty').value,comment:$('sp_comment').value,photo:$('sp_photo').value||'',at:nowText()}; if(i===null)a.stadium.products.unshift(p); else a.stadium.products[i]=p; save(); renderStadium(); toast('Produit stade enregistré');}
 function quickPhotoStadiumProduct(){addStadiumProductForm(); openCamera(d=>setTempStadiumPhoto(d));}
 function quickImportStadiumProduct(){addStadiumProductForm(); pickFile(d=>setTempStadiumPhoto(d));}
@@ -926,7 +1023,7 @@ function importAuditJSON(){
   input.click();
 }
 function esc(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img src="${p.src}"><button onclick="${cmd.replace('IDX',i)}" aria-label="Supprimer la photo">×</button></div>`).join('')}</div>`}
+function photoStrip(arr,cmd){if(!arr?.length)return ''; return `<div class="photo-row" style="margin-top:8px">${arr.map((p,i)=>`<div class="photo-mini"><img loading="lazy" src="${photoUrl(p.src)}"><button onclick="${cmd.replace('IDX',i)}" aria-label="Supprimer la photo">×</button></div>`).join('')}</div>`}
 async function openCamera(cb){photoCallback=cb; $('cameraModal').classList.add('open'); try{await startCamera(true)}catch(e){toast('Caméra indisponible. Utilise importer photo.'); console.warn(e)}}
 function isRearLabel(label){label=(label||'').toLowerCase();return /back|rear|environment|arrière|arriere|dos|trás|tras|rück|ruck|0/.test(label)}
 function isFrontLabel(label){label=(label||'').toLowerCase();return /front|user|face|facetime|avant|selfie|1/.test(label)}
@@ -1009,7 +1106,7 @@ function compressImage(dataUrl,maxDim=1400,quality=0.66,budget=92000){
 /* Recompresse les photos déjà stockées (audits importés ou tirés du cloud). */
 async function compactPhotos(){
   let a=ensureAudit(); if(!a)return;
-  let before=storageUsageMB(),touched=0;
+  let before=storageUsageMB(true),touched=0;
   const shrink=async src=>{
     if(typeof src!=='string'||src.length<=110000)return null;
     let out=await compressImage(src);
@@ -1021,12 +1118,12 @@ async function compactPhotos(){
   for(const m of Object.values((a.cdc&&a.cdc.controls)||{}))await doBucket(m);
   for(const m of Object.values(a.leftovers||{})){
     await doBucket(m.refItems);
-    for(const x of (m.extras||[]))for(const p of (x.photos||[])){let n=await shrink(p.src); if(n)p.src=n}
+    for(const x of (m.extra||m.extras||[]))for(const p of (x.photos||[])){let n=await shrink(p.src); if(n)p.src=n}
   }
   for(const list of [a.products||[],a.locals||[],(a.stadium&&a.stadium.products)||[],(a.stadium&&a.stadium.locals)||[]])
     for(const o of list){let n=await shrink(o.photo); if(n)o.photo=n}
   await saveNow(); renderAll();
-  let after=storageUsageMB();
+  let after=storageUsageMB(true);
   toast(touched?`✅ ${touched} photo(s) optimisée(s) · ${before.toFixed(1)} → ${after.toFixed(1)} Mo`:'Photos déjà optimisées');
 }
 function capturePhoto(){let v=$('video');let c=document.createElement('canvas');c.width=v.videoWidth||1280;c.height=v.videoHeight||720;let ctx=c.getContext('2d');ctx.drawImage(v,0,0,c.width,c.height);let data=c.toDataURL('image/jpeg',0.86);closeCamera(); compressImage(data).then(d=>{if(photoCallback)photoCallback(d)})}
@@ -1474,6 +1571,14 @@ function exportStadiumLocalsPDF(){
 }
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js?v=23').catch(()=>{}))}
+/* V23.1 : sans console ouverte, une exception était totalement invisible et
+   se traduisait juste par « ça ne répond pas ». On l'affiche. */
+window.addEventListener('error',e=>{
+  try{toast('⚠️ Erreur : '+(e.message||'inconnue'))}catch(_){}
+});
+window.addEventListener('unhandledrejection',e=>{
+  try{toast('⚠️ Erreur : '+((e.reason&&e.reason.message)||e.reason||'inconnue'))}catch(_){}
+});
 window.__AHP_BOOT=load().then(()=>{renderAll()}).catch(e=>{console.error('Démarrage',e); renderAll()});
 </script>
 
@@ -1490,13 +1595,26 @@ window.__AHP_BOOT=load().then(()=>{renderAll()}).catch(e=>{console.error('Démar
 (()=>{
 'use strict';
 if(window.__AHP_PATCHED)return; window.__AHP_PATCHED='V23';
-const V='V23';
+const V='V23.2';
 const O={renderAll,renderDashboard,renderChecklist,renderStadium,renderCdc,renderRestes,renderLocals,renderExports,exportGeneralPDF};
-let t=null,pending=false;
+let t=null,pending=false,dirty=false;
 const editing=()=>{const e=document.activeElement;return !!(e&&(e.matches&&e.matches('input.fc,textarea.fc')||e.isContentEditable))};
-function qsave(now=false){const a=current();if(a)a.updatedAt=new Date().toISOString();clearTimeout(t);if(now){saveNow();scheduleCloudPush()}else t=setTimeout(save,280)}
+/* V23.1 : qsave estampillait updatedAt et déclenchait une écriture + un push
+   cloud à CHAQUE perte de focus, donc à chaque tap sur un bouton, en clonant
+   5 Mo au passage. On ne sauvegarde plus que s'il y a eu une vraie modification. */
+function qsave(now=false){
+  dirty=true;
+  const a=current();if(a)a.updatedAt=new Date().toISOString();
+  clearTimeout(t);
+  if(now){dirty=false;saveNow();scheduleCloudPush()}
+  else t=setTimeout(()=>{dirty=false;save()},280);
+}
 window.renderAll=function(){if(editing()){pending=true;return}O.renderAll();decorateAll()};
-document.addEventListener('focusout',()=>{qsave(true);setTimeout(()=>{if(pending&&!editing()&&!document.querySelector('.mo.open')){pending=false;O.renderAll();decorateAll()}},350)},true);
+document.addEventListener('focusout',()=>{
+  if(dirty)qsave(true);
+  if(!pending)return;
+  setTimeout(()=>{if(pending&&!editing()&&!document.querySelector('.mo.open')){pending=false;O.renderAll();decorateAll()}},350);
+},true);
 window.addEventListener('beforeunload',()=>{if(t){clearTimeout(t);try{saveNow()}catch(_){}}});
 function hotelItem(a,it){if(!a.items[it])a.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};a.items[it].photos=a.items[it].photos||[];return a.items[it]}
 function stadiumItem(a,it){if(!a.stadium)migrateAuditData();if(!a.stadium.items[it])a.stadium.items[it]={status:'',temp:'',cooking:'',notify:false,remarks:'',photos:[]};a.stadium.items[it].photos=a.stadium.items[it].photos||[];return a.stadium.items[it]}

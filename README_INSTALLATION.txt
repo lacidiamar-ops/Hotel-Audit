@@ -82,3 +82,78 @@ CÔTÉ SUPABASE (projet gytabinhioceawwgfsly)
 L'audit Mariott / Monaco du 29/08 est intact côté serveur : 30/30 points
 renseignés, 16 photos, 48 contrôles cahier des charges, restes sur les
 5 moments. Il se récupère depuis Exports → « Récupérer les audits du cloud ».
+
+
+V23.1 — 03/09/2026 — CORRECTIF DE PERFORMANCE
+---------------------------------------------
+Symptôme : boutons qui ne répondent pas, impossible d'ouvrir l'audit Mariott.
+
+Régression introduite par la V23 elle-même. En V22 le Mariott ne pouvait PAS
+être chargé en local (quota localStorage dépassé), donc l'état restait léger.
+Dès que IndexedDB a permis de le charger, trois opérations coûteuses se sont
+mises à s'exécuter à chaque interaction :
+
+  - renderAll() reconstruisait les 12 pages à chaque appel, en réinjectant
+    4,4 Mo de photos base64 dans le DOM. Mesuré : 1843 ms par rendu.
+  - storageUsageMB() sérialisait l'état entier, deux fois par rendu.
+  - Chaque perte de focus réécrivait 5 Mo dans IndexedDB, même sans
+    modification.
+
+Corrections, toutes mesurées sur un état de 4,75 Mo :
+
+  - Rendu à la demande : seule la page affichée est construite, les autres le
+    sont au moment où l'on y navigue.
+      ouverture d'un audit  : 2365 ms -> 36 ms
+      rendu complet         : 1843 ms -> 16 ms
+  - Vignettes converties une seule fois en URL blob au lieu d'être réinjectées
+    en base64. Les exports PDF continuent d'utiliser le base64 d'origine :
+    vérifié, 32 images bien intégrées dans le rapport hôtel.
+      page Contrôle PMS     : 2055 ms -> 95 ms  (2,26 Mo -> 53 Ko de HTML)
+  - Taille de l'état mise en cache, invalidée à l'écriture.
+  - Écriture IndexedDB uniquement s'il y a eu une vraie modification.
+  - selectAudit() change de page AVANT de rendre : un rendu en échec ne peut
+    plus donner l'impression que le bouton est mort.
+  - renderAll() isole chaque secteur : une exception sur un seul n'interrompt
+    plus les onze autres.
+  - Les erreurs JavaScript s'affichent désormais en toast, au lieu de rester
+    invisibles sans console ouverte.
+  - Clé « extra » corrigée (le code d'optimisation photo cherchait « extras »).
+
+
+V23.2 — 03/09/2026 — SURVOL ET CLIC
+-----------------------------------
+Symptôme : au survol d'un bouton l'élément tremble, et le curseur alterne
+rapidement entre la main et la flèche. Clics parfois perdus.
+
+Cause : trois règles CSS déplaçaient l'élément au survol.
+
+  .card:hover, .kpi:hover  translateY(-4px) + rotateX(2deg) rotateY(-2deg)
+  .li:hover                translateY(-2px) + rotateX(1deg)
+  .btn:hover               translateY(-2px)
+
+Le mécanisme : l'élément se déplace sous l'effet du survol, le curseur se
+retrouve donc hors de sa zone, le survol s'annule, l'élément revient à sa
+place, le survol se déclenche de nouveau — en boucle, plusieurs fois par
+seconde. Le curseur suit ce va-et-vient, d'où l'alternance main / flèche.
+
+Le défaut était amplifié par l'imbrication. Le bouton « Ouvrir » de
+l'historique est dans une ligne .li, elle-même dans une carte .card : le
+survoler déplaçait les trois à la fois, soit 8 px de mouvement cumulé.
+
+Deuxième problème, plus grave, sur le clic :
+
+  .btn:active                       scale(.97) puis scale(.96)
+  .card:active, .kpi:active, .li:active   translateY(-1px) scale(.995)
+
+Le bouton rétrécissait pendant l'appui. Si le relâchement tombait hors du
+bouton rétréci, le navigateur n'émettait pas d'événement click sur le bouton
+mais sur son parent : l'action n'était jamais déclenchée. C'est une cause
+directe de « je clique et il ne se passe rien », indépendante du problème de
+performance corrigé en V23.1.
+
+Correction : plus aucune règle de survol ou d'appui ne modifie la géométrie.
+Le relief est conservé par l'ombre, le fond et la luminosité, qui ne
+déplacent rien et ne changent pas la zone cliquable. Les transitions
+n'animent plus la propriété transform.
+
+Vérifié : aucun transform ne subsiste sur :hover, :active ou :focus.
