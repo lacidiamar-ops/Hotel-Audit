@@ -5,7 +5,7 @@
    absent : l'app ne se comportait pas deux fois pareil. Les correctifs sont
    désormais dans index.html ; ce worker ne fait plus que du cache.
    ========================================================================== */
-const CACHE_NAME='audit-hotel-pro-v25';
+const CACHE_NAME='audit-hotel-pro-v26';
 const APP_SHELL=['/','/index.html','/manifest.webmanifest','/icon192.png','/icon512.png','/audithotellogo.png'];
 
 self.addEventListener('install',event=>{

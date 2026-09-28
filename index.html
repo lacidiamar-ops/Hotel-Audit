@@ -433,12 +433,12 @@ const STADIUM_SECTIONS=[
  {name:'Traiteur stade · Logistique stade', color:'orange', items:['Conditionnement adapté au transport','Étuves / bacs GN / housses thermiques propres','Heure de départ respectée','Heure de livraison vestiaire respectée','Température à réception stade contrôlée','Organisation remise au vestiaire fluide']},
  {name:'Traiteur stade · Locaux & photos', color:'purple', items:['Zone de stockage propre et rangée','Zone d’allotissement propre','Matériel disponible et en bon état','Photos des locaux / étuves / conditionnements','Poubelles fermées et évacuées','Actions correctives identifiées']}
 ];
-const CDC_FUNCTION_URL='https://gytabinhioceawwgfsly.supabase.co/functions/v1/get-cdc-reference';
-const CDC_ANON_KEY='sb_publishable_czR-qnp1qxaJhAZts7nGzw_8_O92lxp';
+const CDC_FUNCTION_URL='https://lnelpsdssnbyuwmwrwza.supabase.co/functions/v1/get-cdc-reference';
+const CDC_ANON_KEY='sb_publishable_veVMRga0YcYtOH54w-4lDg_X72d873M';
 const CDC_SOURCE_VERSION='2026-07-01-v1';
 const CDC_MOMENTS=[{id:'din',label:'1 Dîner veille de match'},{id:'pdj',label:'2 PDJ jour de match'},{id:'dej_3a',label:'3A Déjeuner + collation'},{id:'dej',label:'3B Dernier repas avant match'},{id:'col',label:'4 Collation jour de match'}];
 let cdcActiveMoment='pdj', restesActiveMoment='pdj', cdcFetchInFlight=false;
-const SYNC_FUNCTION_URL='https://gytabinhioceawwgfsly.supabase.co/functions/v1/sync-audit';
+const SYNC_FUNCTION_URL='https://lnelpsdssnbyuwmwrwza.supabase.co/functions/v1/sync-audit';
 let sessionPin='', cloudPushTimer=null, syncPollInterval=null;
 let state={audits:[],currentId:null,user:'Auditeur'};
 let cameraStream=null,devices=[],deviceIndex=0,photoCallback=null,currentFacing='environment',lastDeviceId=null;
